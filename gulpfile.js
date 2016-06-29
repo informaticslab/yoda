@@ -440,7 +440,7 @@ function serve(isDev, specRunner) {
   }
 
   return $.nodemon(nodeOptions)
-    .on('restart', ['vet'], function(ev) {
+    .on('restart', function(ev) {               // Remove vetting for now
       log('*** nodemon restarted');
       log('files changed:\n' + ev);
       setTimeout(function() {
