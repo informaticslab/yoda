@@ -2,20 +2,20 @@
   'use strict';
 
   angular
-    .module('app.dashboard')
-    .controller('DashboardController', DashboardController);
+    .module('app.home')
+    .controller('HomeController', HomeController);
 
-  DashboardController.$inject = ['$q', 'dataservice', 'logger'];
+  HomeController.$inject = ['$q', 'dataservice', 'logger'];
   /* @ngInject */
-  function DashboardController($q, dataservice, logger) {
+  function HomeController($q, dataservice, logger) {
     var vm = this;
     vm.news = {
       title: 'yoda',
-      description: 'Hot Towel Angular is a SPA template for Angular developers.'
+      description: 'CDC-INFO responsive webapp'
     };
     vm.messageCount = 0;
     vm.people = [];
-    vm.title = 'Dashboard';
+    vm.title = 'Home';
 
     activate();
 
