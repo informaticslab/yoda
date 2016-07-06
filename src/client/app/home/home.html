@@ -1,14 +1,22 @@
-<section id="home-view" class="mainbar">
-  <section class="matter">
-    <div class="container">
-      <div class="row">
-        <div class="well">
+<section id='home-view' class='mainbar'>
+  <section class='matter'>
+    <div class='container'>
+      <div class='row'>
+        <div class='well'>
           <pre>Model: {{selected | json}}</pre>
-            <input type="text" ng-model="selected" uib-typeahead="pr for pr in testPR | filter:$viewValue | limitTo:8" class="form-control">
+          <div class='input-group'>
+            <input type='text' class='form-control' ng-model='selected' uib-typeahead='pr for pr in testPR | filter:$viewValue | limitTo:8' class='form-control' placeholder='Seach using elasticsearch'>
+            <span class='input-group-btn'>
+              <button class='btn btn-primary' type='button' ng-click='search()'>Go!</button>
+            </span>
+          </div>
         </div>
       </div>
-      <div class="row">
-        
+      <div class='row'>
+        <div class='well' ng-if='resultsArr != null'>
+          <pre>Number of results: {{resultsArr.length}}</pre>
+          <pre ng-repeat='response in resultsArr'>{{response._source | json}}</pre>
+        </div>
       </div>
     </div>
   </section>
