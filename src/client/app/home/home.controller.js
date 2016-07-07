@@ -25,30 +25,32 @@
     $scope.currentPage = 1;
     $scope.pageSize = 10;
 
-    $scope.search = function() {  //TODO: Refine this
-      var results;
-      $scope.resultsArr;
-      esclientservice.search({
-        index: index,
-        body: {
-          query: {
-            match: {
-              query: $scope.selected
-            }
-          },
-          size: 1000,
-          explain: false     //set to 'true' for testing only
-        }
-      })
-      .then(function(results) {
-        $scope.resultsArr = results.hits.hits;
-        $scope.error = null;
-        console.log(results);
-      })
-      .catch(function(err) {
-        $scope.resultsArr = null;
-        $scope.error.err;
-      });
+    $scope.search = function(val) {  //TODO: Refine this
+      if(val !== undefined){
+        var results;
+        $scope.resultsArr;
+        esclientservice.search({
+          index: index,
+          body: {
+            query: {
+              match: {
+                query: val
+              }
+            },
+            size: 1000,
+            explain: false     //set to 'true' for testing only
+          }
+        })
+        .then(function(results) {
+          $scope.resultsArr = results.hits.hits;
+          $scope.error = null;
+          console.log(results);
+        })
+        .catch(function(err) {
+          $scope.resultsArr = null;
+          $scope.error.err;
+        });
+      }
     };
 
     $scope.getQuery = function(val) {  //TODO: Refine this
