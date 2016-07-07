@@ -5,17 +5,20 @@
         <div class='well'>
           <pre>Model: {{selected | json}}</pre>
           <div class='input-group'>
-            <input type='text' class='form-control' ng-model='selected' uib-typeahead='pr for pr in testPR | filter:$viewValue | limitTo:8' class='form-control' placeholder='Seach using elasticsearch'>
+            <input type='text' class='form-control' ng-model='selected' uib-typeahead='pr for pr in getQuery($viewValue)' typeahead-loading="loadingLocations" typeahead-no-results="noResults" class='form-control' placeholder='Seach using elasticsearch'>
             <span class='input-group-btn'>
               <button class='btn btn-primary' type='button' ng-click='search()'>Go!</button>
             </span>
+            <!-- <button class='btn btn-primary' type='button' ng-click='getQuerys()'>Go!</button> -->
           </div>
         </div>
       </div>
       <div class='row'>
         <div class='well' ng-if='resultsArr != null'>
           <pre>Number of results: {{resultsArr.length}}</pre>
-          <pre ng-repeat='response in resultsArr'>{{response._source | json}}</pre>
+          <!-- <pre ng-repeat='response in resultsArr'>{{response._source | json}}</pre> -->
+          <pre dir-paginate='response in resultsArr | itemsPerPage: pageSize' current-page='currentPage'>{{response._source | json}}</pre>
+          <dir-pagination-controls boundary-links='true'></dir-pagination-controls>
         </div>
       </div>
     </div>
