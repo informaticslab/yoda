@@ -18,10 +18,10 @@
         <div class='col-lg-6'>
           <dir-pagination-controls template-url="/bower_components/angularUtils-pagination/dirPaginationCustom.tpl.html"></dir-pagination-controls><span> results for "{{selected}}"</span>
         </div>
-       <!--  <div class='col-lg-6'>
+        <div class='col-lg-6'>
           <div class='pull-right'>
-            <span>Sort by(mocked) 
-              <select class="form-control">
+            <span>Sort by
+              <select>
                 <option>Relevance</option>
                 <option>Topic</option>
                 <option>Type</option>
@@ -29,13 +29,20 @@
               </select>
              </span>
           </div>
-        </div> -->
+        </div>
         <div class="col-lg-12"><hr></div>
       </div>
       <div class='row' ng-if='resultsArr != null'>
         <div class='col-lg-3'>
           <h4>Refine by</h4>
+          <h5>Audience</h5>
+          <ul>
+            <li>For everyone</li>
+            <li>For the public</li>
+            <li>For health care specialist</li>
+          </ul>
         </div>
+
         <div class='col-lg-9'>
           <!-- <pre ng-repeat='response in resultsArr'>{{response._source | json}}</pre> -->
           <div dir-paginate='response in resultsArr | itemsPerPage: pageSize' current-page='currentPage'>
