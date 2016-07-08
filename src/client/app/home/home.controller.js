@@ -25,6 +25,13 @@
     $scope.currentPage = 1;
     $scope.pageSize = 10;
 
+    $scope.placeholderSort = [
+                                'Topic',
+                                'Type',
+                                'Relevance',
+                                'Keywords'
+                              ];
+
     $scope.search = function(val) {  //TODO: Refine this
       if(val !== undefined){
         var results;
@@ -33,7 +40,7 @@
           index: index,
           body: {
             query: {
-              match: {
+              query_string: {
                 query: val
               }
             },
@@ -43,7 +50,7 @@
         })
         .then(function(results) {
           $scope.resultsArr = results.hits.hits;
-          $scope.error = null;
+          $scope.error = null
           console.log(results);
         })
         .catch(function(err) {
@@ -65,12 +72,6 @@
           return item._source.query;
         });
       });
-      // return esclientservice.seach({
-      //   index: 'prepared_responses'
-      // })
-      // .then(function(response) {
-      //   console.log(response);
-      // });
     }
 
     ///////

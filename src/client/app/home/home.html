@@ -12,23 +12,37 @@
               <!-- <button class='btn btn-primary' type='button' ng-click='getQuerys()'>Go!</button> -->
             </div>
           </div>
-       <!--    <div class='row'>
-            <ul class='nav nav-pills'>
-              <li>Home</li>
-              <li>Topics</li>
-              <li>Help</li>
-              <li>About</li>
-              <li>FAQ</li>
-              <li>Contact</li>
-            </ul>
-          </div> -->
         </div>
       </div>
-      <div class='row'>
-        <div class='well' ng-if='resultsArr != null'>
-          <pre>Number of results: {{resultsArr.length}}</pre>
+      <div class='row' ng-if='resultsArr != null'>
+        <div class='col-lg-6'>
+          <dir-pagination-controls template-url="/bower_components/angularUtils-pagination/dirPaginationCustom.tpl.html"></dir-pagination-controls><span> results for "{{selected}}"</span>
+        </div>
+       <!--  <div class='col-lg-6'>
+          <div class='pull-right'>
+            <span>Sort by(mocked) 
+              <select class="form-control">
+                <option>Relevance</option>
+                <option>Topic</option>
+                <option>Type</option>
+                <option>Keywords</option>
+              </select>
+             </span>
+          </div>
+        </div> -->
+        <div class="col-lg-12"><hr></div>
+      </div>
+      <div class='row' ng-if='resultsArr != null'>
+        <div class='col-lg-3'>
+          <h4>Refine by</h4>
+        </div>
+        <div class='col-lg-9'>
           <!-- <pre ng-repeat='response in resultsArr'>{{response._source | json}}</pre> -->
-          <pre dir-paginate='response in resultsArr | itemsPerPage: pageSize' current-page='currentPage'>{{response._source | json}}</pre>
+          <div dir-paginate='response in resultsArr | itemsPerPage: pageSize' current-page='currentPage'>
+            <h4><a href="#" class='query'>{{response._source.query}}</a></h4>
+            <p>{{response._source.response | limitTo: 250}}</p>
+            <p class='id'>ID: {{response._source.id}}</p>
+          </div>
           <dir-pagination-controls boundary-links='true'></dir-pagination-controls>
         </div>
       </div>
