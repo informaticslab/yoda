@@ -13,6 +13,24 @@
     ```
 
     >Refer to these [instructions on how to not require sudo](https://github.com/sindresorhus/guides/blob/master/npm-global-without-sudo.md)
+    
+3. Install and start elasticsearch
+  - follow instructions here [elasticsearch](https://www.elastic.co/downloads/elasticsearch)
+
+4. Import test data into elasticsearch DB
+  -From project root
+    ```bash
+    cd data
+    node load_PRs.js
+    ```
+5. Add the following to elasticsearch config to enable CORS
+
+    ```bash
+    http.cors.enabled : true
+    http.cors.allow-origin : "*"
+    http.cors.allow-methods : OPTIONS, HEAD, GET, POST, PUT, DELETE
+    http.cors.allow-headers : X-Requested-With,X-Auth-Token,Content-Type, Content-Length
+    ```
 
 ## Running yoda
 
