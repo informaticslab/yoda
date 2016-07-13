@@ -2,20 +2,55 @@
   <section class='matter'>
     <div class='container'>
       <div class='row'>
-        <div class='well'>
-          <pre>Model: {{selected | json}}</pre>
-          <div class='input-group'>
-            <input type='text' class='form-control' ng-model='selected' uib-typeahead='pr for pr in testPR | filter:$viewValue | limitTo:8' class='form-control' placeholder='Seach using elasticsearch'>
-            <span class='input-group-btn'>
-              <button class='btn btn-primary' type='button' ng-click='search()'>Go!</button>
-            </span>
+        <div class='well searchbox'>
+          <div class='row'>
+            <div class='input-group searchbar col-lg-6'>
+              <input type='text' class='form-control' ng-model='selected' uib-typeahead='pr for pr in getQuery($viewValue)' typeahead-loading="loadingLocations" typeahead-no-results="noResults" class='form-control' placeholder='Seach CDC-INFO'>
+              <span class='input-group-btn'>
+                <button class='btn btn-default' type='button' ng-click='search(selected)'><i class='fa fa-search fa-lg' aria-hidden='true'></i></button> 
+              </span>
+              <!-- <button class='btn btn-primary' type='button' ng-click='getQuerys()'>Go!</button> -->
+            </div>
           </div>
         </div>
       </div>
-      <div class='row'>
-        <div class='well' ng-if='resultsArr != null'>
-          <pre>Number of results: {{resultsArr.length}}</pre>
-          <pre ng-repeat='response in resultsArr'>{{response._source | json}}</pre>
+      <div class='row' ng-if='resultsArr != null'>
+        <div class='col-lg-6'>
+          <dir-pagination-controls template-url="/bower_components/angularUtils-pagination/dirPaginationCustom.tpl.html"></dir-pagination-controls><span> results for "{{selected}}"</span>
+        </div>
+        <div class='col-lg-6'>
+          <div class='pull-right'>
+            <span>Sort by
+              <select>
+                <option>Relevance</option>
+                <option>Topic</option>
+                <option>Type</option>
+                <option>Keywords</option>
+              </select>
+             </span>
+          </div>
+        </div>
+        <div class="col-lg-12"><hr></div>
+      </div>
+      <div class='row' ng-if='resultsArr != null'>
+        <div class='col-lg-3'>
+          <h4>Refine by</h4>
+          <h5>Audience</h5>
+          <ul>
+            <li>For everyone</li>
+            <li>For the public</li>
+            <li>For health care specialist</li>
+          </ul>
+        </div>
+
+        <div class='col-lg-9'>
+          <!-- <pre ng-repeat='response in resultsArr'>{{response._source | json}}</pre> -->
+          <div dir-paginate='response in resultsArr | itemsPerPage: pageSize' current-page='currentPage'>
+            <h4><a href="#" class='query'>{{response._source.query}}</a></h4>
+            <p>{{response._source.response | limitTo: 250}}</p>
+            <p class='id'>ID: {{response._source.id}}</p>
+          </div>
+          <dir-pagination-controls boundary-links='true'></dir-pagination-controls>
         </div>
       </div>
     </div>

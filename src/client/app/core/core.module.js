@@ -5,6 +5,7 @@
     .module('app.core', [
       'ngAnimate', 'ngSanitize',
       'blocks.exception', 'blocks.logger', 'blocks.router',
-      'ui.router', 'ngplus', 'ui.bootstrap', 'elasticsearch'
+      'ui.router', 'ngplus', 'ui.bootstrap', 'elasticsearch',
+      'angularUtils.directives.dirPagination'
     ]);
 })();

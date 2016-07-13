@@ -19,41 +19,60 @@
 
     activate();
 
-    $scope.selected = undefined;
-    $scope.testPR = [
-      'Is there any danger from receiving extra doses of a vaccine?', 'How is HIV transmitted?',
-      'What is the role of CDC-INFO?', 'Does CDC have any job openings, or training or fellowship opportunities?',
-      'Where can I go for a free or low-cost mammogram or Pap test?', 'How is genital herpes transmitted?',
-      'Can CDC provide information on product safety and testing?', 'What are the signs and symptoms of HIV?',
-      'Who should get Zostavax (shingles vaccine)?', 'Can the varicella-zoster virus from the shingles (herpes zoster) vaccine (Zostavax) be spread to at-risk family members and other close contacts of people who have been recently vaccinated?',
-      'Who should get the Tdap vaccine?', 'What are the signs and symptoms of genital herpes?'
-    ];
+    var index = 'prepared_responses';
 
-    $scope.search = function() {
-      var results;
-      $scope.resultsArr;
-      esclientservice.search({
-        index: 'prepared_responses',
+    $scope.selected = undefined;
+    $scope.currentPage = 1;
+    $scope.pageSize = 10;
+
+    $scope.placeholderSort = [
+                                'Topic',
+                                'Type',
+                                'Relevance',
+                                'Keywords'
+                              ];
+
+    $scope.search = function(val) {  //TODO: Refine this
+      if(val !== undefined){
+        var results;
+        $scope.resultsArr;
+        esclientservice.search({
+          index: index,
+          body: {
+            query: {
+              query_string: {
+                query: val
+              }
+            },
+            size: 1000,
+            explain: false     //set to 'true' for testing only
+          }
+        })
+        .then(function(results) {
+          $scope.resultsArr = results.hits.hits;
+          $scope.error = null
+          console.log(results);
+        })
+        .catch(function(err) {
+          $scope.resultsArr = null;
+          $scope.error.err;
+        });
+      }
+    };
+
+    $scope.getQuery = function(val) {  //TODO: Refine this
+      return esclientservice.search({
+        index: index,
         body: {
-          query: {
-            match: {
-              query: $scope.selected
-            }
-          },
-          size: 20,
-          explain: false     //set to true for testing only
+          query: { "match": { query: val} }
         }
       })
-      .then(function(results) {
-        $scope.resultsArr = results.hits.hits;
-        $scope.error = null;
-        console.log(results);
-      })
-      .catch(function(err) {
-        $scope.resultsArr = null;
-        $scope.error.err;
+      .then(function(response) {
+        return response.hits.hits.map(function(item) {
+          return item._source.query;
+        });
       });
-    };
+    }
 
     ///////
 
