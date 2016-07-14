@@ -9,10 +9,8 @@ var client = new elasticsearch.Client({
 });
 var index = 'prepared_responses';
 
-router.get('/search', doSearch);
-router.get('/questions', getQuestions);
-router.get('/people', getPeople);
-// router.get('/person/:id', getPerson);
+router.get('/search/:query', doSearch);
+router.get('/questions/:query', getQuestions);
 router.get('/*', four0four.notFoundMiddleware);
 
 module.exports = router;
@@ -26,7 +24,7 @@ function doSearch(req, res, next) {
     body: {
       query: {
         query_string: {
-          query: 'ebola'
+          query: req.params.query
         }
       },
       size: 1000,
@@ -45,7 +43,7 @@ function getQuestions(req, res, next) {
   client.search({
     index: index,
     body: {
-
+       query: { "match": { query: req.params.query} }
     }
   })
   .then(function(results) {
@@ -56,19 +54,3 @@ function getQuestions(req, res, next) {
   });
 }
 
-function getPeople(req, res, next) {
-  res.status(200).send(data.people);
-}
-
-function getPerson(req, res, next) {
-  var id = +req.params.id;
-  var person = data.people.filter(function(p) {
-    return p.id === id;
-  })[0];
-
-  if (person) {
-    res.status(200).send(person);
-  } else {
-    four0four.send404(req, res, 'person ' + id + ' not found');
-  }
-}
