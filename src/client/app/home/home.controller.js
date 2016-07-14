@@ -5,16 +5,15 @@
     .module('app.home')
     .controller('HomeController', HomeController);
 
-  HomeController.$inject = ['$q', 'dataservice', 'logger','$scope', 'esclientservice', 'esFactory'];
+  HomeController.$inject = ['$q', 'dataservice', 'logger','$scope'];
   /* @ngInject */
-  function HomeController($q, dataservice, logger, $scope, esclientservice, esFactory) {
+  function HomeController($q, dataservice, logger, $scope) {
     var vm = this;
     vm.news = {
       title: 'yoda',
       description: 'CDC-INFO responsive webapp'
     };
     vm.messageCount = 0;
-    vm.people = [];
     vm.title = 'Home';
 
     activate();
@@ -32,43 +31,18 @@
                                 'Keywords'
                               ];
 
-    $scope.search = function(val) {  //TODO: Refine this
-      if(val !== undefined){
-        var results;
-        $scope.resultsArr;
-        esclientservice.search({
-          index: index,
-          body: {
-            query: {
-              query_string: {
-                query: val
-              }
-            },
-            size: 1000,
-            explain: false     //set to 'true' for testing only
-          }
-        })
-        .then(function(results) {
-          $scope.resultsArr = results.hits.hits;
-          $scope.error = null
-          console.log(results);
-        })
-        .catch(function(err) {
-          $scope.resultsArr = null;
-          $scope.error.err;
+    $scope.search = function(val) { 
+      if(val !== undefined) {
+        return dataservice.doSearch(val).then(function(data) {
+          $scope.resultsArr = data;
         });
       }
     };
 
-    $scope.getQuery = function(val) {  //TODO: Refine this
-      return esclientservice.search({
-        index: index,
-        body: {
-          query: { "match": { query: val} }
-        }
-      })
-      .then(function(response) {
-        return response.hits.hits.map(function(item) {
+    $scope.getQuery = function(val) {
+
+      return dataservice.getQuestions(val).then(function(data) {
+        return data.map(function(item) {
           return item._source.query;
         });
       });
@@ -77,7 +51,7 @@
     ///////
 
     function activate() {
-      var promises = [getMessageCount(), getPeople()];
+      var promises = [getMessageCount()];
       return $q.all(promises).then(function() {
         logger.info('Activated Home View');
       });
@@ -87,13 +61,6 @@
       return dataservice.getMessageCount().then(function(data) {
         vm.messageCount = data;
         return vm.messageCount;
-      });
-    }
-
-    function getPeople() {
-      return dataservice.getPeople().then(function(data) {
-        vm.people = data;
-        return vm.people;
       });
     }
   }

@@ -9,7 +9,8 @@
   /* @ngInject */
   function dataservice($http, $q, exception, logger) {
     var service = {
-      getPeople: getPeople,
+      doSearch: doSearch,
+      getQuestions: getQuestions,
       getMessageCount: getMessageCount
     };
 
@@ -17,18 +18,33 @@
 
     function getMessageCount() { return $q.when(72); }
 
-    function getPeople() {
-      return $http.get('/api/people')
-        .then(success)
-        .catch(fail);
+    function doSearch(query) {
+      return $http.get('/api/search/' + query)
+      .then(success)
+      .catch(fail);
 
       function success(response) {
         return response.data;
       }
 
       function fail(e) {
-        return exception.catcher('XHR Failed for getPeople')(e);
+        return exception.catcher('XHR failed for doSearch')(e);
       }
     }
+
+    function getQuestions(query) {
+      return $http.get('/api/questions/' + query)
+      .then(success)
+      .catch(fail);
+
+      function success(response) {
+        return response.data;
+      }
+
+      function fail(e) {
+        return exception.catcher('XHR failed for getQuestions')(e);
+      }
+    }
+
   }
 })();
