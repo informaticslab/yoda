@@ -5,16 +5,15 @@
         <div class='well searchbox'>
           <div class='row'>
             <div class='input-group searchbar col-lg-6'>
-              <input type='text' class='form-control' ng-model='selected' uib-typeahead='pr for pr in getQuery($viewValue)' typeahead-loading="loadingLocations" typeahead-no-results="noResults" class='form-control' placeholder='Seach CDC-INFO'>
+              <input type='text' class='form-control' ng-model='vm.selected' uib-typeahead='pr for pr in vm.getQuery($viewValue)' typeahead-loading="loadingLocations" typeahead-no-results="noResults" class='form-control' placeholder='Seach CDC-INFO'>
               <span class='input-group-btn'>
-                <button class='btn btn-default' type='button' ng-click='search(selected)'><i class='fa fa-search fa-lg' aria-hidden='true'></i></button> 
+                <button class='btn btn-default' type='button' ng-click='vm.search(vm.selected)'><i class='fa fa-search fa-lg' aria-hidden='true'></i></button> 
               </span>
-              <!-- <button class='btn btn-primary' type='button' ng-click='getQuerys()'>Go!</button> -->
             </div>
           </div>
         </div>
       </div>
-      <div class='row' ng-if='resultsArr == null'>
+      <div class='row' ng-if='vm.resultsArr == null'>
         <div class='well'>
           <div>
             <h4>You have questions? We have answers.</h4>
@@ -23,9 +22,9 @@
           </div>
         </div>
       </div>
-      <div class='row' ng-if='resultsArr != null'>
+      <div class='row' ng-if='vm.resultsArr != null'>
         <div class='col-lg-6'>
-          <dir-pagination-controls template-url="/bower_components/angularUtils-pagination/dirPaginationCustom.tpl.html"></dir-pagination-controls><span> results for "{{selected}}"</span>
+          <dir-pagination-controls template-url="/bower_components/angularUtils-pagination/dirPaginationCustom.tpl.html"></dir-pagination-controls><span> results for "{{vm.selected}}"</span>
         </div>
         <div class='col-lg-6'>
           <div class='pull-right'>
@@ -41,7 +40,7 @@
         </div>
         <div class="col-lg-12"><hr></div>
       </div>
-      <div class='row' ng-if='resultsArr != null'>
+      <div class='row' ng-if='vm.resultsArr != null'>
         <div class='col-lg-3'>
           <h4>Refine by</h4>
           <h5>Audience</h5>
@@ -53,8 +52,7 @@
         </div>
 
         <div class='col-lg-9'>
-          <!-- <pre ng-repeat='response in resultsArr'>{{response._source | json}}</pre> -->
-          <div dir-paginate='response in resultsArr | itemsPerPage: pageSize' current-page='currentPage'>
+          <div dir-paginate='response in vm.resultsArr | itemsPerPage: vm.pageSize' current-page='vm.currentPage'>
             <h4><a href="#" class='query'>{{response._source.query}}</a></h4>
             <p>{{response._source.response | limitTo: 250}}</p>
             <p class='id'>ID: {{response._source.id}}</p>

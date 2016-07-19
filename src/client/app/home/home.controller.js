@@ -5,9 +5,9 @@
     .module('app.home')
     .controller('HomeController', HomeController);
 
-  HomeController.$inject = ['$q', 'dataservice', 'logger','$scope'];
+  HomeController.$inject = ['$q', 'dataservice', 'logger'];
   /* @ngInject */
-  function HomeController($q, dataservice, logger, $scope) {
+  function HomeController($q, dataservice, logger) {
     var vm = this;
     vm.news = {
       title: 'yoda',
@@ -20,26 +20,26 @@
 
     var index = 'prepared_responses';
 
-    $scope.selected = undefined;
-    $scope.currentPage = 1;
-    $scope.pageSize = 10;
+    vm.selected = undefined;
+    vm.currentPage = 1;
+    vm.pageSize = 10;
 
-    $scope.placeholderSort = [
+    vm.placeholderSort = [
                                 'Topic',
                                 'Type',
                                 'Relevance',
                                 'Keywords'
                               ];
 
-    $scope.search = function(val) { 
+    vm.search = function(val) { 
       if(val !== undefined) {
         return dataservice.doSearch(val).then(function(data) {
-          $scope.resultsArr = data;
+          vm.resultsArr = data;
         });
       }
     };
 
-    $scope.getQuery = function(val) {
+    vm.getQuery = function(val) {
 
       return dataservice.getQuestions(val).then(function(data) {
         return data.map(function(item) {
