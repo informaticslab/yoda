@@ -1,65 +1,123 @@
 <section id='home-view' class='mainbar'>
-  <section class='matter'>
-    <div class='container'>
+  <div class='row'>
+    <!--  <div class='well searchbox'>
       <div class='row'>
-        <div class='well searchbox'>
-          <div class='row'>
-            <div class='input-group searchbar col-lg-6'>
-              <input type='text' class='form-control' ng-model='vm.selected' uib-typeahead='pr for pr in vm.getQuery($viewValue)' typeahead-loading="loadingLocations" typeahead-no-results="noResults" class='form-control' placeholder='Seach CDC-INFO'>
-              <span class='input-group-btn'>
-                <button class='btn btn-default' type='button' ng-click='vm.search(vm.selected)'><i class='fa fa-search fa-lg' aria-hidden='true'></i></button> 
-              </span>
-            </div>
-          </div>
+        <div class='input-group searchbar col-lg-6'>
+          <input type='text' class='form-control' ng-model='vm.selected' uib-typeahead='pr for pr in vm.getQuery($viewValue)' typeahead-loading="loadingLocations" typeahead-no-results="noResults" class='form-control' placeholder='Seach CDC-INFO'>
+          <span class='input-group-btn'>
+            <button class='btn btn-default' type='button' ng-click='vm.search(vm.selected)'><i class='fa fa-search fa-lg' aria-hidden='true'></i></button>
+          </span>
         </div>
       </div>
-      <div class='row' ng-if='vm.resultsArr == null'>
-        <div class='well'>
-          <div>
-            <h4>You have questions? We have answers.</h4>
-            <p>CDC-INFO is the CDC’s national contact center, providing information to the public, healthcare providers, and public health professionals. CDC-INFO offers live agents to help you find the up-to-date, reliable, consistent, and science-based health information you’re looking for, on more than 750 health topics.</p>
-            <p>CDC-INFO also manages the distribution of printed materials through the CDC-INFO On Demand ordering system. On Demand is a webpage where you can order or download CDC materials free of charge.</p>
-          </div>
+    </div> -->
+  </div>
+  <div class='row' ng-if='vm.resultsArr == null'>
+    <div class="col-lg-12 cdc-info-home">
+      <h4>You have questions? We have answers.</h4>
+      <p>CDC-INFO is the CDC’s national contact center, providing information to the public, healthcare providers, and public health professionals. CDC-INFO offers live agents to help you find the up-to-date, reliable, consistent, and science-based health information you’re looking for, on more than 750 health topics.</p>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-lg-4 col-md-4">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h3 class="panel-title">Most Recent</h3>
         </div>
-      </div>
-      <div class='row' ng-if='vm.resultsArr != null'>
-        <div class='col-lg-6'>
-          <dir-pagination-controls template-url="/bower_components/angularUtils-pagination/dirPaginationCustom.tpl.html"></dir-pagination-controls><span> results for "{{vm.selected}}"</span>
-        </div>
-        <div class='col-lg-6'>
-          <div class='pull-right'>
-            <span>Sort by
-              <select>
-                <option>Relevance</option>
-                <option>Topic</option>
-                <option>Type</option>
-                <option>Keywords</option>
-              </select>
-             </span>
-          </div>
-        </div>
-        <div class="col-lg-12"><hr></div>
-      </div>
-      <div class='row' ng-if='vm.resultsArr != null'>
-        <div class='col-lg-3'>
-          <h4>Refine by</h4>
-          <h5>Audience</h5>
+        <div class="panel-body cust-li">
           <ul>
-            <li>For everyone</li>
-            <li>For the public</li>
-            <li>For health care specialist</li>
+            <li><a href="search-results.html">Is there any danger from receiving extra doses of a vaccine?</a></li>
+            <li><a href="#">How is HIV transmitted?</a></li>
+            <li><a href="#">What is the role of CDC-INFO?</a></li>
+            <li><a href="#">Does CDC have any job openings, or training or fellowship opportunities?</a></li>
+            <li><a href="#">Where can I go for a free or low-cost mammogram or Pap test?</a></li>
           </ul>
-        </div>
-
-        <div class='col-lg-9'>
-          <div dir-paginate='response in vm.resultsArr | itemsPerPage: vm.pageSize' current-page='vm.currentPage'>
-            <h4><a href="#" class='query'>{{response._source.query}}</a></h4>
-            <p>{{response._source.response | limitTo: 250}}</p>
-            <p class='id'>ID: {{response._source.id}}</p>
-          </div>
-          <dir-pagination-controls boundary-links='true'></dir-pagination-controls>
         </div>
       </div>
     </div>
+    <div class="col-lg-4 col-md-4">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h3 class="panel-title">Trending Topics</h3>
+        </div>
+        <div class="panel-body cust-li">
+          <ul>
+            <li><a href="search-results.html">Is there any danger from receiving extra doses of a vaccine?</a></li>
+            <li><a href="#">How is HIV transmitted?</a></li>
+            <li><a href="#">What is the role of CDC-INFO?</a></li>
+            <li><a href="#">Does CDC have any job openings, or training or fellowship opportunities?</a></li>
+            <li><a href="#">Where can I go for a free or low-cost mammogram or Pap test?</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-4 col-md-4">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h3 class="panel-title">Featured Questions</h3>
+        </div>
+        <div class="panel-body cust-li">
+          <ul>
+            <li><a href="search-results.html">Is there any danger from receiving extra doses of a vaccine?</a></li>
+            <li><a href="#">How is HIV transmitted?</a></li>
+            <li><a href="#">What is the role of CDC-INFO?</a></li>
+            <li><a href="#">Does CDC have any job openings, or training or fellowship opportunities?</a></li>
+            <li><a href="#">Where can I go for a free or low-cost mammogram or Pap test?</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-lg-6 col-md-6">
+      <div class="well well-dynamic1">
+        
+        <h4>CDC-INFO on Demand - Publications</h4><br>
+        <img src="images/cdc-info-demand.jpg" style="margin-right:10px;"  align="left" class="img-thumbnail">
+        CDC works 24/7 to provide information that helps protect the health of individuals and communities. Order or download books, fact sheets, pamphlets, and educational materials at CDC-INFO on Demand.<br><br>
+        <button class="btn btn-default" type="submit">More</button>
+        
+      </div>
+    </div>
+    <div class="col-lg-6 col-md-6">
+      <div class="well well-dynamic2">
+        <h4>Call CDC-INFO</h4><br>
+        <div class="row">
+          <div class="col-lg-6">
+            <strong>Monday - Friday</strong><br>
+            8:00 a.m. - 8:00 p.m. EST
+            <!--<br>(regular hours, for all inquiries)<br>--><br>
+            8:00 p.m. – 11:00 p.m. EST
+            <br>(extended hours, for Zika inquiries only)<br>
+          <br></div>
+          <div class="col-lg-6">
+            <strong>Saturday and Sunday</strong><br>
+            9:00 a.m. - 5:00 p.m. EST
+            <br>(for Zika inquiries only)<br>
+          <br></div></div>
+          800-CDC-INFO <br>
+          (800-232-4636) <br>
+          TTY 888-232-6348<br>
+          
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-lg-12">
+        <img src="images/cdc-info-each-day.jpg" class="img-responsive">
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-lg-12">
+        <hr>
+      </div>
+    </div>
+    <div class="row">
+            <div class="col-lg-12 cust-updated">
+                <ul>
+                    <li>Page last reviewed: July 11, 2016</li>
+                    <li>Page last updated: January 6, 2016</li>
+                    <li>Content source: <a href="#">Centers for Disease Control and Prevention</a></li>
+                </ul>
+            </div>
+        </div>
   </section>
-</section>
