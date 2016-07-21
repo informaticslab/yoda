@@ -107,10 +107,10 @@ span[class*=sprite-48],i[class*=sprite-48] {
 }
 .nav>li {
     border-bottom: 1px solid;
-    border-color: #fff;
+    border-color: #e3f2fe;
 }
 .navbar-nav > li > a:hover {
-	background-color:#eef6fd;
+	background-color:#bedffa;
 }
 
 .navbar-fixed-top .navbar-brand {
@@ -174,7 +174,7 @@ span[class*=sprite-48],i[class*=sprite-48] {
 	margin-top:20px;
 }
 .cdc-info-search {
-	background-color:#e3f2fe;
+	background-color:#b1dafb;
 	padding:20px 20px 15px 20px;
 	margin-top:10px;
 }
@@ -324,6 +324,52 @@ margin:0;
 .content-section {
 	margin-top:15px;
 }
+.nav > li > a {
+    display: block;
+    padding: 10px 15px;
+    position: relative;
+    color:#075290;
+}
+.nav > li > a:hover {
+	color:#0e5fa2;
+}
+.well {
+    background-color: #e3f2fe;
+    border: 1px solid #e3e3e3;
+    border-radius: 0px;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05) inset;
+    margin-bottom: 20px;
+    min-height: 20px;
+    padding: 19px;
+}
+.panel {
+	border-radius:0px;
+}
+@media (min-width: 1400px) {
+	.well-dynamic1 {
+	height:313px;
+}
+}
+@media (max-width: 1400px) {
+	.well-dynamic1 {
+	height:313px;
+}
+}
+@media (max-width: 1199px) {
+	.well-dynamic1 {
+	height:417px;
+}
+}
+@media (max-width: 991px) {
+	.well-dynamic1 {
+	height:100%;
+}
+}
+/*@media (min-width: 1200px) {
+	.well-dynamic2 {
+	height:313px;
+}
+}*/
 @media (max-width: 768px) {
 	.search-results2 {
 	text-align: left;
