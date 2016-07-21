@@ -71,6 +71,21 @@ gulp.task('styles', ['clean-styles'], function() {
     .pipe(gulp.dest(config.temp));
 });
 
+
+/**
+* Move css to styles folder
+* @return {stream}
+*/
+gulp.task('styles', ['clean-styles'], function() {
+  log('Moving css -> stlyes');
+
+  return gulp
+  .src(config.less)
+  .pipe($.plumber())
+  .pipe(gulp.dest(config.temp));
+});
+
+
 /**
  * Copy fonts
  * @return {Stream}

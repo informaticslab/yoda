@@ -3,25 +3,25 @@
 
   angular
     .module('app.layout')
-    .directive('htTopNav', htTopNav);
+    .directive('footer', footer);
 
   /* @ngInject */
-  function htTopNav() {
+  function footer() {
     var directive = {
       bindToController: true,
-      controller: TopNavController,
+      controller: FooterController,
       controllerAs: 'vm',
       restrict: 'EA',
       scope: {
         'navline': '='
       },
-      templateUrl: 'app/layout/ht-top-nav.html'
+      templateUrl: 'app/layout/footer.html'
     };
 
-    TopNavController.$inject = ['$scope'];
+    FooterController.$inject = ['$scope'];
 
     /* @ngInject */
-    function TopNavController($scope) {
+    function FooterController($scope) {
       var vm = this;
       $scope.isCollapsed = true;
     }
