@@ -64,28 +64,28 @@ span[class*=sprite-48],i[class*=sprite-48] {
     max-width:49px
 }
 .sprite-24-govd {
-    background: url(../img/ss.png) no-repeat 0 -85px;
+    background: url(../images/ss.png) no-repeat 0 -85px;
 }
 .sprite-24-facebook {
-    background: url(../img/ss.png) no-repeat -52px -85px;
+    background: url(../images/ss.png) no-repeat -52px -85px;
 }
 .sprite-24-twitter {
-    background: url(../img/ss.png) no-repeat -78px -85px;
+    background: url(../images/ss.png) no-repeat -78px -85px;
 }
 .sprite-24-youtube {
-    background: url(../img/ss.png) no-repeat -26px -85px;
+    background: url(../images/ss.png) no-repeat -26px -85px;
 }
 .sprite-24-instagram {
-    background: url(../img/ss.png) no-repeat -233px -85px;
+    background: url(../images/ss.png) no-repeat -233px -85px;
 }
 .sprite-24-listen {
-    background: url(../img/sm.png) no-repeat -155px -85px;
+    background: url(../images/sm.png) no-repeat -155px -85px;
 }
 .sprite-24-watch {
-    background: url(../img/sm.png) no-repeat -129px -85px;
+    background: url(../images/sm.png) no-repeat -129px -85px;
 }
 .sprite-24-rss {
-    background: url(../img/ss.png) no-repeat -155px -85px;
+    background: url(../images/ss.png) no-repeat -155px -85px;
 }
 
 .container {
