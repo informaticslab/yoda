@@ -3,8 +3,8 @@
     <div class="col-lg-12 cdc-info-search">
         <div class="form-group col-lg-10 col-lg-offset-1">
             <div class="form-group has-feedback">
-                <input type="text" class="form-control" id="inputValidation" placeholder="Search CDC-INFO"/>
-                <span class="glyphicon glyphicon-search form-control-feedback"></span>
+                <input type="text" class="form-control" id="inputValidation" ng-model='vm.selected' uib-typeahead='pr for pr in vm.getQuery($viewValue)' typeahead-loading="loadingLocations" typeahead-no-results="noResults" placeholder="Search CDC-INFO"/>
+                <!-- <span class="glyphicon glyphicon-search form-control-feedback"></span> -->
             </div>
         </div>
         <!-- Collect the nav links, forms, and other content for toggling -->
