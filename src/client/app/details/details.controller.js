@@ -14,10 +14,9 @@
     vm.id = $stateParams.id;
 
     activate();
-    console.log(vm.data);
+    // console.log(vm.data);
 
     function activate() {
-      console.log(vm.id);
       var promises = [getPreparedResponse(vm.id)];
       return $q.all(promises).then(function() {
         logger.info('Activated Details View');
@@ -29,7 +28,7 @@
         return dataservice.getPreparedResponsebyId(id).then(function(data) {
           vm.data = data;
           vm.data = vm.data._source;
-          return vm.data
+          return vm.data;
         });
       }
       

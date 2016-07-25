@@ -26,20 +26,15 @@
       vm.selected = undefined;
 
       vm.goToDetails = function($item, $model, $label) {
-        console.log($item);
+        // console.log($item);
         $state.go('details', {id: $item.id});
       };
 
-      vm.search = function(val) { 
-        if(val !== undefined) {
-          return dataservice.doSearch(val).then(function(data) {
-            vm.resultsArr = data;
-            $state.go('results', {results: vm.resultsArr});
-            // console.log(vm.resultsArr);
-          });
-        }
-      };
-
+      vm.goToResults = function($item) {
+        console.log($item);
+        $state.go('results', {searchString: $item});
+      }
+      
       vm.getQuery = function(val) {
         return dataservice.getQuestions(val).then(function(data) {
           return data.map(function(item) {

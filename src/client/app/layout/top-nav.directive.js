@@ -21,7 +21,7 @@
     TopNavController.$inject = ['$scope'];
 
     /* @ngInject */
-    function TopNavController($scope) {
+    function TopNavController($scope, $state) {
       var vm = this;
       // $scope.isCollapsed = true;
     }
