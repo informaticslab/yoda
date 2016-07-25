@@ -5,7 +5,10 @@
     'app.core',
     'app.admin',
     'app.home',
-    'app.layout'
+    'app.layout',
+    'app.results',
+    'app.search',
+    'app.details'
   ]);
 
 })();

@@ -8,7 +8,9 @@ var client = new elasticsearch.Client({
   log: 'error'
 });
 var index = 'prepared_responses';
+var type = 'prepared_responses';
 
+router.get('/getPreparedResponsebyId/:id', getPreparedResponsebyId);
 router.get('/search/:query', doSearch);
 router.get('/questions/:query', getQuestions);
 router.get('/*', four0four.notFoundMiddleware);
@@ -17,6 +19,20 @@ module.exports = router;
 
 //////////////
 
+
+function getPreparedResponsebyId(req, res, next) {
+  client.get({
+    index: index,
+    type: type,
+    id: req.params.id
+  })
+  .then(function(results) {
+    var preparedResponse = results;
+    res.send(preparedResponse);
+  }, function(err) {
+    console.trace(err.message);
+  });
+}
 
 function doSearch(req, res, next) {
   client.search({

@@ -23,7 +23,7 @@
     /* @ngInject */
     function TopNavController($scope) {
       var vm = this;
-      $scope.isCollapsed = true;
+      // $scope.isCollapsed = true;
     }
 
     return directive;

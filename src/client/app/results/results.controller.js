@@ -5,12 +5,13 @@
     .module('app.results')
     .controller('ResultsController', ResultsController);
 
-  ResultsController.$inject = ['logger'];
+  ResultsController.$inject = ['logger', '$scope', '$state', '$stateParams'];
   /* @ngInject */
-  function ResultsController(logger) {
+  function ResultsController(logger, $scope, $state, $stateParams) {
     var vm = this;
     vm.title = 'Results';
-
+    vm.results = $stateParams.results;
+    console.log(vm.results);
     activate();
 
     function activate() {

@@ -31,23 +31,6 @@
                                 'Keywords'
                               ];
 
-    // vm.search = function(val) { 
-    //   if(val !== undefined) {
-    //     return dataservice.doSearch(val).then(function(data) {
-    //       vm.resultsArr = data;
-    //     });
-    //   }
-    // };
-
-    // vm.getQuery = function(val) {
-
-    //   return dataservice.getQuestions(val).then(function(data) {
-    //     return data.map(function(item) {
-    //       return item._source.query;
-    //     });
-    //   });
-    // }
-
     ///////
 
     function activate() {

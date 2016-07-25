@@ -21,6 +21,7 @@
           controller: 'ResultsController',
           controllerAs: 'vm',
           title: 'results',
+          params: { results: null },  //required to pass along state params
           settings: {
             nav: 2,
             content: '<i class="fa fa-dashboard"></i> Home'

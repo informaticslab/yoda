@@ -10,8 +10,8 @@
   function ShellController($rootScope, $timeout, config, logger) {
     var vm = this;
     vm.busyMessage = 'Please wait ...';
-    vm.isBusy = true;
-    $rootScope.showSplash = true;
+    // vm.isBusy = true;
+    // $rootScope.showSplash = true;
     vm.navline = {
       title: config.appTitle,
       text: 'Created by John Papa',
@@ -22,7 +22,7 @@
 
     function activate() {
       logger.success(config.appTitle + ' loaded!', null);
-      hideSplash();
+      // hideSplash();
     }
 
     function hideSplash() {

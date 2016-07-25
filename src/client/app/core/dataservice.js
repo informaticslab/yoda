@@ -11,6 +11,7 @@
     var service = {
       doSearch: doSearch,
       getQuestions: getQuestions,
+      getPreparedResponsebyId: getPreparedResponsebyId,
       getMessageCount: getMessageCount
     };
 
@@ -43,6 +44,20 @@
 
       function fail(e) {
         return exception.catcher('XHR failed for getQuestions')(e);
+      }
+    }
+
+    function getPreparedResponsebyId(id) {
+      return $http.get('/api/getPreparedResponsebyId/' + id)
+      .then(success)
+      .catch(fail);
+
+      function success(response) {
+        return response.data;
+      }
+
+      function fail(e) {
+        return exception.catcher('XHR failed for getPreparedResponsebyId')(e);
       }
     }
 
