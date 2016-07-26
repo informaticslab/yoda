@@ -18,12 +18,17 @@
       templateUrl: 'app/layout/top-nav.html'
     };
 
-    TopNavController.$inject = ['$scope'];
+    TopNavController.$inject = ['$scope','$state'];
 
     /* @ngInject */
     function TopNavController($scope, $state) {
       var vm = this;
       // $scope.isCollapsed = true;
+
+      vm.isHomeState = function() {
+        var state =  $state.is('home');
+        return state;
+      };
     }
 
     return directive;

@@ -32,9 +32,12 @@
 
       vm.goToResults = function($item) {
         console.log($item);
-        $state.go('results', {searchString: $item});
+        if(!($item === undefined)) {
+          $state.go('results', {searchString: $item});
+          vm.selected = undefined;
+        }
       }
-      
+
       vm.getQuery = function(val) {
         return dataservice.getQuestions(val).then(function(data) {
           return data.map(function(item) {
