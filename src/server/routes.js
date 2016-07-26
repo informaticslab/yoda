@@ -10,6 +10,7 @@ var client = new elasticsearch.Client({
 var index = 'prepared_responses';
 var type = 'prepared_responses';
 
+router.get('/termSearch/:query', termSearch);
 router.get('/getPreparedResponsebyId/:id', getPreparedResponsebyId);
 router.get('/search/:query', doSearch);
 router.get('/questions/:query', getQuestions);
@@ -36,7 +37,7 @@ function getPreparedResponsebyId(req, res, next) {
   });
 }
 
-function doSearch(req, res, next) {
+function doSearch(req, res, next) {  //full body
   client.search({
     index: index,
     body: {
@@ -46,7 +47,28 @@ function doSearch(req, res, next) {
         }
       },
       size: 1000,
-      explain: false     //set to 'true' for testing only
+      explain: true      //set to 'true' for testing only
+    }
+  })
+  .then(function(results) {
+    var hits = results.hits.hits;
+    res.send(hits);
+  }, function(err) {
+    console.trace(err.message);
+  });
+}
+
+function termSearch(req, res, next) {
+  client.search({
+    index:index,
+    body:{
+      query:{
+        term: {
+          query: req.params.query
+        }
+      },
+      size: 1000,
+      explain: true
     }
   })
   .then(function(results) {
