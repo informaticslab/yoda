@@ -75,7 +75,7 @@
                 </div>
                 <div class="col-lg-9 col-md-9 col-sm-8 col-xs-12 right-results">
                   <div class="indv-results" dir-paginate='result in vm.resultsArray | itemsPerPage: vm.pageSize' current-page='vm.currentPage'>
-                    <h3><a ui-sref='details({id: result._source.id})'>{{result._source.query}}</a> <span class="liked">(42 people like this [Mocked])</span></h3>
+                    <h3><a ui-sref='details({id: result._source.id})'>{{result._source.query}}</a> <span class="liked" ng-if='result._source.liked'>({{result._source.liked}} people like this)</span></h3>
                     {{result._source.response | limitTo: 256}}...
                     <br>
                     <i>ID:{{result._source.id}}</i>

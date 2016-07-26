@@ -12,7 +12,8 @@
       doSearch: doSearch,
       getQuestions: getQuestions,
       getPreparedResponsebyId: getPreparedResponsebyId,
-      getMessageCount: getMessageCount
+      getMessageCount: getMessageCount,
+      ratePreparedResponse: ratePreparedResponse
     };
 
     return service;
@@ -61,5 +62,24 @@
       }
     }
 
+    function ratePreparedResponse(type, id) {
+      if(type === 'like') {
+        return $http.post('/api/updatePositiveRating/' + id)
+        .then(success)
+        .catch(fail);
+      } else {
+        return $http.post('/api/updateNegativeRating/' + id)
+        .then(success)
+        .catch(fail);
+      }
+
+      function success(response) {
+        return response;
+      }
+
+      function fail(e) {
+        return exception.catcher('XHR failed for ratePreparedResponse')(e);
+      }
+    }
   }
 })();

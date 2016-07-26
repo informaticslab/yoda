@@ -14,6 +14,8 @@ router.get('/getPreparedResponsebyId/:id', getPreparedResponsebyId);
 router.get('/search/:query', doSearch);
 router.get('/questions/:query', getQuestions);
 router.get('/*', four0four.notFoundMiddleware);
+router.post('/updatePositiveRating/:id', updatePositiveRating);
+router.post('/updateNegativeRating/:id', updateNegativeRating);
 
 module.exports = router;
 
@@ -69,4 +71,51 @@ function getQuestions(req, res, next) {
     console.trace(err.message);
   });
 }
+
+function updatePositiveRating(req, res, next) {
+  client.update({
+    index: index,
+    type: type,
+    id: req.params.id,
+    body: {
+      script: 'if( ctx._source.containsKey(\"liked\") ){ ctx._source.liked += 1; } else { ctx._source.liked = 1; }',
+      upsert: {
+        liked: 1
+      }
+    }
+  }, function(error, response) {
+    if(!error){
+      res.send(response);
+    } else {
+      res.send(error);
+      console.trace(error.message);
+    }
+    
+  });
+  
+}
+
+function updateNegativeRating(req, res, next) {
+  client.update({
+    index: index,
+    type: type,
+    id: req.params.id,
+    body: {
+      script: 'if( ctx._source.containsKey(\"disliked\") ){ ctx._source.disliked += 1; } else { ctx._source.disliked = 1; }',
+      upsert: {
+        disliked: 1
+      }
+    }
+  }, function(error, response) {
+    if(!error){
+      res.send(response);
+    } else {
+      res.send(error);
+      console.trace(error.message);
+    }
+    
+  });
+  
+}
+
 

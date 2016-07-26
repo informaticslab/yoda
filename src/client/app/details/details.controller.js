@@ -12,6 +12,18 @@
     vm.title = 'Details';
     vm.data = {};
     vm.id = $stateParams.id;
+    vm.like = 'like';
+    vm.dislike = 'dislike';
+    vm.showThanks = false;
+
+    vm.ratePreparedResponse = function(type) {
+      return dataservice.ratePreparedResponse(type, vm.id).then(function(response){
+        if(response.status === 200) {
+          vm.showThanks = true;
+        }
+        console.log(response);
+      });
+    };
 
     activate();
     // console.log(vm.data);
