@@ -30,6 +30,7 @@
 
     function search(searchString) {
       return dataservice.doSearch(searchString).then(function(data){
+        console.log('search result ',data);
         vm.resultsArray = data;
       });
     }

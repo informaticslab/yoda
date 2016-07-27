@@ -12,9 +12,10 @@ var type = 'prepared_responses';
 
 router.get('/termSearch/:query', termSearch);
 router.get('/getPreparedResponsebyId/:id', getPreparedResponsebyId);
-router.get('/search/:query', doSearch);
+router.get('/search/:query', fuzzySearch);
 router.get('/questions/:query', getQuestions);
 router.get('/*', four0four.notFoundMiddleware);
+//router.get('/fuzzySearch/:query', fuzzySearch);
 router.post('/updatePositiveRating/:id', updatePositiveRating);
 router.post('/updateNegativeRating/:id', updateNegativeRating);
 
@@ -38,6 +39,7 @@ function getPreparedResponsebyId(req, res, next) {
 }
 
 function doSearch(req, res, next) {  //full body
+
   client.search({
     index: index,
     body: {
@@ -58,6 +60,44 @@ function doSearch(req, res, next) {  //full body
   });
 }
 
+function fuzzySearch(req, res, next) {  //full body
+  var suggestions;
+  client.search({
+      index: index,
+      body:   {
+      "suggest": {
+        "didYouMean": {
+        "text": req.params.query,
+          "phrase": {
+              "field": "query"
+          }
+      }
+    },
+    query: {
+      multi_match: {
+        query: req.params.query,
+        fields: [
+            "response",
+            "query"
+       ]
+    }
+  }
+  ,
+        size: 1000,
+        explain: true      //set to 'true' for testing only
+      }
+    })
+    .then(function(results) {
+      if (results.suggest.didYouMean[0].options.length > 0) {
+        suggestions = results.didYouMean[0].options;
+      }
+      var hits = results.hits.hits;
+      console.log(hits);
+      res.send(hits);
+    }, function(err) {
+      console.trace(err.message);
+    });
+}
 function termSearch(req, res, next) {
   client.search({
     index:index,
@@ -112,9 +152,9 @@ function updatePositiveRating(req, res, next) {
       res.send(error);
       console.trace(error.message);
     }
-    
+
   });
-  
+
 }
 
 function updateNegativeRating(req, res, next) {
@@ -135,9 +175,9 @@ function updateNegativeRating(req, res, next) {
       res.send(error);
       console.trace(error.message);
     }
-    
+
   });
-  
+
 }
 
 

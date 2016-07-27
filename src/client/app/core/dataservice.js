@@ -14,6 +14,7 @@
       getPreparedResponsebyId: getPreparedResponsebyId,
       getMessageCount: getMessageCount,
       ratePreparedResponse: ratePreparedResponse
+
     };
 
     return service;
@@ -81,5 +82,6 @@
         return exception.catcher('XHR failed for ratePreparedResponse')(e);
       }
     }
+
   }
 })();
