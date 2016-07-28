@@ -12,6 +12,7 @@ var type = 'prepared_responses';
 
 router.get('/termSearch/:query', termSearch);
 router.get('/getPreparedResponsebyId/:id', getPreparedResponsebyId);
+//router.get('/search/:query', doSearch);
 router.get('/search/:query', fuzzySearch);
 router.get('/questions/:query', getQuestions);
 router.get('/*', four0four.notFoundMiddleware);
@@ -61,7 +62,7 @@ function doSearch(req, res, next) {  //full body
 }
 
 function fuzzySearch(req, res, next) {  //full body
-  var suggestions;
+  var suggestions = null;
   client.search({
       index: index,
       body:   {
@@ -73,10 +74,10 @@ function fuzzySearch(req, res, next) {  //full body
           }
       }
     },
-    query: {
-      multi_match: {
-        query: req.params.query,
-        fields: [
+    "query": {
+      "multi_match": {
+        "query": req.params.query,
+        "fields": [
             "response",
             "query"
        ]
@@ -88,12 +89,17 @@ function fuzzySearch(req, res, next) {  //full body
       }
     })
     .then(function(results) {
-      if (results.suggest.didYouMean[0].options.length > 0) {
-        suggestions = results.didYouMean[0].options;
+      //console.log('my result ',results);
+      if (results.suggest.didYouMean  ) {
+        suggestions = results.suggest.didYouMean;
       }
       var hits = results.hits.hits;
-      console.log(hits);
-      res.send(hits);
+      var resultPackage = {
+        "hits" : hits,
+        "suggestions" : suggestions
+      }
+    //  console.log(resultPackage);
+      res.send(resultPackage);
     }, function(err) {
       console.trace(err.message);
     });

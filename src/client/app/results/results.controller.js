@@ -12,6 +12,7 @@
     vm.title = 'Results';
     vm.searchString = $stateParams.searchString;
     vm.resultsArray = [];
+    vm.suggestionArray = [];
     vm.currentPage = 1;
     vm.pageSize = 5;
 
@@ -30,8 +31,8 @@
 
     function search(searchString) {
       return dataservice.doSearch(searchString).then(function(data){
-        console.log('search result ',data);
-        vm.resultsArray = data;
+        vm.suggestionArray = data.suggestions;
+        vm.resultsArray = data.hits;
       });
     }
   }
