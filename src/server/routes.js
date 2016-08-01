@@ -70,16 +70,19 @@ function fuzzySearch(req, res, next) {  //full body
         "didYouMean": {
         "text": req.params.query,
           "phrase": {
-              "field": "query"
+              "field": "did_you_mean"
           }
       }
     },
+
     "query": {
       "multi_match": {
         "query": req.params.query,
+        "type": "phrase_prefix",
         "fields": [
             "response",
-            "query"
+            "query",
+            "keywords"
        ]
     }
   }

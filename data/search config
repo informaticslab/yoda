@@ -1,6 +1,71 @@
 curl -XPOST 'localhost:9200/prepared_responses/_close'
 
+
 // add config
+
+curl -XPUT 'localhost:9200/prepared_responses/'
+{
+  "settings": {
+    "index": {
+      "analysis": {
+        "filter": {
+          "stemmer": {
+            "type": "stemmer",
+            "language": "english"
+          },
+          "autocompleteFilter": {
+            "max_shingle_size": "5",
+            "min_shingle_size": "2",
+            "type": "shingle"
+          },
+          "stopwords": {
+            "type": "stop",
+            "stopwords": [
+              "_english_"
+            ]
+          }
+        },
+        "analyzer": {
+          "didYouMean": {
+            "filter": [
+              "lowercase"
+            ],
+            "char_filter": [
+              "html_strip"
+            ],
+            "type": "custom",
+            "tokenizer": "standard"
+          },
+          "autocomplete": {
+            "filter": [
+              "lowercase",
+              "autocompleteFilter"
+            ],
+            "char_filter": [
+              "html_strip"
+            ],
+            "type": "custom",
+            "tokenizer": "standard"
+          },
+          "default": {
+            "filter": [
+              "lowercase",
+              "stopwords",
+              "stemmer"
+            ],
+            "char_filter": [
+              "html_strip"
+            ],
+            "type": "custom",
+            "tokenizer": "standard"
+          }
+        }
+      }
+    }
+  }
+}'
+
+// update config
 curl -XPUT 'localhost:9200/prepared_responses/_settings' -d '{
   "settings": {
     "index": {
@@ -70,39 +135,47 @@ curl -XPUT 'http://localhost:9200/prepared_responses/prepared_responses/_mapping
 {
   "prepared_responses": {
     "properties": {
-      "autocomplete": {
-        "type": "string",
-        "analyzer": "autocomplete"
-      },
+
       "query": {
         "type": "string",
         "copy_to": [
           "did_you_mean",
-          "autocomplete"
+          "autocomplete",
+          "all_search_fields"
         ]
       },
-      "did_you_mean": {
-        "type": "string",
-        "analyzer": "didYouMean"
-      },
+
       "response": {
         "type": "string",
         "copy_to": [
           "autocomplete",
-          "did_you_mean"
+          "did_you_mean",
+          "all_search_fields"
         ]
       },
        "keywords": {
         "type": "string",
         "copy_to": [
           "autocomplete",
-          "did_you_mean"
+          "did_you_mean",
+          "all_search_fields"
         ]
+      },
+      "did_you_mean": {
+              "type": "string",
+              "analyzer": "didYouMean"
+      },
+      "autocomplete": {
+        "type": "string",
+        "analyzer": "autocomplete"
+      },
+      "all_search_fields" :{
+        "type" : "string"
       }
-
     }
   }
 }'
 
 curl -XPOST 'localhost:9200/prepared_responses/_open'
+
 
