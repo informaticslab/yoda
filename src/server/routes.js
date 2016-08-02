@@ -132,7 +132,7 @@ function getQuestions(req, res, next) {
   client.search({
     index: index,
     body: {
-       query: { "match": { query: req.params.query} }
+       query: { "wildcard": { query: "*"+req.params.query+"*"} }
     }
   })
   .then(function(results) {
