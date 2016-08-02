@@ -15,6 +15,7 @@
     vm.suggestionArray = [];
     vm.currentPage = 1;
     vm.pageSize = 5;
+    vm.noResults = false;
 
     vm.goToResults = function($item) {
       $state.go('details', {id: $item.id});
@@ -33,6 +34,9 @@
       return dataservice.doSearch(searchString).then(function(data){
         vm.suggestionArray = data.suggestions;
         vm.resultsArray = data.hits;
+        if (vm.resultsArray.length === 0){
+          vm.noResults = true;
+        }
       });
     }
   }

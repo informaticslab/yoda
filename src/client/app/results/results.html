@@ -2,12 +2,12 @@
 
   <div class="row">
     <div class="col-lg-9 col-md-8 col-sm-12 search-results">
-
-      <dir-pagination-controls template-url="/template/dirPaginationRange.tpl.html"></dir-pagination-controls> results for <strong>{{vm.searchString}}</strong>
+      <div ng-if="vm.noResults">No results for <strong>{{vm.searchString}}</strong></div>
+      <div ng-if="!vm.noResults"><dir-pagination-controls template-url="/template/dirPaginationRange.tpl.html"></dir-pagination-controls> results for <strong>{{vm.searchString}}</strong></div>
     </div>
     <div class="col-lg-3 col-md-4 col-sm-12 search-results2">
 
-      <div class="btn-group">
+      <div class="btn-group" ng-if="!vm.noResults">
         <button class="btn btn-default btn-xs dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
         Sort by <span class="caret"></span>
         </button>
@@ -19,7 +19,7 @@
       </div>
     </div>
   </div>
-  <div class="row"  ng-show="vm.resultsArray.length==0 && vm.suggestionArray[0].options.length > 0">
+  <div class="row"  ng-if="vm.resultsArray.length==0 && vm.suggestionArray[0].options.length > 0">
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 left-filterss2">
       <label>Did you mean: <a ui-sref="results({searchString: vm.suggestionArray[0].options[0].text})">{{vm.suggestionArray[0].options[0].text}}</a>?</label>
     </div>
@@ -29,7 +29,7 @@
       <hr>
     </div>
   </div>
-  <div class="row">
+  <div class="row" ng-if="!vm.noResults">
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 left-filters2">
       <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
         <div class="panel panel-default">
