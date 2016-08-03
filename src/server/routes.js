@@ -126,10 +126,12 @@ function termSearch(req, res, next) {
 }
 
 function getQuestions(req, res, next) {
+  var searchTerm = req.params.query;
+  searchTerm = searchTerm.toLowerCase();
   client.search({
     index: index,
     body: {
-       query: { "wildcard": { query: "*"+req.params.query+"*"} }
+       query: { "wildcard": { query: "*"+searchTerm+"*"} }
     }
   })
   .then(function(results) {
