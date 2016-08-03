@@ -26,7 +26,7 @@
     function activate() {
       var promises = [search(vm.searchString)];
       return $q.all(promises).then(function(){
-        logger.info('Activated Results View');
+        // logger.info('Activated Results View');
       });
     }
 

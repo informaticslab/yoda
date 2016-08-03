@@ -14,7 +14,7 @@
     activate();
 
     function activate() {
-      logger.info('Activated Topics View');
+      // logger.info('Activated Topics View');
     }
   }
 })();
