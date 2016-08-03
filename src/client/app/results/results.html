@@ -19,9 +19,15 @@
       </div>
     </div>
   </div>
-  <div class="row"  ng-if="vm.resultsArray.length==0 && vm.suggestionArray[0].options.length > 0">
+  <div class="row"  ng-if="vm.suggestionArray[0].options.length > 0">
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 left-filterss2">
-      <label>Did you mean: <a ui-sref="results({searchString: vm.suggestionArray[0].options[0].text})">{{vm.suggestionArray[0].options[0].text}}</a>?</label>
+      <label>Did you mean:
+            <label ng-repeat="option in vm.suggestionArray[0].options | limitTo:5" >
+              <a ui-sref="results({searchString: option.text})">{{option.text}}</a>
+              <span ng-show="!$last" >,</span>
+              &nbsp;
+            </label>?
+        </label>
     </div>
   </div>
   <div class="row">
