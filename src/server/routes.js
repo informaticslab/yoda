@@ -74,6 +74,7 @@ function fuzzySearch(req, res, next) {  //full body
           }
       }
     },
+
     "query": {
       "multi_match": {
         "query": req.params.query,
@@ -131,8 +132,19 @@ function getQuestions(req, res, next) {
   client.search({
     index: index,
     body: {
-       query: { "wildcard": { query: "*"+searchTerm+"*"} }
+       //query: { "wildcard": { query: "*"+searchTerm+"*"} }
+    "size": 20,
+    "query": {
+    "bool": {
+      "should": [
+        { "wildcard": { "query":  "*"+searchTerm+"*"}},
+        { "match": { "query":  searchTerm   }},
+        { "match_phrase": { "query":  searchTerm   }}
+
+      ]
     }
+  }
+  }
   })
   .then(function(results) {
     var hits = results.hits.hits;
