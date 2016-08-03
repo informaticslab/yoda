@@ -8,7 +8,8 @@
     'app.layout',
     'app.results',
     'app.search',
-    'app.details'
+    'app.details',
+    'app.topics'
   ]);
 
 })();
