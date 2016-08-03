@@ -3,11 +3,11 @@
     <div class="col-lg-10 col-lg-offset-1">
       <div class="form-group">
       <div class="input-group">
-          <input type="text" class="form-control" id="inputValidation" ng-model='vm.selected' uib-typeahead='pr.query for pr in vm.getQuery($viewValue)' typeahead-on-select='vm.goToDetails($item, $model, $label)' typeahead-loading="loadingLocations" typeahead-no-results="noResults" placeholder="Search CDC-INFO"/>
+          <input type="text" class="form-control" id="inputValidation" ng-model='vm.selected' uib-typeahead='pr.query for pr in vm.getQuery($viewValue)' ng-keypress="vm.checkKey($event,vm.selected)" typeahead-focus-first="false" typeahead-on-select='vm.goToDetails($item, $model, $label)' typeahead-loading="loadingLocations" typeahead-no-results="noResults" placeholder="Search CDC-INFO"/>
           <span class="input-group-btn">
             <button class="btn btn-default search-button" type="button" ng-click="vm.goToResults(vm.selected)"><i class="glyphicon glyphicon-search"></i></button>
           </span>
-        
+
       </div>
       </div>
     </div>
