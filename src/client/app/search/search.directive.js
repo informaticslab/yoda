@@ -28,6 +28,7 @@
       vm.goToDetails = function($item, $model, $label) {
         // console.log($item);
         $state.go('details', {id: $item.id});
+        vm.selected = undefined;
       };
 
       vm.goToResults = function($item) {
