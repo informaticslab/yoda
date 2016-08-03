@@ -69,12 +69,17 @@ function fuzzySearch(req, res, next) {  //full body
       "suggest": {
         "didYouMean": {
         "text": req.params.query,
-          "phrase": {
+        "phrase": {
               "field": "did_you_mean"
-          }
+        }
       }
     },
-
+    //"fuzzy" : {
+    //    "did_you_mean" :{
+    //      "value" : req.params.query,
+    //      "fuzziness" :     2,
+    //    }
+    //  }
     "query": {
       "multi_match": {
         "query": req.params.query,

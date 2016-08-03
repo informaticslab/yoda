@@ -85,7 +85,12 @@ curl -XPUT 'localhost:9200/prepared_responses/_settings' -d '{
             "stopwords": [
               "_english_"
             ]
-          }
+          },
+        "my_metaphone": {
+           "type": "phonetic",
+           "encoder": "doublemetaphone",
+           "replace": false
+           }
         },
         "analyzer": {
           "didYouMean": {
@@ -109,13 +114,22 @@ curl -XPUT 'localhost:9200/prepared_responses/_settings' -d '{
             "type": "custom",
             "tokenizer": "standard"
           },
+          "soundex" : {
+            "filter": [
+                        "standard",
+                        "lowercase",
+                        "my_metaphone"
+                      ],
+            "char_filter" : ["html_strip"],
+            "tokenizer": "standard"
+          },
           "default": {
             "filter": [
               "lowercase",
               "stopwords",
               "stemmer"
             ],
-            "char_filter": [
+             "char_filter": [
               "html_strip"
             ],
             "type": "custom",
