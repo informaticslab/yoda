@@ -21,7 +21,7 @@
     activate();
 
     function activate() {
-      logger.success(config.appTitle + ' loaded!', null);
+      // logger.success(config.appTitle + ' loaded!', null);
       // hideSplash();
     }
 
