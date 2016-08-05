@@ -4,7 +4,7 @@
       <div class="form-group">
 
       <div class="input-group search-bar">
-          <input type="text" class="form-control search-bar" id="inputValidation" ng-model='vm.selected' uib-typeahead='pr.query for pr in vm.getQuery($viewValue)' ng-keypress="vm.checkKey($event,vm.selected)" typeahead-focus-first="false" typeahead-on-select='vm.goToDetails($item, $model, $label)' typeahead-loading="loadingLocations" typeahead-no-results="noResults" placeholder="Search CDC-INFO"/>
+          <input type="search" class="form-control search-bar" id="inputValidation" ng-model='vm.selected' uib-typeahead='pr.query for pr in vm.getQuery($viewValue)' ng-keypress="vm.checkKey($event,vm.selected)" typeahead-focus-first="false" typeahead-on-select='vm.goToDetails($item, $model, $label)' typeahead-loading="loadingLocations" typeahead-no-results="noResults" placeholder="Search CDC-INFO"/>
 
           <span class="input-group-btn">
             <button class="btn btn-default search-button" type="button" ng-click="vm.goToResults(vm.selected)"><i class="glyphicon glyphicon-search"></i></button>
