@@ -101,7 +101,8 @@ curl -XPUT 'localhost:9200/prepared_responses/_settings' -d '{
               "html_strip"
             ],
             "type": "custom",
-            "tokenizer": "standard"
+            "tokenizer": "standard",
+            "stopwords" : ["have"]
           },
           "autocomplete": {
             "filter": [

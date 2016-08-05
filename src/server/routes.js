@@ -138,7 +138,15 @@ function getQuestions(req, res, next) {
     "bool": {
       "should": [
         { "wildcard": { "query":  "*"+searchTerm+"*"}},
-        { "match": { "query":  searchTerm   }},
+        {
+          "match": {
+            "query": { // name of seach field
+              query: searchTerm,
+              fuzziness: 2,
+              prefix_length: 1
+            }
+          }
+        },
         { "match_phrase": { "query":  searchTerm   }}
 
       ]
