@@ -9,6 +9,7 @@
     "test": "gulp test"
   },
   "dependencies": {
+    "angular-ui-bootstrap": "^2.0.1",
     "body-parser": "^1.8.2",
     "elasticsearch": "^11.0.1",
     "elasticsearch-browser": "^11.0.1",

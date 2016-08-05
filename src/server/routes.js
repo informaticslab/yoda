@@ -69,25 +69,18 @@ function fuzzySearch(req, res, next) {  //full body
       "suggest": {
         "didYouMean": {
         "text": req.params.query,
-        "phrase": {
-              "field": "did_you_mean"
-        }
+          "phrase": {
+              "field": "query"
+          }
       }
     },
-    //"fuzzy" : {
-    //    "did_you_mean" :{
-    //      "value" : req.params.query,
-    //      "fuzziness" :     2,
-    //    }
-    //  }
+
     "query": {
       "multi_match": {
         "query": req.params.query,
-        "type": "phrase_prefix",
         "fields": [
             "response",
-            "query",
-            "keywords"
+            "query"
        ]
     }
   }
@@ -134,11 +127,24 @@ function termSearch(req, res, next) {
 }
 
 function getQuestions(req, res, next) {
+  var searchTerm = req.params.query;
+  searchTerm = searchTerm.toLowerCase();
   client.search({
     index: index,
     body: {
-       query: { "wildcard": { query: "*"+req.params.query+"*"} }
+       //query: { "wildcard": { query: "*"+searchTerm+"*"} }
+    "size": 20,
+    "query": {
+    "bool": {
+      "should": [
+        { "wildcard": { "query":  "*"+searchTerm+"*"}},
+        { "match": { "query":  searchTerm   }},
+        { "match_phrase": { "query":  searchTerm   }}
+
+      ]
     }
+  }
+  }
   })
   .then(function(results) {
     var hits = results.hits.hits;

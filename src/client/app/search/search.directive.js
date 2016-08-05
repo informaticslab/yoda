@@ -28,6 +28,7 @@
       vm.goToDetails = function($item, $model, $label) {
         // console.log($item);
         $state.go('details', {id: $item.id});
+        vm.selected = undefined;
       };
 
       vm.goToResults = function($item) {
@@ -44,6 +45,14 @@
             return item._source;
           });
         });
+      };
+
+      vm.checkKey = function($event,$item) {
+        // console.log($event);
+        if ($event.which === 13) {  // enter key press, do search
+          $state.go('results', {searchString: $item});
+          vm.selected = undefined;
+        }
       };
 
       $scope.isCollapsed = true;

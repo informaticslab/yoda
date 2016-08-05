@@ -31,7 +31,7 @@
     function activate() {
       var promises = [getPreparedResponse(vm.id)];
       return $q.all(promises).then(function() {
-        logger.info('Activated Details View');
+        // logger.info('Activated Details View');
       });
     }
 
