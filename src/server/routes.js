@@ -50,7 +50,7 @@ function doSearch(req, res, next) {  //full body
         }
       },
       size: 1000,
-      explain: true      //set to 'true' for testing only
+      // explain: true      //set to 'true' for testing only
     }
   })
   .then(function(results) {
@@ -86,7 +86,7 @@ function fuzzySearch(req, res, next) {  //full body
   }
   ,
         size: 1000,
-        explain: true      //set to 'true' for testing only
+        // explain: true      //set to 'true' for testing only
       }
     })
     .then(function(results) {
