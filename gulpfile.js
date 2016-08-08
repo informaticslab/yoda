@@ -98,6 +98,14 @@ gulp.task('fonts', ['clean-fonts'], function() {
     .pipe(gulp.dest(config.build + 'fonts'));
 });
 
+gulp.task('fontface', ['clean-fontface'], function() {
+  log('Copying lato fonts');
+
+  return gulp
+    .src(config.fontface)
+    .pipe(gulp.dest(config.build + 'font'));
+})
+
 /**
  * Compress images
  * @return {Stream}
@@ -109,6 +117,18 @@ gulp.task('images', ['clean-images'], function() {
     .src(config.images)
     .pipe($.imagemin({ optimizationLevel: 4 }))
     .pipe(gulp.dest(config.build + 'images'));
+});
+
+/**
+  * Move third party templates
+  * $return {Stream}
+  */
+gulp.task('templates', ['clean-templates'], function() {
+  log('Moving third party custom templates to the build folder');
+
+  return gulp
+    .src(config.template)
+    .pipe(gulp.dest(config.build + 'template'));
 });
 
 gulp.task('less-watcher', function() {
@@ -206,7 +226,7 @@ gulp.task('build-specs', ['templatecache'], function(done) {
  * This is separate so we can run tests on
  * optimize before handling image or fonts
  */
-gulp.task('build', ['optimize', 'images', 'fonts'], function() {
+gulp.task('build', ['optimize', 'images', 'fonts', 'templates'], function() {
   log('Building everything');
 
   var msg = {
@@ -282,12 +302,24 @@ gulp.task('clean-fonts', function(done) {
   clean(config.build + 'fonts/**/*.*', done);
 });
 
+gulp.task('clean-fontface', function(done) {
+  clean(config.build + 'font/**/*.*', done);
+})
+
 /**
  * Remove all images from the build folder
  * @param  {Function} done - callback when complete
  */
 gulp.task('clean-images', function(done) {
   clean(config.build + 'images/**/*.*', done);
+});
+
+/** 
+ * Remove all third-party templates from the build folder
+ * @param {Function} done - callback when complete
+ */
+gulp. task('clean-templates', function(done) {
+  clean(config.build + 'templates/**/*.*', done);
 });
 
 /**
@@ -356,6 +388,10 @@ gulp.task('serve-dev', ['inject'], function() {
  * --nosync
  */
 gulp.task('serve-build', ['build'], function() {
+  serve(false /*isDev*/);
+});
+
+gulp.task('serve-only', function() {
   serve(false /*isDev*/);
 });
 

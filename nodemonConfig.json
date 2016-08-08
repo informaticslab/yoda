@@ -1,0 +1,9 @@
+{
+  "script": "./src/server/app.js",
+  "delayTime": 1,
+  "env": {
+    "PORT": 8001,
+    "NODE_ENV": "build"
+  },
+  "watch": "./src/server/"
+}
