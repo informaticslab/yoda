@@ -226,7 +226,7 @@ gulp.task('build-specs', ['templatecache'], function(done) {
  * This is separate so we can run tests on
  * optimize before handling image or fonts
  */
-gulp.task('build', ['optimize', 'images', 'fonts', 'templates'], function() {
+gulp.task('build', ['optimize', 'images', 'fonts', 'fontface', 'templates'], function() {
   log('Building everything');
 
   var msg = {
