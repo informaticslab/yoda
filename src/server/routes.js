@@ -10,7 +10,7 @@ var client = new elasticsearch.Client({
 var index = 'prepared_responses';
 var type = 'prepared_responses';
 
-router.get('/termSearch/:query', termSearch);
+// router.get('/termSearch/:query', termSearch);
 router.get('/getPreparedResponsebyId/:id', getPreparedResponsebyId);
 //router.get('/search/:query', doSearch);
 router.get('/search/:query', fuzzySearch);
@@ -62,13 +62,15 @@ function doSearch(req, res, next) {  //full body
 }
 
 function fuzzySearch(req, res, next) {  //full body
+  var searchTerm = req.params.query;
+  searchTerm = searchTerm.toLowerCase();
   var suggestions = null;
   client.search({
       index: index,
       body:   {
       "suggest": {
         "didYouMean": {
-        "text": req.params.query,
+        "text": searchTerm,
           "phrase": {
               "field": "query"
           }
@@ -76,18 +78,45 @@ function fuzzySearch(req, res, next) {  //full body
     },
 
     "query": {
-      "multi_match": {
-        "query": req.params.query,
-        "fields": [
-            "response",
-            "query"
-       ]
-    }
-  }
-  ,
-        size: 1000,
-        // explain: true      //set to 'true' for testing only
+      "bool": {
+        "should": [
+          // { 
+          //   "wildcard": { "query":  "*"+searchTerm+"*"}
+          // },
+          {
+            "match":{
+              "query": {
+                query: searchTerm,
+                boost: 2
+              }  
+            }
+          },
+          {
+            "match": {
+              "query": { // name of search field
+                query: searchTerm,
+                fuzziness: 2,
+                // boost: 2,
+                prefix_length: 1
+              }
+            }
+          },
+          {
+            "match": {
+              "response": {
+                query: searchTerm
+              }
+            }
+          },
+          { 
+            "match_phrase": { "query":  searchTerm   }
+          }
+        ]
       }
+    },
+    size: 1000,
+      // explain: true      //set to 'true' for testing only
+    }
     })
     .then(function(results) {
       //console.log('my result ',results);
@@ -105,26 +134,6 @@ function fuzzySearch(req, res, next) {  //full body
       console.trace(err.message);
     });
 }
-function termSearch(req, res, next) {
-  client.search({
-    index:index,
-    body:{
-      query:{
-        term: {
-          query: req.params.query
-        }
-      },
-      size: 1000,
-      explain: true
-    }
-  })
-  .then(function(results) {
-    var hits = results.hits.hits;
-    res.send(hits);
-  }, function(err) {
-    console.trace(err.message);
-  });
-}
 
 function getQuestions(req, res, next) {
   var searchTerm = req.params.query;
@@ -135,8 +144,8 @@ function getQuestions(req, res, next) {
        //query: { "wildcard": { query: "*"+searchTerm+"*"} }
     "size": 20,
     "query": {
-    "bool": {
-      "should": [
+      "bool": {
+        "should": [
         { "wildcard": { "query":  "*"+searchTerm+"*"}},
         {
           "match": {
@@ -150,9 +159,9 @@ function getQuestions(req, res, next) {
 
         { "match_phrase": { "query":  searchTerm   }}
 
-      ]
+        ]
+      }
     }
-  }
   }
   })
   .then(function(results) {
