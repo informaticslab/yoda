@@ -30,6 +30,10 @@
     http.cors.allow-origin : "*"
     http.cors.allow-methods : OPTIONS, HEAD, GET, POST, PUT, DELETE
     http.cors.allow-headers : X-Requested-With,X-Auth-Token,Content-Type, Content-Length
+    
+    script.engine.groovy.inline.aggs: on
+    script.groovy.sandbox.enabled: true
+    script.update: on
     ```
 
 ## Running yoda
