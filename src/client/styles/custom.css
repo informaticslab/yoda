@@ -439,6 +439,11 @@ margin:0;
         left: 2em;
         opacity: 0;
     }
+
+.fade.ng-enter {
+  transition:0.5s linear all;
+  opacity:0;
+}
 /*#endregion*/
 
 body {
