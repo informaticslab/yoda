@@ -1,6 +1,5 @@
 var router = require('express').Router();
 var four0four = require('./utils/404')();
-var data = require('./data');
 var elasticsearch = require('elasticsearch');
 
 var client = new elasticsearch.Client({
