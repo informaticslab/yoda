@@ -210,7 +210,7 @@ gulp.task('build', ['optimize', 'images', 'fonts'], function() {
   log('Building everything');
 
   var msg = {
-    title: 'gulp build',
+    title: 'gulp build ttn',
     subtitle: 'Deployed to the build folder',
     message: 'Running `gulp serve-build`'
   };
@@ -320,7 +320,7 @@ gulp.task('clean-code', function(done) {
  * To start servers and run midway specs as well:
  *    gulp test --startServers
  * @return {Stream}
- */  
+ */
 // gulp.task('test', ['vet', 'templatecache'], function(done) {
 //   startTests(true /*singleRun*/, done);
 // });
