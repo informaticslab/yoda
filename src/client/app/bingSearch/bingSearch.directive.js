@@ -3,10 +3,10 @@
 
   angular
     .module('app.layout')
-    .directive('search', search);
+    .directive('bingSearch', bingSearch);
 
   /* @ngInject */
-  function search() {
+  function bingSearch() {
     var directive = {
       bindToController: true,
       controller: bingSearchController,
@@ -15,7 +15,7 @@
       scope: {
         'navline': '='
       },
-      templateUrl: 'app/bingSearch/search.html'
+      templateUrl: 'app/bingSearch/bingSearch.html'
     };
 
     bingSearchController.$inject = ['$scope', 'dataservice', '$state'];

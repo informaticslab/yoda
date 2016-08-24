@@ -7,13 +7,16 @@ var client = new elasticsearch.Client({
   host: 'localhost:9200',
   log: 'error'
 });
-var index = 'prepared_responses';
-var type = 'prepared_responses';
+//var index = 'prepared_responses_test';
+//var type = 'prepared_responses_test';
+
+var index = 'prepared_responses_v2';
+var type = 'prepared_responses_v2';
 
 router.get('/termSearch/:query', termSearch);
 router.get('/getPreparedResponsebyId/:id', getPreparedResponsebyId);
 //router.get('/search/:query', doSearch);
-router.get('/search/:query', fuzzySearch);
+router.get('/search/:query', fuzzySearch3);
 router.get('/questions/:query', getQuestions);
 router.get('/*', four0four.notFoundMiddleware);
 //router.get('/fuzzySearch/:query', fuzzySearch);
@@ -75,18 +78,48 @@ function fuzzySearch(req, res, next) {  //full body
       }
     },
 
-    "query": {
-      "multi_match": {
-        "query": req.params.query,
-        "fields": [
-            "response",
-            "query"
-       ]
-    }
-  }
+  //  "query": {
+  //    "multi_match": {
+  //      "query": req.params.query,
+  //      "fields": [
+  //          "response",
+  //          "query"
+  //     ]
+  //  }
+  //},
+        "query": {
+          "bool": {
+            "should": [
+              {
+                "multi_match": {
+                  "query": req.params.query,
+                  "type": "phrase_prefix",
+                  "fields": ["query", "response"],
+                  "operator" : "or"
+                }
+              },
+
+              {
+                "match": {
+                  "query": { // name of seach field
+                    query: req.params.query,
+                    fuzziness: 2,
+                    prefix_length: 1,
+                    "operator" : "or"
+                  }
+                }
+              },
+              { "wildcard":
+                { "query":  "*"+req.params.query+"*"
+
+                }
+              }
+            ]
+          }
+        }
   ,
         size: 1000,
-        explain: true      //set to 'true' for testing only
+        explain: false      //set to 'true' for testing only
       }
     })
     .then(function(results) {
@@ -100,6 +133,152 @@ function fuzzySearch(req, res, next) {  //full body
         "suggestions" : suggestions
       }
     //  console.log(resultPackage);
+      res.send(resultPackage);
+    }, function(err) {
+      console.trace(err.message);
+    });
+}
+function fuzzySearch2(req, res, next) {  //full body
+  var suggestions = null;
+  client.search({
+      index: index,
+      body:   {
+        "suggest": {
+          "didYouMean": {
+            "text": req.params.query,
+            "phrase": {
+              "field": "query"
+            }
+          }
+        },
+        "query": {
+          "bool": {
+            "should": [
+              { "match_phrase": { "query":  req.params.query   }},
+              { "match_phrase": { "response":  req.params.query   }},
+              //{
+              //  "multi_match": {
+              //    "query": req.params.query,
+              //    "type": "phrase_prefix",
+              //    "fields": ["query", "response"],
+              //    "operator" : "or"
+              //  }
+              //},
+
+              {
+                "match": {
+                  "query": { // name of seach field
+                    query: req.params.query,
+                    fuzziness: 2,
+                    prefix_length: 1,
+                    "operator" : "or"
+                  }
+                }
+              },
+              { "wildcard":
+              { "query":  "*"+req.params.query+"*"
+
+              }
+              }
+            ]
+          }
+        }
+        ,
+        size: 1000,
+        explain: false      //set to 'true' for testing only
+      }
+    })
+    .then(function(results) {
+      //console.log('my result ',results);
+      if (results.suggest.didYouMean  ) {
+        suggestions = results.suggest.didYouMean;
+      }
+      var hits = results.hits.hits;
+      var resultPackage = {
+        "hits" : hits,
+        "suggestions" : suggestions
+      }
+      //  console.log(resultPackage);
+      res.send(resultPackage);
+    }, function(err) {
+      console.trace(err.message);
+    });
+}
+function fuzzySearch3(req, res, next) {  //full body
+  var suggestions = null;
+  client.search({
+      index: index,
+      body:   {
+        "suggest": {
+          "didYouMean": {
+            "text": req.params.query,
+            "phrase": {
+              "field": "query"
+            }
+          }
+        },
+        "min_score":.2,
+        "query": {
+          "bool": {
+            "should": [
+              //{ "match_phrase": { "query":  req.params.query}},
+              //{ "match_phrase": { "response":  req.params.query}},
+              {
+                "multi_match": {
+                  "query": req.params.query,
+                  "type": "cross_fields",
+                  "fields": ["query", "response"],
+                  "tie_breaker":0.3,
+                  "minimum_should_match": "100%",
+                  "operator" : "or"
+                }
+              },
+
+              {
+                "match": {
+                  "query": { // name of seach field
+                    query: req.params.query,
+                    fuzziness: 2,
+                    prefix_length: 1,
+                    "operator" : "or",
+                    "boost" : 4
+                  }
+                }
+              },
+              {
+                "match": {
+                  "response": { // name of seach field
+                    query: req.params.query,
+                    fuzziness: 2,
+                    prefix_length: 1,
+                    "operator" : "or"
+                  }
+                }
+              },
+              //{ "wildcard":
+              //{ "query":  "*"+req.params.query+"*"
+              //
+              //}
+              //},
+
+            ]
+          }
+        },
+        size: 1000,
+        explain: false      //set to 'true' for testing only
+      }
+    })
+    .then(function(results) {
+      //console.log('my result ',results);
+      if (results.suggest.didYouMean  ) {
+        suggestions = results.suggest.didYouMean;
+      }
+      var hits = results.hits.hits;
+      var resultPackage = {
+        "hits" : hits,
+        "suggestions" : suggestions
+      }
+      //  console.log(resultPackage);
       res.send(resultPackage);
     }, function(err) {
       console.trace(err.message);
@@ -134,6 +313,7 @@ function getQuestions(req, res, next) {
     body: {
        //query: { "wildcard": { query: "*"+searchTerm+"*"} }
     "size": 20,
+    //"min_score":.2,
     "query": {
     "bool": {
       "should": [
@@ -147,7 +327,7 @@ function getQuestions(req, res, next) {
             }
           }
         },
-        { "match_phrase": { "query":  searchTerm   }}
+          { "match_phrase": { "query":  searchTerm   }}
 
       ]
     }
@@ -205,6 +385,13 @@ function updateNegativeRating(req, res, next) {
     }
 
   });
+
+  function getCommon(req,res,next){
+    client.search()
+  }
+  function getFeatured(req,res,next){
+
+  }
 
 }
 

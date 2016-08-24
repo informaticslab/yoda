@@ -5,9 +5,9 @@
         <form accept-charset="UTF-8" action="http://search.usa.gov/search" id="search_form" method="get">
           <div style="margin:0;padding:0;display:inline">
             <input name="utf8" type="hidden" value="&#x2713;" /></div>
-          <input id="affiliate" name="affiliate" type="hidden" value="YourSiteHandle" />
-          <label for="query">Enter Search Term(s):</label>
-          <input autocomplete="off" class="usagov-search-autocomplete" id="query" name="query" type="text" />
+          <input id="affiliate" name="affiliate" type="hidden" value="cdc-main" />
+          <label for="query">Enter Bing Search Term(s):</label>
+          <input autocomplete="off" class="usagov-search-autocomplete" id="query" name="query" type="text" style="width: 50%" />
           <input name="commit" type="submit" value="Search" />
         </form>
       </div>
@@ -45,3 +45,14 @@
     <!-- /.navbar-collapse -->
   </div>
 </div>
+<script type="text/javascript">
+  //<![CDATA[
+  var usasearch_config = { siteHandle:"cdc-main" };
+
+  var script = document.createElement("script");
+  script.type = "text/javascript";
+  script.src = "http://search.usa.gov/javascripts/remote.loader.js";
+  document.getElementsByTagName("head")[0].appendChild(script);
+
+  //]]>
+</script>
