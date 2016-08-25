@@ -4,7 +4,7 @@ var client = new es.Client({
   host: 'localhost:9200'
 });
 
-fs.readFile('cdcinfo_dev_data.json', {encoding: 'utf-8'}, function(err, data) {
+fs.readFile('cdcinfo_dev_data_modified.json', {encoding: 'utf-8'}, function(err, data) {
   if (err) { throw err; }
 
   var content =  JSON.parse(data);

@@ -1,6 +1,5 @@
 var router = require('express').Router();
 var four0four = require('./utils/404')();
-var data = require('./data');
 var elasticsearch = require('elasticsearch');
 
 var client = new elasticsearch.Client({
@@ -10,8 +9,12 @@ var client = new elasticsearch.Client({
 //var index = 'prepared_responses_test';
 //var type = 'prepared_responses_test';
 
-var index = 'prepared_responses_v2';
-var type = 'prepared_responses_v2';
+var index = 'prepared_responses';  //production index name
+var type = 'prepared_responses';
+
+// var index = 'prepared_responses_v2';
+// var type = 'prepared_responses_v2';
+
 
 router.get('/termSearch/:query', termSearch);
 router.get('/getPreparedResponsebyId/:id', getPreparedResponsebyId);
@@ -53,7 +56,7 @@ function doSearch(req, res, next) {  //full body
         }
       },
       size: 1000,
-      explain: true      //set to 'true' for testing only
+      // explain: true      //set to 'true' for testing only
     }
   })
   .then(function(results) {
@@ -327,8 +330,8 @@ function getQuestions(req, res, next) {
             }
           }
         },
-          { "match_phrase": { "query":  searchTerm   }}
 
+          { "match_phrase": { "query":  searchTerm   }}
       ]
     }
   }

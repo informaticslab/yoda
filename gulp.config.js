@@ -28,9 +28,11 @@ module.exports = function() {
     client: client,
     css: temp + 'styles.css',
     fonts: bower.directory + 'glyphicons/fonts/**/*.*',
+    fontface: bower.directory + 'lato/font/**/*.*',
     html: client + '**/*.html',
     htmltemplates: clientApp + '**/*.html',
     images: client + 'images/**/*.*',
+    template: root + 'template/**/*.*',
     index: client + 'index.html',
     // app js, with no specs
     js: [
