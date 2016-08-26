@@ -25,7 +25,7 @@ fs.readFile('cdcinfo_dev_data_modified.json', {encoding: 'utf-8'}, function(err,
     }
 
 
-    bulk_request.push({index: {_index: 'prepared_responses_v2', _type: 'prepared_responses_v2', _id: obj.id}});
+    bulk_request.push({index: {_index: 'prepared_responses', _type: 'prepared_responses', _id: obj.id}});
     bulk_request.push(obj);
     return bulk_request;
   }, []);

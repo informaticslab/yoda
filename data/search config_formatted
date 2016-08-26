@@ -1,3 +1,130 @@
+========= Elasticsearch Clean Setup Process =============
+
+1. Create empty index:
+
+curl -XPUT 'localhost:9200/prepared_responses/'
+
+2. Close the index: 
+
+curl -XPOST 'localhost:9200/prepared_responses/_close'
+
+3. Update Config: 
+
+curl -XPUT 'localhost:9200/prepared_responses/_settings' -d '{
+  "settings": {
+    "index": {
+      "analysis": {
+        "filter": {
+          "stemmer": {
+            "type": "stemmer",
+            "language": "english"
+          },
+          "autocompleteFilter": {
+            "max_shingle_size": "5",
+            "min_shingle_size": "2",
+            "type": "shingle"
+          },
+          "stopwords": {
+            "type": "stop",
+            "stopwords": [
+              "_english_"
+            ]
+          }
+        },
+        "analyzer": {
+          "didYouMean": {
+            "filter": [
+              "lowercase"
+            ],
+            "char_filter": [
+              "html_strip"
+            ],
+            "type": "custom",
+            "tokenizer": "standard",
+            "stopwords" : ["have"]
+          },
+          "autocomplete": {
+            "filter": [
+              "lowercase",
+              "autocompleteFilter"
+            ],
+            "char_filter": [
+              "html_strip"
+            ],
+            "type": "custom",
+            "tokenizer": "standard"
+          },
+          "default": {
+            "filter": [
+              "lowercase",
+              "stopwords",
+              "stemmer"
+            ],
+             "char_filter": [
+              "html_strip"
+            ],
+            "type": "custom",
+            "tokenizer": "standard"
+          }
+        }
+      }
+    }
+  }
+}'
+
+4. Add Mapping: 
+
+curl -XPUT 'http://localhost:9200/prepared_responses/prepared_responses/_mapping' -d '
+{
+  "prepared_responses": {
+    "properties": {
+
+      "query": {
+        "type": "string",
+        "copy_to": [
+          "did_you_mean",
+          "autocomplete",
+          "all_search_fields"
+        ]
+      },
+
+      "response": {
+        "type": "string",
+        "copy_to": [
+          "autocomplete",
+          "did_you_mean",
+          "all_search_fields"
+        ]
+      },
+       "keywords": {
+        "type": "string",
+        "copy_to": [
+          "autocomplete",
+          "did_you_mean",
+          "all_search_fields"
+        ]
+      },
+      "did_you_mean": {
+              "type": "string",
+              "analyzer": "didYouMean"
+      },
+      "autocomplete": {
+        "type": "string",
+        "analyzer": "autocomplete"
+      },
+      "all_search_fields" :{
+        "type" : "string"
+      }
+    }
+  }
+}'
+
+5. Load data:
+
+node load_formatted_PRs.js
+
+=========================================================
+
 curl -XPOST 'localhost:9200/prepared_responses/_close'
 
 
@@ -85,12 +212,7 @@ curl -XPUT 'localhost:9200/prepared_responses/_settings' -d '{
             "stopwords": [
               "_english_"
             ]
-          },
-        "my_metaphone": {
-           "type": "phonetic",
-           "encoder": "doublemetaphone",
-           "replace": false
-           }
+          }
         },
         "analyzer": {
           "didYouMean": {
@@ -113,15 +235,6 @@ curl -XPUT 'localhost:9200/prepared_responses/_settings' -d '{
               "html_strip"
             ],
             "type": "custom",
-            "tokenizer": "standard"
-          },
-          "soundex" : {
-            "filter": [
-                        "standard",
-                        "lowercase",
-                        "my_metaphone"
-                      ],
-            "char_filter" : ["html_strip"],
             "tokenizer": "standard"
           },
           "default": {
@@ -191,7 +304,7 @@ curl -XPUT 'http://localhost:9200/prepared_responses/prepared_responses/_mapping
   }
 }'
 
-curl -XPOST 'localhost:9200/prepared_responses_test/_open'
+curl -XPOST 'localhost:9200/prepared_responses/_open'
 
 ///////////  test index
 
@@ -282,12 +395,6 @@ curl -XPUT 'localhost:9200/prepared_responses_test/_settings' -d '{
               "_english_"
             ]
           },
-        "my_metaphone": {
-           "type": "phonetic",
-           "encoder": "doublemetaphone",
-           "replace": false
-           }
-        },
         "analyzer": {
           "didYouMean": {
             "filter": [
