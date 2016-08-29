@@ -3,18 +3,20 @@ var es = require('elasticsearch');
 var esClient = new es.Client({
   host: 'localhost:9200'
 });
-
+var fs = require('fs');
 var Q = require('q');
+var path = require('path')
+var PRfile =  'PRfile_'+ new Date().toISOString().replace(/-/g,'_').replace(/:/g,'_').replace('.' ,'_');
 
 var okToProcess = true;
 var okToPush = true;
-var prCount = 0;
+
 
 var httpClient = new restClient();
 
 var mainIndex =  {
-  "index"  : "prepared_responses_test",
-  "type"   : "prepared_responses_test"
+  "index"  : "prepared_responses",
+  "type"   : "prepared_responses"
 }
 var tempIndex =  {
   "index"  : "prepared_responses_2",
@@ -27,89 +29,136 @@ var prKey = "164608";
 var prContent = "content";
 var serviceUrl = baseUrl+'/'+service+"/"+prKey;
 
-switchIndex()
+var fd = fs.openSync(path.join(process.cwd(), PRfile), 'a')
+
+retrievePrToFile()
+  .then(switchIndex)
   .then(deleteAllDoc)
-  .then(retrievePR)
+  .then(syncPrSingle)
   .then(confirmInsert)
   .then(reindex)
-.then(switchIndex);
+.finally(switchIndex);
 
 
-
-function retrievePR() {
+function retrievePrToFile(nextUrl){
   var deferred = Q.defer();
+
   httpClient.get(serviceUrl, function (data, response) {
     // parsed response body as js object
-    prCount = data.meta.pagination.total;
-    var pageCount = data.meta.pagination.count;
+    pagination = data.meta.pagination;
+    //prCount = data.meta.pagination.total;
+    currentUrl = data.meta.pagination.currentUrl;
+    nextUrl = data.meta.pagination.nextUrl;
+    var pageCount = pagination.totalPages;
 
-    var content = data.results;
-
-
-    if (okToProcess) {
-
-      bulk_request = content.reduce(function (bulk_request, line) {
-
-        // console.log(line);
-        var obj, recipe;
-
-        try {
-          obj = line;
-          //   console.log('object ', obj);
-        } catch (e) {
-          // console.log(e);
-          console.log('Done reading');
-          return bulk_request;
-        }
-
-
-
-        // Rework the data slightly
-        recipe = {
+      for (var j=0;j<data.results.length; j++){
+        var obj = data.results[j];
+        var recipe = {
           id: obj.id,
-          prId : obj.extendedAttributes.PrId,
+          prId: obj.extendedAttributes.PrId,
           number: obj.Number,
-          dateModified  : obj.dateModified,
+          dateModified: obj.dateModified,
           query: obj.name,
           response: obj.description,
           category: obj.extendedAttributes.Category,
-          commonQuestionRanking : obj.extendedAttributes.CommonQuestionRanking,
-          featuredRanking  : obj.extendedAttributes.FeaturedRanking,
-          relatedPrList   : obj.extendedAttributes.RelatedPrList,
+          commonQuestionRanking: obj.extendedAttributes.CommonQuestionRanking,
+          featuredRanking: obj.extendedAttributes.FeaturedRanking,
+          relatedPrList: obj.extendedAttributes.RelatedPrList,
           resources: obj.extendedAttributes.Resources,
           keywords: obj.extendedAttributes.Keywords,
           language: obj.language.name,
-          datePublished : obj.datePublished,
+          datePublished: obj.datePublished,
           smartTag: obj.extendedAttributes.SmartTag,
           subtopic: obj.extendedAttributes.SubTopic,
           topic: obj.extendedAttributes.Topic,
-          tier      : obj.audience
-
-          //gender: obj.Gender,
-          //readingLevel: obj.ReadingLevel,
-          //readingLevelScore: obj.ReadingLevelScore,
-          //center: obj.Center,
-          //program: obj.Program,
-          //probes: obj.Probes,
-          //callToAction: obj.CallToAction,
-          //background: obj.Background
-
-
-
-        };
-//      console.log('recipe ', recipe);
-        if (okToPush) {
-          bulk_request.push({index: {_index: mainIndex.index, _type: mainIndex.type, _id: recipe.id}});
-          bulk_request.push(recipe);
+          tier: obj.audience
         }
-        return bulk_request;
-      }, []);
+        fs.writeSync(fd,JSON.stringify(recipe));
+        console.log('saving PR '+recipe.prId);
+    }
 
+    if (nextUrl != ''){
+      retrievePrToFile(nextUrl);
+    }
+    else {
+      fs.closeSync(fd);
+      deferred.resolve(PRfile)
+    };
+  });
+  return deferred.promise;
+}
+
+function syncPrSingle() {
+  var PRfile = 'PRfile_2016_08_29T18_26_44_586Z';
+  var deferred = Q.defer();
+  var content;
+  prCount = 0;
+  try {
+    content = fs.readFileSync(PRfile).toString().split('\n');
+    content.forEach(function(listItem, index){
+      if (listItem != '') {
+        obj = JSON.parse(listItem);
+        console.log('inserting PR ' + obj.prId);
+        esClient.create({
+          'index': mainIndex.index,
+          'type': mainIndex.type,
+          'id': obj.id,
+          'body': obj
+        }, function (err, insertResult) {
+          if (err) {
+            deferred.reject('insert failed for ' + obj.prId);
+          }
+          if (insertResult) {
+            prCount += 1;
+            deferred.resolve(prCount);
+          }
+        }
+      );
+    }
+    });
+  }
+  catch (e) {
+    deferred.reject();
+    console.log ('error detected in SyncPR single ', e);
+  }
+  return deferred.promise;
+}
+
+function syncPrBulk() {
+  var PRfile = 'PRfile_2016_08_29T18_26_44_586Z';
+  var deferred = Q.defer();
+  var content;
+  try {
+    content = fs.readFileSync(PRfile).toString().split('\n');
+    if (okToProcess) {
+      for (var i=0 ; i < content.length; i++) {
+
+        line = content[i];
+        bulk_request = content.reduce(function (bulk_request, line) {
+          // console.log(line);
+          var obj;
+          try {
+            obj = JSON.parse(line);
+            //  console.log('object ', obj);
+          } catch (e) {
+            // console.log(e);
+            console.log('Done reading');
+            return bulk_request;
+          }
+          if (okToPush) {
+            console.log('inserting PR '+ obj.prId);
+            bulk_request.push({index: {_index: mainIndex.index, _type: mainIndex.type, _id: obj.id}});
+            bulk_request.push(obj);
+          }
+          return bulk_request;
+        }, []);
+      }
       // A little voodoo to simulate synchronous insert
       var busy = false;
       var callback = function (err, resp) {
         if (err) {
           console.log(err);
+          deferred.reject(err)
         }
 
         busy = false;
@@ -120,10 +169,10 @@ function retrievePR() {
         if (!busy) {
           busy = true;
           esClient.bulk({
-            body: bulk_request.slice(0, 1000)
+            body: bulk_request.slice(0,1000)
           }, callback);
           bulk_request = bulk_request.slice(1000);
-          console.log(bulk_request.length);
+      //    console.log('bulk request length ', bulk_request.length);
         }
 
         if (bulk_request.length > 0) {
@@ -137,20 +186,25 @@ function retrievePR() {
         perhaps_insert();
       }
     }
-  });
+  }
+  catch (e) {
+    deferred.reject();
+    console.log ('error detected in SyncPR ', e);
+  }
   return deferred.promise;
 }
+
 
 function confirmInsert() {
   var deferred = Q.defer();
   httpClient.get('http://localhost:9200/'+mainIndex.index+'/_count', function(countData){
     if (countData && countData.count == prCount) {
-      console.log(prCount + ' Insert confirmed');
+      console.log('Insert Confirmed: PR count from db : '+ countData.count + ', PR Count from file: ' + prCount);
       deferred.resolve()
     }
     else {
-      console.log('Insert not confirmed');
-      deferred.reject('Insert not confirmed')
+      console.log('Insert Not Confirmed: PR count from db : '+ countData.count + ', PR Count from file: ' + prCount);
+      deferred.reject('Insertion not confirmed')
     }
 
   });
@@ -159,12 +213,18 @@ function confirmInsert() {
 function deleteAllDoc() {
   var deferred = Q.defer();
   httpClient.delete('http://localhost:9200/'+mainIndex.index+'/'+mainIndex.type+'/_query?q=*:*',function(result){
-    console.log(result);
-        deferred.resolve('delete completed');
+    deferred.resolve();
+    console.log('completed deleting '+ result._indices._all.deleted + ' records');
   })
   return deferred.promise
 }
 
+function switchIndex() {
+  var deferred = Q.defer();
+  console.log('switch index not implemented yet');
+  deferred.resolve(true);
+  return deferred.promise
+}
 function reindex() {
   var deferred = Q.defer();
   console.log('i was in reindex')
