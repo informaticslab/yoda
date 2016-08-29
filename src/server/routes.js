@@ -9,7 +9,7 @@ var client = new elasticsearch.Client({
 //var index = 'prepared_responses_test';
 //var type = 'prepared_responses_test';
 
-var index = 'prepared_responses';  //production index name
+var index = 'prepared_responses_alias';  //using index alias
 var type = 'prepared_responses';
 
 // var index = 'prepared_responses_v2';

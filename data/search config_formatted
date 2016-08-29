@@ -123,6 +123,10 @@ curl -XPUT 'http://localhost:9200/prepared_responses/prepared_responses/_mapping
 
 node load_formatted_PRs.js
 
+6. Create alias for index:
+
+curl -XPUT 'localhost:9200/prepared_responses/_alias/prepared_responses_alias'
+
 =========================================================
 
 curl -XPOST 'localhost:9200/prepared_responses/_close'
