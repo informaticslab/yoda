@@ -10,7 +10,7 @@ var PRfile =  'PRfile_'+ new Date().toISOString().replace(/-/g,'_').replace(/:/g
 
 var okToProcess = true;
 var okToPush = true;
-
+var prCount = 0;
 
 var httpClient = new restClient();
 
@@ -31,13 +31,14 @@ var serviceUrl = baseUrl+'/'+service+"/"+prKey;
 
 var fd = fs.openSync(path.join(process.cwd(), PRfile), 'a')
 
+
 retrievePrToFile()
   .then(switchIndex)
   .then(deleteAllDoc)
   .then(syncPrSingle)
-  .then(confirmInsert)
-  .then(reindex)
-.finally(switchIndex);
+  //.then(confirmInsert)
+  //.then(reindex)
+  //.then(switchIndex);
 
 
 function retrievePrToFile(nextUrl){
@@ -89,16 +90,17 @@ function retrievePrToFile(nextUrl){
 }
 
 function syncPrSingle() {
-  var PRfile = 'PRfile_2016_08_29T18_26_44_586Z';
+  //var PRfile = 'PRfile_2016_08_29T18_26_44_586Z';
+  var PRfile = 'cdcinfo_dev_data_single_lines.json';
   var deferred = Q.defer();
   var content;
-  prCount = 0;
+
   try {
     content = fs.readFileSync(PRfile).toString().split('\n');
     content.forEach(function(listItem, index){
       if (listItem != '') {
-        obj = JSON.parse(listItem);
-        console.log('inserting PR ' + obj.prId);
+        var obj = JSON.parse(listItem);
+
         esClient.create({
           'index': mainIndex.index,
           'type': mainIndex.type,
@@ -109,19 +111,36 @@ function syncPrSingle() {
             deferred.reject('insert failed for ' + obj.prId);
           }
           if (insertResult) {
-            prCount += 1;
-            deferred.resolve(prCount);
+            prCount++;
+            checkInsertCompleted(content.length);
+            if (obj.id != insertResult._id) {
+              console.log('inserting ' + obj.prId + ' failed');
+            }
           }
         }
       );
     }
     });
+
   }
   catch (e) {
     deferred.reject();
     console.log ('error detected in SyncPR single ', e);
   }
   return deferred.promise;
+}
+
+function checkInsertCompleted(recordCount) {
+ // console.log(prCount + ' ' + recordCount);
+  // pick up where it left off
+  if (prCount >= recordCount) {
+    // wait 15 seconds before execute
+    setTimeout(function () {
+      confirmInsert()
+        .then(reindex)
+        .finally(switchIndex)
+    }, 15000);
+  }
 }
 
 function syncPrBulk() {
