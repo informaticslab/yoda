@@ -108,13 +108,18 @@ function syncPrSingle() {
           'body': obj
         }, function (err, insertResult) {
           if (err) {
-            deferred.reject('insert failed for ' + obj.prId);
+            deferred.reject('Insert PR '+ obj.prId + ' failed');
+            console.log('Insert PR '+ obj.prId + ' failed')
           }
           if (insertResult) {
             prCount++;
             checkInsertCompleted(content.length);
+
             if (obj.id != insertResult._id) {
-              console.log('inserting ' + obj.prId + ' failed');
+              console.log('insert PR ' + obj.prId + ' failed');
+            }
+            else {
+              console.log('inserted PR ' + obj.prId );
             }
           }
         }
