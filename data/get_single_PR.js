@@ -2,6 +2,17 @@ var restClient = require('node-rest-client').Client;
 var es = require('elasticsearch');
 var moment = require('moment');
 var config = require('./elastic.config')();
+var bunyan = require('bunyan');
+
+var log = bunyan.createLogger({
+  name: 'cdcinfo',
+  streams: [{
+    type: 'rotating-file',
+    path: './logs/data-load.log',
+    period: '1d',
+    count: 2  //keep 2 backups
+  }]
+});
 
 var esClient = new es.Client({
   host: 'localhost:9200'
@@ -138,7 +149,8 @@ function retrievePrToFile(nextUrl){
 function initIndex() {  
   var timestamp = moment().format('X');
   newIndexName = baseIndex.index + '-' + timestamp;
-  console.log('creating new index: ' + newIndexName);
+  // console.log('creating new index: ' + newIndexName);
+  log.info('Creating new index: ' + newIndexName);
   // console.log(newIndexName);
   return esClient.indices.create({
     index: newIndexName
@@ -152,7 +164,7 @@ exports.initIndex = initIndex;
 */
 function configIndex() {
   var body = config.settings;
-  console.log('config index: ' + newIndexName);
+  log.info('Config index: ' + newIndexName);
   return esClient.indices.putSettings({
     index: newIndexName,
     type: baseIndex.type,
@@ -164,7 +176,7 @@ function configIndex() {
 * Close index
 */
 function closeIndex() {
-  console.log('close index: ' + newIndexName);
+  log.info('Close index: ' + newIndexName);
   return esClient.indices.close({
     index: newIndexName
   });
@@ -175,7 +187,7 @@ function closeIndex() {
 */
 
 function openIndex() {
-  console.log('open index:' + newIndexName);
+  log.info('Open index:' + newIndexName);
   return esClient.indices.open({
     index: newIndexName
   });
@@ -185,7 +197,7 @@ function openIndex() {
 * Create mappings for the new index
 */
 function putMappings() {
-  console.log('put mappings, index: ' + newIndexName);
+  log.info('Put mappings for: ' + newIndexName);
   var body = config.mappings;
   return esClient.indices.putMapping({
     index: newIndexName,
@@ -199,7 +211,7 @@ function putMappings() {
 * delete old index
 */
 function deleteOldIndex() {
-  console.log('deleting old index: ' + oldIndex);
+  log.info('Deleting old index: ' + oldIndex);
   return esClient.indices.delete({
     index: oldIndex
   });
@@ -218,7 +230,8 @@ function getAlias() {
 * Update alias
 */
 function updateAliases() {
-  console.log('update alias');
+  // console.log('update alias');
+  log.info('Update alias from ' + oldIndex + ' to ' + newIndexName);
 
   return esClient.indices.updateAliases({
     body: {
@@ -235,9 +248,10 @@ function syncPrSingle() {
   var PRfile = 'cdcinfo_dev_data_single_lines.json';
   var deferred = Q.defer();
   var content;
-  console.log('load data');
+  // console.log('load data');
   try {
-    console.log('load data');
+    // console.log('load data');
+    log.info('Loading data start');
     content = fs.readFileSync(PRfile).toString().split('\n');
     content.forEach(function(listItem, index){
       if (listItem != '') {
@@ -251,17 +265,20 @@ function syncPrSingle() {
         }, function (err, insertResult) {
           if (err) {
             deferred.reject('Insert PR '+ obj.prId + ' failed');
-            console.log('Insert PR '+ obj.prId + ' failed')
+            // console.log('Insert PR '+ obj.prId + ' failed')
+            log.warn('Insert PR '+ obj.prId + ' failed');
           }
           if (insertResult) {
             prCount++;
             checkInsertCompleted(content.length);
 
             if (obj.id != insertResult._id) {
-              console.log('insert PR ' + obj.prId + ' failed');
+              // console.log('insert PR ' + obj.prId + ' failed');
+              log.warn('Insert PR '+ obj.prId + ' failed');
             }
             else {
-              console.log('inserted PR ' + obj.prId );
+              // console.log('inserted PR ' + obj.prId );
+              log.info('Insert success PRID: ' + obj.prId);
             }
           }
         }
@@ -364,13 +381,15 @@ function syncPrBulk() {
 
 function confirmInsert() {
   var deferred = Q.defer();
-  httpClient.get('http://localhost:9200/'+mainIndex.index+'/_count', function(countData){
+  httpClient.get('http://localhost:9200/'+newIndexName+'/_count', function(countData){
     if (countData && countData.count == prCount) {
-      console.log('Insert Confirmed: PR count from db : '+ countData.count + ', PR Count from file: ' + prCount);
+      // console.log('Insert Confirmed: PR count from db : '+ countData.count + ', PR Count from file: ' + prCount);
+      log.info('Insert Confirmed: PR count from db : '+ countData.count + ', PR Count from file: ' + prCount);
       deferred.resolve()
     }
     else {
       console.log('Insert Not Confirmed: PR count from db : '+ countData.count + ', PR Count from file: ' + prCount);
+      log.warn('Insert Not Confirmed: PR count from db : '+ countData.count + ', PR Count from file: ' + prCount);
       deferred.reject('Insertion not confirmed')
     }
 
