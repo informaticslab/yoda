@@ -1,5 +1,8 @@
 var restClient = require('node-rest-client').Client;
 var es = require('elasticsearch');
+var moment = require('moment');
+var config = require('./elastic.config')();
+
 var esClient = new es.Client({
   host: 'localhost:9200'
 });
@@ -13,6 +16,15 @@ var okToPush = true;
 var prCount = 0;
 
 var httpClient = new restClient();
+
+var indexAlias = 'prepared_responses_alias';
+var newIndexName = '';
+var oldIndex = '';
+
+var baseIndex =  {
+  "index"  : "prepared_responses",
+  "type"   : "prepared_responses"
+}
 
 var mainIndex =  {
   "index"  : "prepared_responses",
@@ -31,11 +43,42 @@ var serviceUrl = baseUrl+'/'+service+"/"+prKey;
 
 var fd = fs.openSync(path.join(process.cwd(), PRfile), 'a')
 
+// initIndex()
+//   .then(getAlias()
+//     .then(function(response){
+//       var keys = Object.keys(response); 
+//       oldIndex = keys[0];
+//     }))
+//   .then(closeIndex)
+//   .then(configIndex)
+//   .then(openIndex)
+//   .then(syncPrSingle)
+//   .then(putMappings);
+
+//   getAlias()
+//     .then(function(response){
+//       var keys = Object.keys(response); 
+//       oldIndex = keys[0];
+//       console.log(response);
+//       console.log(oldIndex);
+//     });
 
 retrievePrToFile()
-  .then(switchIndex)
-  .then(deleteAllDoc)
+  // .then(switchIndex)
+  .then(initIndex)
+  .then(getAlias()
+    .then(function(response){
+      var keys = Object.keys(response); 
+      oldIndex = keys[0];
+    }))
+  .then(closeIndex)
+  .then(configIndex)
+  .then(openIndex)
+  // .then(putMappings)
+  // .then(deleteAllDoc)
   .then(syncPrSingle)
+  .then(putMappings);
+  // .then(updateAliases);
   //.then(confirmInsert)
   //.then(reindex)
   //.then(switchIndex);
@@ -89,21 +132,120 @@ function retrievePrToFile(nextUrl){
   return deferred.promise;
 }
 
+/**
+* create the new index
+*/
+function initIndex() {  
+  var timestamp = moment().format('X');
+  newIndexName = baseIndex.index + '-' + timestamp;
+  console.log('creating new index: ' + newIndexName);
+  // console.log(newIndexName);
+  return esClient.indices.create({
+    index: newIndexName
+  });
+}
+
+exports.initIndex = initIndex;
+
+/**
+* Update settings for the new index
+*/
+function configIndex() {
+  var body = config.settings;
+  console.log('config index: ' + newIndexName);
+  return esClient.indices.putSettings({
+    index: newIndexName,
+    type: baseIndex.type,
+    body: body
+  })
+}
+
+/**
+* Close index
+*/
+function closeIndex() {
+  console.log('close index: ' + newIndexName);
+  return esClient.indices.close({
+    index: newIndexName
+  });
+}
+
+/**
+* Open index
+*/
+
+function openIndex() {
+  console.log('open index:' + newIndexName);
+  return esClient.indices.open({
+    index: newIndexName
+  });
+}
+
+/**
+* Create mappings for the new index
+*/
+function putMappings() {
+  console.log('put mappings, index: ' + newIndexName);
+  var body = config.mappings;
+  return esClient.indices.putMapping({
+    index: newIndexName,
+    type: baseIndex.type,
+    body: body
+  });
+}
+
+
+/**
+* delete old index
+*/
+function deleteOldIndex() {
+  console.log('deleting old index: ' + oldIndex);
+  return esClient.indices.delete({
+    index: oldIndex
+  });
+}
+
+/**
+* Get alias
+*/
+function getAlias() {
+  return esClient.indices.getAlias({
+    name: indexAlias
+  });
+}
+
+/** 
+* Update alias
+*/
+function updateAliases() {
+  console.log('update alias');
+
+  return esClient.indices.updateAliases({
+    body: {
+      actions: [
+        { remove: {index: oldIndex, alias: indexAlias} },
+        { add: { index: newIndexName, alias: indexAlias} }
+      ]
+    }
+  });  
+}
+
 function syncPrSingle() {
   //var PRfile = 'PRfile_2016_08_29T18_26_44_586Z';
   var PRfile = 'cdcinfo_dev_data_single_lines.json';
   var deferred = Q.defer();
   var content;
-
+  console.log('load data');
   try {
+    console.log('load data');
     content = fs.readFileSync(PRfile).toString().split('\n');
     content.forEach(function(listItem, index){
       if (listItem != '') {
         var obj = JSON.parse(listItem);
 
         esClient.create({
-          'index': mainIndex.index,
-          'type': mainIndex.type,
+          'index': newIndexName,
+          'type': baseIndex.type,
           'id': obj.id,
           'body': obj
         }, function (err, insertResult) {
@@ -143,7 +285,8 @@ function checkInsertCompleted(recordCount) {
     setTimeout(function () {
       confirmInsert()
         .then(reindex)
-        .finally(switchIndex)
+        .then(updateAliases)
+        .finally(deleteOldIndex)
     }, 15000);
   }
 }
@@ -238,17 +381,12 @@ function deleteAllDoc() {
   var deferred = Q.defer();
   httpClient.delete('http://localhost:9200/'+mainIndex.index+'/'+mainIndex.type+'/_query?q=*:*',function(result){
     deferred.resolve();
-    console.log('completed deleting '+ result._indices._all.deleted + ' records');
+    // console.log('completed deleting '+ result._indices._all.deleted + ' records');
   })
   return deferred.promise
 }
 
-function switchIndex() {
-  var deferred = Q.defer();
-  console.log('switch index not implemented yet');
-  deferred.resolve(true);
-  return deferred.promise
-}
+
 function reindex() {
   var deferred = Q.defer();
   console.log('i was in reindex')
