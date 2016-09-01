@@ -13,7 +13,10 @@
       getQuestions: getQuestions,
       getPreparedResponsebyId: getPreparedResponsebyId,
       getMessageCount: getMessageCount,
-      ratePreparedResponse: ratePreparedResponse
+      ratePreparedResponse: ratePreparedResponse,
+      getFeatured : getFeatured,
+      getCommon : getCommon,
+      getMostRecent : getMostRecent
 
     };
 
@@ -22,7 +25,7 @@
     function getMessageCount() { return $q.when(72); }
 
     function doSearch(query) {
-      return $http.get('/api/search/' + query)
+      return $http.get('/api/search1/' + query)
       .then(success)
       .catch(fail);
 
@@ -83,5 +86,44 @@
       }
     }
 
+    function getFeatured(maxCount) {
+      return $http.get('/api/getFeatured/'+ maxCount)
+        .then(success)
+        .catch(fail);
+
+      function success(response) {
+        return response;
+      }
+
+      function fail(e) {
+        return exception.catcher('XHR failed for getFeatured')(e);
+      }
+    }
+    function getCommon(maxCount) {
+      return $http.get('/api/getCommon/'+ maxCount)
+        .then(success)
+        .catch(fail);
+
+      function success(response) {
+        return response;
+      }
+
+      function fail(e) {
+        return exception.catcher('XHR failed for getCommon')(e);
+      }
+    }
+    function getMostRecent(maxCount) {
+      return $http.get('/api/getMostRecent/'+ maxCount)
+        .then(success)
+        .catch(fail);
+
+      function success(response) {
+        return response;
+      }
+
+      function fail(e) {
+        return exception.catcher('XHR failed for getMostRecent')(e);
+      }
+    }
   }
 })();

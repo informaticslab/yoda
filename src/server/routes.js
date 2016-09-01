@@ -15,16 +15,19 @@ var type = 'prepared_responses';
 // var index = 'prepared_responses_v2';
 // var type = 'prepared_responses_v2';
 
-
+router.get('/getMostRecent/:maxCount',getMostRecent);
+router.get('/getFeatured/:maxCount',getFeatured);
+router.get('/getCommon/:maxCount',getCommon);
 router.get('/termSearch/:query', termSearch);
 router.get('/getPreparedResponsebyId/:id', getPreparedResponsebyId);
 //router.get('/search/:query', doSearch);
-router.get('/search/:query', fuzzySearch3);
+router.get('/search1/:query', fuzzySearch3);
 router.get('/questions/:query', getQuestions);
 router.get('/*', four0four.notFoundMiddleware);
 //router.get('/fuzzySearch/:query', fuzzySearch);
 router.post('/updatePositiveRating/:id', updatePositiveRating);
 router.post('/updateNegativeRating/:id', updateNegativeRating);
+
 
 module.exports = router;
 
@@ -389,13 +392,111 @@ function updateNegativeRating(req, res, next) {
 
   });
 
-  function getCommon(req,res,next){
-    client.search()
-  }
-  function getFeatured(req,res,next){
 
-  }
 
+
+}
+
+function getFeatured(req,res,next){
+  var maxCount = req.params.maxCount;
+  client.search({
+    'index' : index,
+    'body' : {
+    "fields": ["id","prId","query", "response", "featuredRanking","dateModified","datePublished"],
+    "query": {
+    "bool": {
+      "must": [
+        {
+          "range": {
+            "featuredRanking": {
+              "gt": "0"
+            }
+          }
+        }
+      ]
+    }
+  },
+    "from": 0,
+    "size": maxCount,
+    "sort": [{"featuredRanking": {"order":"desc"}} ],
+    "aggs": { }
+  }
+  }, function (error, response) {
+    if(!error){
+      res.send(response);
+    } else {
+      res.send(error);
+      console.trace(error.message);
+    }
+  });
+}
+
+function getCommon(req,res,next){
+  var maxCount = req.params.maxCount;
+  client.search({
+    'index' : index,
+    'body' : {
+      "fields": ["id","prId","query", "response", "commonQuestionRanking","dateModified","datePublished"],
+      "query": {
+        "bool": {
+          "must": [
+            {
+              "range": {
+                "commonQuestionRanking": {
+                  "gt": "0"
+                }
+              }
+            }
+          ]
+        }
+      },
+      "from": 0,
+      "size": maxCount,
+      "sort": [{"commonQuestionRanking": {"order":"desc"}} ],
+      "aggs": { }
+    }
+  }, function (error, response) {
+    if(!error){
+      res.send(response);
+    } else {
+      res.send(error);
+      console.trace(error.message);
+    }
+  });
+}
+function getMostRecent(req,res,next){
+  var maxCount = req.params.maxCount;
+  client.search({
+    'index' : index,
+    'body' : {
+      "fields": ["id","prId","query", "response", "commonQuestionRanking","dateModified","datePublished"],
+      "query": {
+        "bool": {
+          "should": [
+            {
+            "range" : {
+              "dateModified" : {
+                "gte": "1970/01/01",
+                "format": "yyyy/MM/dd||yyyy"
+              }
+            }
+          }
+          ]
+        }
+      },
+      "from": 0,
+      "size": maxCount,
+      "sort": [{"dateModified": {"order":"desc"}} ],
+      "aggs": { }
+    }
+  }, function (error, response) {
+    if(!error){
+      res.send(response);
+    } else {
+      res.send(error);
+      console.trace(error.message);
+    }
+  });
 }
 
 
