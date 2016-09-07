@@ -8,14 +8,17 @@
     <div class="col-lg-3 col-md-4 col-sm-12 search-results2">
 
       <div class="btn-group" ng-if="!vm.noResults">
-        <button class="btn btn-default btn-xs dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-        Sort by <span class="caret"></span>
-        </button>
-        <ul class="dropdown-menu">
-          <li><a href="#">Most Recent (Placeholder)</a></li>
-          <li><a href="#">Most Relevant (Placeholder)</a></li>
-          <li><a href="#">Featured (Placeholder)</a></li>
-        </ul>
+        <!--<button class="btn btn-default btn-xs dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">-->
+        <!--Sort by <span class="caret"></span>-->
+        <!--</button>-->
+        <!--<ul class="dropdown-menu">-->
+          <!--<li><a href="#" ng-click="vm.sort('dateModified')">Most Recent</a></li>-->
+          <!--<li><a href="#" ng-click="vm.sort('relevant')">Most Popular (Placeholder)</a></li>-->
+          <!--<li><a href="#" ng-click="vm.sort('featuredRanking')">Featured</a></li>-->
+        <!--</ul>-->
+        <label>Sort By</label>
+        <select ng-model=vm.sortOption ng-options="option as option.label for option in vm.sortOptions" ng-change="vm.sort(vm.sortOption.option)">
+        </select>
       </div>
     </div>
   </div>
@@ -99,13 +102,13 @@
 
                 </div>
                 <div class="col-lg-9 col-md-9 col-sm-8 col-xs-12 right-results ">
-                  <div class="indv-results" dir-paginate='result in vm.resultsArray | itemsPerPage: vm.pageSize' current-page='vm.currentPage'>
+                  <div class="indv-results" dir-paginate='result in vm.resultsArray |orderBy :[vm.sortKey,vm.secondarySort]| itemsPerPage: vm.pageSize' current-page='vm.currentPage'>
                     <h3><a ui-sref='details({id: result._source.id})'>{{result._source.query}}</a> <span class="liked" ng-if='result._source.liked'>({{result._source.liked}} people like this)</span></h3>
                     {{result._source.response | limitTo: 256}}...
                     <br>
                     <i>ID:{{result._source.id}}</i>
                     <br>
-                    <span class="date-color">Content last updated: 02/19/2016 (Mocked)</span>
+                    <span class="date-color">Content last updated: {{result._source.dateModified | date}}</span>
                   </div>
                   <dir-pagination-controls on-page-change='vm.toTop("top")'  boundary-links='true'></dir-pagination-controls>
                 </div>

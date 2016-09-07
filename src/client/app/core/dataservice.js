@@ -25,7 +25,7 @@
     function getMessageCount() { return $q.when(72); }
 
     function doSearch(query) {
-      return $http.get('/api/search1/' + query)
+      return $http.get('/api/search/' + query)
       .then(success)
       .catch(fail);
 

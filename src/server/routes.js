@@ -21,7 +21,7 @@ router.get('/getCommon/:maxCount',getCommon);
 router.get('/termSearch/:query', termSearch);
 router.get('/getPreparedResponsebyId/:id', getPreparedResponsebyId);
 //router.get('/search/:query', doSearch);
-router.get('/search1/:query', fuzzySearch3);
+router.get('/search/:query', fuzzySearch3);
 router.get('/questions/:query', getQuestions);
 router.get('/*', four0four.notFoundMiddleware);
 //router.get('/fuzzySearch/:query', fuzzySearch);
