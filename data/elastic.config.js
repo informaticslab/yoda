@@ -107,48 +107,4 @@ module.exports = function() {
 
   return config;
 
-  // var mappings = {
-
-  //   "properties": {
-
-  //     "query": {
-  //       "type": "string",
-  //       "copy_to": [
-  //         "did_you_mean",
-  //         "autocomplete",
-  //         "all_search_fields"
-  //       ]
-  //     },
-
-  //     "response": {
-  //       "type": "string",
-  //       "copy_to": [
-  //         "autocomplete",
-  //         "did_you_mean",
-  //         "all_search_fields"
-  //       ]
-  //     },
-  //      "keywords": {
-  //       "type": "string",
-  //       "copy_to": [
-  //         "autocomplete",
-  //         "did_you_mean",
-  //         "all_search_fields"
-  //       ]
-  //     },
-  //     "did_you_mean": {
-  //             "type": "string",
-  //             "analyzer": "didYouMean"
-  //     },
-  //     "autocomplete": {
-  //       "type": "string",
-  //       "analyzer": "autocomplete"
-  //     },
-  //     "all_search_fields" :{
-  //       "type" : "string"
-  //     }
-  //   }
-  
-  // };
-
 };

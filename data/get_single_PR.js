@@ -29,8 +29,8 @@ var prCount = 0;
 var httpClient = new restClient();
 
 var indexAlias = 'prepared_responses_alias';
-var newIndexName = '';
-var oldIndex = '';
+var newIndexName;
+var oldIndex;
 
 var baseIndex =  {
   "index"  : "prepared_responses",
@@ -85,11 +85,8 @@ retrievePrToFile()
   .then(closeIndex)
   .then(configIndex)
   .then(openIndex)
-  // .then(putMappings)
-  // .then(deleteAllDoc)
   .then(syncPrSingle)
   .then(putMappings);
-  // .then(updateAliases);
   //.then(confirmInsert)
   //.then(reindex)
   //.then(switchIndex);
