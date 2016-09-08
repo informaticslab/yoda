@@ -126,7 +126,8 @@ function retrievePrToFile(nextUrl){
           tier: obj.audience
         }
         fs.writeSync(fd,JSON.stringify(recipe));
-        console.log('saving PR '+recipe.prId);
+        console.log('Saving PR with ID: '+recipe.prId+ ' to local file');
+        log.info('Saving PR with ID: '+ recipe.prId+ ' to local file');
     }
 
     if (nextUrl != ''){
@@ -161,7 +162,7 @@ exports.initIndex = initIndex;
 */
 function configIndex() {
   var body = config.settings;
-  log.info('Config index: ' + newIndexName);
+  log.info('Configure index: ' + newIndexName);
   return esClient.indices.putSettings({
     index: newIndexName,
     type: baseIndex.type,
@@ -194,7 +195,7 @@ function openIndex() {
 * Create mappings for the new index
 */
 function putMappings() {
-  log.info('Put mappings for: ' + newIndexName);
+  log.info('Apply mappings for: ' + newIndexName);
   var body = config.mappings;
   return esClient.indices.putMapping({
     index: newIndexName,
@@ -248,7 +249,7 @@ function syncPrSingle() {
   // console.log('load data');
   try {
     // console.log('load data');
-    log.info('Loading data start');
+    log.info('Data syncronization start');
     content = fs.readFileSync(PRfile).toString().split('\n');
     content.forEach(function(listItem, index){
       if (listItem != '') {
