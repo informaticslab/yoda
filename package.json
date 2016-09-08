@@ -11,12 +11,15 @@
   "dependencies": {
     "angular-ui-bootstrap": "^2.0.1",
     "body-parser": "^1.8.2",
+    "cookie-parser": "^1.4.3",
     "elasticsearch": "^11.0.1",
     "elasticsearch-browser": "^11.0.1",
     "express": "^4.9.3",
     "express-session": "^1.14.0",
     "morgan": "^1.1.1",
     "node-rest-client": "^2.0.1",
+    "passport": "^0.3.2",
+    "passport-local": "^1.0.0",
     "serve-favicon": "^2.0.1"
   },
   "devDependencies": {
