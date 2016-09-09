@@ -3,15 +3,25 @@ var es = require('elasticsearch');
 var moment = require('moment');
 var config = require('./elastic.config')();
 var bunyan = require('bunyan');
+var bunyanStreamElasticsearch = require('bunyan-elasticsearch');
+
+var esStream = new bunyanStreamElasticsearch({
+  indexPattern: '[logstash-]YYYY.MM.DD',
+  type: 'logs',
+  host: 'localhost:9200' 
+});
 
 var log = bunyan.createLogger({
   name: 'cdcinfo',
-  streams: [{
-    type: 'rotating-file',
-    path: './logs/data-load.log',
-    period: '1d',
-    count: 2  //keep 2 backups
-  }]
+  streams: [
+    {stream: esStream}
+    // {
+    //   type: 'rotating-file',
+    //   path: './logs/data-load.log',
+    //   period: '1d',
+    //   count: 2  //keep 2 backups
+    // }
+  ]
 });
 
 var esClient = new es.Client({
@@ -306,75 +316,75 @@ function checkInsertCompleted(recordCount) {
   }
 }
 
-function syncPrBulk() {
-  var PRfile = 'PRfile_2016_08_29T18_26_44_586Z';
-  var deferred = Q.defer();
-  var content;
-  try {
-    content = fs.readFileSync(PRfile).toString().split('\n');
-    if (okToProcess) {
-      for (var i=0 ; i < content.length; i++) {
+// function syncPrBulk() {
+//   var PRfile = 'PRfile_2016_08_29T18_26_44_586Z';
+//   var deferred = Q.defer();
+//   var content;
+//   try {
+//     content = fs.readFileSync(PRfile).toString().split('\n');
+//     if (okToProcess) {
+//       for (var i=0 ; i < content.length; i++) {
 
-        line = content[i];
-        bulk_request = content.reduce(function (bulk_request, line) {
-          // console.log(line);
-          var obj;
-          try {
-            obj = JSON.parse(line);
-            //  console.log('object ', obj);
-          } catch (e) {
-            // console.log(e);
-            console.log('Done reading');
-            return bulk_request;
-          }
-          if (okToPush) {
-            console.log('inserting PR '+ obj.prId);
-            bulk_request.push({index: {_index: mainIndex.index, _type: mainIndex.type, _id: obj.id}});
-            bulk_request.push(obj);
-          }
-          return bulk_request;
-        }, []);
-      }
-      // A little voodoo to simulate synchronous insert
-      var busy = false;
-      var callback = function (err, resp) {
-        if (err) {
-          console.log(err);
-          deferred.reject(err)
-        }
+//         line = content[i];
+//         bulk_request = content.reduce(function (bulk_request, line) {
+//           // console.log(line);
+//           var obj;
+//           try {
+//             obj = JSON.parse(line);
+//             //  console.log('object ', obj);
+//           } catch (e) {
+//             // console.log(e);
+//             console.log('Done reading');
+//             return bulk_request;
+//           }
+//           if (okToPush) {
+//             console.log('inserting PR '+ obj.prId);
+//             bulk_request.push({index: {_index: mainIndex.index, _type: mainIndex.type, _id: obj.id}});
+//             bulk_request.push(obj);
+//           }
+//           return bulk_request;
+//         }, []);
+//       }
+//       // A little voodoo to simulate synchronous insert
+//       var busy = false;
+//       var callback = function (err, resp) {
+//         if (err) {
+//           console.log(err);
+//           deferred.reject(err)
+//         }
 
-        busy = false;
-      };
+//         busy = false;
+//       };
 
-      // Recursively whittle away at bulk_request, 1000 at a time.
-      var perhaps_insert = function () {
-        if (!busy) {
-          busy = true;
-          esClient.bulk({
-            body: bulk_request.slice(0,1000)
-          }, callback);
-          bulk_request = bulk_request.slice(1000);
-      //    console.log('bulk request length ', bulk_request.length);
-        }
+//       // Recursively whittle away at bulk_request, 1000 at a time.
+//       var perhaps_insert = function () {
+//         if (!busy) {
+//           busy = true;
+//           esClient.bulk({
+//             body: bulk_request.slice(0,1000)
+//           }, callback);
+//           bulk_request = bulk_request.slice(1000);
+//       //    console.log('bulk request length ', bulk_request.length);
+//         }
 
-        if (bulk_request.length > 0) {
-          setTimeout(perhaps_insert, 10);
-        } else {
-          console.log('Inserted all records.');
-          deferred.resolve();
-        }
-      };
-      if (okToPush) {
-        perhaps_insert();
-      }
-    }
-  }
-  catch (e) {
-    deferred.reject();
-    console.log ('error detected in SyncPR ', e);
-  }
-  return deferred.promise;
-}
+//         if (bulk_request.length > 0) {
+//           setTimeout(perhaps_insert, 10);
+//         } else {
+//           console.log('Inserted all records.');
+//           deferred.resolve();
+//         }
+//       };
+//       if (okToPush) {
+//         perhaps_insert();
+//       }
+//     }
+//   }
+//   catch (e) {
+//     deferred.reject();
+//     console.log ('error detected in SyncPR ', e);
+//   }
+//   return deferred.promise;
+// }
 
 
 function confirmInsert() {
@@ -394,6 +404,7 @@ function confirmInsert() {
   });
   return deferred.promise;
 }
+
 function deleteAllDoc() {
   var deferred = Q.defer();
   httpClient.delete('http://localhost:9200/'+mainIndex.index+'/'+mainIndex.type+'/_query?q=*:*',function(result){
