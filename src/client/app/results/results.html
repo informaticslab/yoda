@@ -17,7 +17,7 @@
           <!--<li><a href="#" ng-click="vm.sort('featuredRanking')">Featured</a></li>-->
         <!--</ul>-->
         <label>Sort By</label>
-        <select ng-model=vm.sortOption ng-options="option as option.label for option in vm.sortOptions" ng-change="vm.sort(vm.sortOption.option)">
+          <select ng-model=vm.sortOption ng-options="option as option.label disable when option.notAvailable for option in vm.sortOptions" ng-change="vm.sort(vm.sortOption.option)">
         </select>
       </div>
     </div>

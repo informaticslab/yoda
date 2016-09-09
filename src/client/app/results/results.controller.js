@@ -23,15 +23,18 @@
     vm.sortOptions =[
       {
         'option' : 'dateModified',
-        "label" : 'Most Recent'
+        "label" : 'Most Recent',
+        'notAvailable' : false
       },
       {
       'option' : 'featuredRanking',
-      "label" : 'Feautured'
+      "label" : 'Feautured',
+        'notAvailable' : false
       },
       {
         'option' : 'default',
-        'label' : 'Relevant'
+        'label' : 'Relevant',
+        'notAvailable' : false
       }
      ];
 
@@ -79,6 +82,7 @@
           }
         });
     //    console.log(vm.featuredArray);
+          vm.sortOptions[1].notAvailable = (vm.featuredArray.length ===0);
         if (vm.resultsArray.length === 0){
           vm.noResults = true;
         }
