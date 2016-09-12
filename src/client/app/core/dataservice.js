@@ -13,7 +13,9 @@
       getQuestions: getQuestions,
       getPreparedResponsebyId: getPreparedResponsebyId,
       getMessageCount: getMessageCount,
-      ratePreparedResponse: ratePreparedResponse
+      ratePreparedResponse: ratePreparedResponse,
+      getIndices: getIndices,
+      getLogDetails: getLogDetails
 
     };
 
@@ -83,5 +85,34 @@
       }
     }
 
+    function getIndices() {
+      return $http.get('/logs/getIndices')
+        .then(success)
+        .catch(fail);
+
+      function success(response) {
+        return response.data;
+      }
+
+      function fail(e) {
+        return exception.catcher('XHR failed for getIndices')(e);
+      }
+    }
+
+
+
+  function getLogDetails(index) {
+    return $http.get('/logs/getLogs/' + index)
+      .then(success)
+      .catch(fail);
+
+      function success(response) {
+        return response.data;
+      }
+
+      function fail(e) {
+        return exception.catcher('XHR failed for getLogs')(e);
+      }
   }
+}
 })();

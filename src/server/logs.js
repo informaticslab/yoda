@@ -19,7 +19,10 @@ module.exports = router;
 function getIndices(req, res, next) {   //move to main routes file 
   client.indices.stats()
   .then(function(results) {
-    var indices = results.indices;
+    var indices = [];
+    for (var k in results.indices) {
+      indices.push(k);
+    }
     res.send(indices);
   }, function(err) {
     console.trace(err.message);
@@ -28,13 +31,16 @@ function getIndices(req, res, next) {   //move to main routes file
 
 
 function getLogs(req, res, next) { 
+  // console.log(req);
+  var params = req.params;
+  var encodedParam = encodeURIComponent(params.index);
   client.search({
-    index: req.index,
+    index: encodedParam,
     body: {
       "query" : {
         "match_all" : {}
       },
-      "size": 10000
+      "size": 100
     }
   })
   .then(function(results) {

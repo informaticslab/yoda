@@ -14,13 +14,13 @@ var esStream = new bunyanStreamElasticsearch({
 var log = bunyan.createLogger({
   name: 'cdcinfo',
   streams: [
-    {stream: esStream}
-    // {
-    //   type: 'rotating-file',
-    //   path: './logs/data-load.log',
-    //   period: '1d',
-    //   count: 2  //keep 2 backups
-    // }
+    {stream: esStream},
+    {
+      type: 'rotating-file',
+      path: './logs/data-load.log',
+      period: '1d',
+      count: 2  //keep 2 backups
+    }
   ]
 });
 
@@ -286,7 +286,7 @@ function syncPrSingle() {
             }
             else {
               // console.log('inserted PR ' + obj.prId );
-              log.info('Insert success PRID: ' + obj.prId);
+              log.info('Sucessfully inserted PR: ' + obj.prId);
             }
           }
         }

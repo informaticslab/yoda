@@ -1,17 +1,30 @@
-<section class="mainbar">
-  <section class="matter">
-    <div class="container">
-      <div class="row">
-        <div class="widget wviolet">
-          <div ht-widget-header title="{{vm.title}}"></div>
-          <div class="widget-content user">
-            <h3>TODO: Implement Your Features</h3>
-          </div>
-          <div class="widget-foot">
-            <div class="clearfix"></div>
-          </div>
-        </div>
-      </div>
+<section class='mainbar'>
+  <div class='row'>
+    <div class='col-lg-12'>
+      <h3>Please choose a log: </h3>
+      <ul>
+        <li ng-repeat='log in vm.logs'>{{log}}</li>
+      </ul>
     </div>
-  </section>
+  </div>
+  <div class='row'>
+    <div class='col-lg-12'>
+      <table class='table table-bordered'>
+        <thead>
+          <th>Hostname</th>
+          <th>PID</th>
+          <th>Timestamp</th>
+          <th>Message</th>
+        </thead>
+        <tbody>
+          <tr ng-if='vm.logDetails' ng-repeat='detail in vm.logDetails'>
+            <td>{{detail._source.hostname}}</td>
+            <td>{{detail._source.pid}}</td>
+            <td>{{detail._source["@timestamp"]}}</td>
+            <td>{{detail._source.message}}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
 </section>

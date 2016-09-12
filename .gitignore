@@ -7,3 +7,5 @@ build/
 # other
 .tmp
 report/
+
+data/logs/

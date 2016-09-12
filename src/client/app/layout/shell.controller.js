@@ -5,13 +5,18 @@
     .module('app.layout')
     .controller('ShellController', ShellController);
 
-  ShellController.$inject = ['$rootScope', '$timeout', 'config', 'logger'];
+  ShellController.$inject = ['$rootScope', '$timeout', 'config', 'logger', '$state'];
   /* @ngInject */
-  function ShellController($rootScope, $timeout, config, logger) {
+  function ShellController($rootScope, $timeout, config, logger, $state) {
     var vm = this;
     vm.busyMessage = 'Please wait ...';
     // vm.isBusy = true;
     // $rootScope.showSplash = true;
+
+    vm.isAdminState = function() {
+      var state =  $state.is('admin');
+      return state;
+    };
     
     activate();
 
