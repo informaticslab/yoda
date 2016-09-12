@@ -7,20 +7,19 @@ var client = new elasticsearch.Client({
 });
 
 var index = 'prepared_responses_alias';  //using index alias
-var type = 'prepared_responses';
+var type = 'logs';
 
-router.get('/getLogIndices', getLogIndices);
+router.get('/getIndices', getIndices);
+router.get('/getLogs/:index', getLogs);
 
 module.exports = router;
 
 //////////////////
 
-function getLogIndices(req, res, next) {   //move to main routes file 
-  client.cat.indices({
-    h: ['index']
-  })
+function getIndices(req, res, next) {   //move to main routes file 
+  client.indices.stats()
   .then(function(results) {
-    var indices = results;
+    var indices = results.indices;
     res.send(indices);
   }, function(err) {
     console.trace(err.message);
@@ -28,6 +27,21 @@ function getLogIndices(req, res, next) {   //move to main routes file
 }
 
 
-function getLog(req, res, next) {
-  //TODO
+function getLogs(req, res, next) { 
+  client.search({
+    index: req.index,
+    body: {
+      "query" : {
+        "match_all" : {}
+      },
+      "size": 10000
+    }
+  })
+  .then(function(results) {
+    var hits = results.hits;
+    res.send(results);
+  }, function(err) {
+    console.trace(err.message);
+  });
+
 }
