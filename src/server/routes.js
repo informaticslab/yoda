@@ -12,8 +12,11 @@ var client = new elasticsearch.Client({
 var index = 'prepared_responses_alias';  //using index alias
 var type = 'prepared_responses';
 var logicalOperator = 'or';
-var min_score = 0.2;
-var tie_breaker = 0.3
+var min_score = 0.13  ;
+var tie_breaker = 0.3;
+
+var primaryStopWords = ['how','do','i','what','can','get','are','where','does','from','cause','my','out','have'];
+// var secondaryStopWords = ['prevent'];
 var multi_match_snippet_fuzzy =  {
   "multi_match": {
     "query": null,
@@ -35,6 +38,7 @@ var multi_match_snippet =  {
     "tie_breaker": tie_breaker,
     "minimum_should_match": "100%",
     "operator" : logicalOperator
+
    }
 };
 
@@ -45,7 +49,7 @@ var match_field_query = {
       fuzziness: 2,
       prefix_length: 1,
       "operator" : logicalOperator,
-      "boost" : 4
+   //  "boost" : 2
     }
   }
  };
@@ -56,7 +60,8 @@ var match_field_response = {
       query: null,
       fuzziness: 2,
       prefix_length: 1,
-      "operator" : logicalOperator
+      "operator" : logicalOperator,
+ //     "boost" : 4
     }
   }
 };
@@ -260,12 +265,14 @@ function fuzzySearch2(req, res, next) {  //full body
 }
 function fuzzySearch3(req, res, next) {  //full body
   var suggestions = null;
+  var preProcessTerms = preProcessSearch(req.params.query);
+  console.log(preProcessTerms);
   multi_match_snippet.multi_match.query = req.params.query;
   multi_match_snippet_fuzzy.multi_match.query = req.params.query;
   match_field_query.match.query.query = req.params.query;
   match_field_response.match.response.query = req.params.query;
 
-  console.log('inused = ',multi_match_snippet)
+  //console.log('inused = ',multi_match_snippet)
   client.search({
       index: index,
       body:   {
@@ -283,40 +290,80 @@ function fuzzySearch3(req, res, next) {  //full body
             "should": [
               // { "match_phrase": { "query":  req.params.query}},
               // { "match_phrase": { "response":  req.params.query}},
-               multi_match_snippet,
+             //  multi_match_snippet,
              //  multi_match_snippet_fuzzy,
-               match_field_query,
-               match_field_response,
+             //  match_field_query,
+             //  match_field_response,
              //   { "multi_match": {
              //      "query": req.params.query,
-             //      "type": "cross_fields",
+             //      "type": "most_fields",
              //      "fields": ["query", "response"],
              //      "tie_breaker": tie_breaker,
              //      "minimum_should_match": "100%",
-             //      "operator" : logicalOperator
+             //      "operator" : "or"
              //    }
              //  },
-             //  {
-             //    "match": {
-             //      "query": { // name of seach field
-             //        query: req.params.query,
-             //        fuzziness: 2,
-             //        prefix_length: 1,
-             //        "operator" : logicalOperator,
-             //        "boost" : 4
-             //      }
-             //    }
-             //  },
-             //  {
-             //    "match": {
-             //      "response": { // name of seach field
-             //        query: req.params.query,
-             //        fuzziness: 2,
-             //        prefix_length: 1,
-             //        "operator" : logicalOperator
-             //      }
-             //    }
-             //  }
+              {
+                "match": {
+                  "query": { // name of seach field
+                    query: req.params.query,
+                    fuzziness: 1,
+                    prefix_length: 1,
+                    "operator" : "or",
+                    "minimum_should_match": "100%"
+                    //    "boost" : 4
+                  }
+                }
+              },
+              {
+                "match": {
+                  "response": { // name of seach field
+                    query: req.params.query,
+                    fuzziness: 1,
+                    prefix_length: 1,
+                    "operator" : "or",
+                    "minimum_should_match": "100%"
+                  }
+                }
+              },
+              {
+                "match": {
+                  "query": { // name of seach field
+                    query: req.params.query,
+                    "operator" : "or",
+                    "minimum_should_match": "40%"
+                    //    "boost" : 4
+                  }
+                }
+              },
+              {
+                "match": {
+                  "response": { // name of seach field
+                    query: req.params.query,
+                    "operator" : "or",
+                    "minimum_should_match": "40%"
+                  }
+                }
+              },
+              {
+                "match": {
+                  "query": { // name of seach field
+                    query: preProcessTerms,
+                    "operator" : "and",
+                    "boost" :2
+                  }
+                }
+              },
+              {
+                "match": {
+                  "response": { // name of seach field
+                    query: preProcessTerms,
+                    "operator" : "and",
+                    "boost" :2
+                  }
+                }
+              }
+
               //{ "wildcard":
               //{ "query":  "*"+req.params.query+"*"
               //
@@ -553,6 +600,22 @@ function getMostRecent(req,res,next){
       console.trace(error.message);
     }
   });
+}
+function preProcessSearch(queryString) {
+  var relevantTemrs = [];
+  var tokens = [];
+  tokens = queryString.toLowerCase().split(' ');
+
+  for (var i=0; i < tokens.length; i++) {
+    if (primaryStopWords.indexOf(tokens[i]) === -1){
+      relevantTemrs.push(tokens[i]);
+    }
+    // else {
+    //   tokens[i] = tokens[i] + '^0.2';
+    // }
+  }
+  console.log(relevantTemrs);
+  return relevantTemrs.join(' ');
 }
 
 
