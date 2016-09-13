@@ -11,7 +11,55 @@ var client = new elasticsearch.Client({
 
 var index = 'prepared_responses_alias';  //using index alias
 var type = 'prepared_responses';
+var logicalOperator = 'or';
+var min_score = 0.2;
+var tie_breaker = 0.3
+var multi_match_snippet_fuzzy =  {
+  "multi_match": {
+    "query": null,
+    "type": "cross_fields",
+    "fields": ["query", "response"],
+    "tie_breaker": tie_breaker,
+    "minimum_should_match": "100%",
+    "operator" : logicalOperator,
+    "fuzziness" : "2",
+    "prefix_length" : 1
+  }
+};
 
+var multi_match_snippet =  {
+  "multi_match": {
+    "query": null,
+    "type": "cross_fields",
+    "fields": ["query", "response"],
+    "tie_breaker": tie_breaker,
+    "minimum_should_match": "100%",
+    "operator" : logicalOperator
+   }
+};
+
+var match_field_query = {
+  "match": {
+    "query": { // name of seach field
+      query: null,
+      fuzziness: 2,
+      prefix_length: 1,
+      "operator" : logicalOperator,
+      "boost" : 4
+    }
+  }
+ };
+
+var match_field_response = {
+  "match": {
+    "response": { // name of seach field
+      query: null,
+      fuzziness: 2,
+      prefix_length: 1,
+      "operator" : logicalOperator
+    }
+  }
+};
 // var index = 'prepared_responses_v2';
 // var type = 'prepared_responses_v2';
 
@@ -212,6 +260,12 @@ function fuzzySearch2(req, res, next) {  //full body
 }
 function fuzzySearch3(req, res, next) {  //full body
   var suggestions = null;
+  multi_match_snippet.multi_match.query = req.params.query;
+  multi_match_snippet_fuzzy.multi_match.query = req.params.query;
+  match_field_query.match.query.query = req.params.query;
+  match_field_response.match.response.query = req.params.query;
+
+  console.log('inused = ',multi_match_snippet)
   client.search({
       index: index,
       body:   {
@@ -223,44 +277,46 @@ function fuzzySearch3(req, res, next) {  //full body
             }
           }
         },
-        "min_score":.2,
+        "min_score": min_score,
         "query": {
           "bool": {
             "should": [
-              //{ "match_phrase": { "query":  req.params.query}},
-              //{ "match_phrase": { "response":  req.params.query}},
-              {
-                "multi_match": {
-                  "query": req.params.query,
-                  "type": "cross_fields",
-                  "fields": ["query", "response"],
-                  "tie_breaker":0.3,
-                  "minimum_should_match": "100%",
-                  "operator" : "or"
-                }
-              },
-
-              {
-                "match": {
-                  "query": { // name of seach field
-                    query: req.params.query,
-                    fuzziness: 2,
-                    prefix_length: 1,
-                    "operator" : "or",
-                    "boost" : 4
-                  }
-                }
-              },
-              {
-                "match": {
-                  "response": { // name of seach field
-                    query: req.params.query,
-                    fuzziness: 2,
-                    prefix_length: 1,
-                    "operator" : "or"
-                  }
-                }
-              },
+              // { "match_phrase": { "query":  req.params.query}},
+              // { "match_phrase": { "response":  req.params.query}},
+               multi_match_snippet,
+             //  multi_match_snippet_fuzzy,
+               match_field_query,
+               match_field_response,
+             //   { "multi_match": {
+             //      "query": req.params.query,
+             //      "type": "cross_fields",
+             //      "fields": ["query", "response"],
+             //      "tie_breaker": tie_breaker,
+             //      "minimum_should_match": "100%",
+             //      "operator" : logicalOperator
+             //    }
+             //  },
+             //  {
+             //    "match": {
+             //      "query": { // name of seach field
+             //        query: req.params.query,
+             //        fuzziness: 2,
+             //        prefix_length: 1,
+             //        "operator" : logicalOperator,
+             //        "boost" : 4
+             //      }
+             //    }
+             //  },
+             //  {
+             //    "match": {
+             //      "response": { // name of seach field
+             //        query: req.params.query,
+             //        fuzziness: 2,
+             //        prefix_length: 1,
+             //        "operator" : logicalOperator
+             //      }
+             //    }
+             //  }
               //{ "wildcard":
               //{ "query":  "*"+req.params.query+"*"
               //
@@ -284,7 +340,7 @@ function fuzzySearch3(req, res, next) {  //full body
         "hits" : hits,
         "suggestions" : suggestions
       }
-      //  console.log(resultPackage);
+     //console.log(JSON.stringify(resultPackage));
       res.send(resultPackage);
     }, function(err) {
       console.trace(err.message);
