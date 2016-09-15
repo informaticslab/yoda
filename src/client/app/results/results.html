@@ -65,18 +65,18 @@
           <div id="collapseOne" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
             <div class="panel-body">
               <!-- AUDIENCE -->
-              <div class="radio cb-group">
-                <strong>Audience</strong>
-                <br>
-                <label>
-                  <input type="radio" name="optionsRadios" id="optionsRadios1" value="option1">For everyone</label>
-                  <br>
-                  <label>
-                    <input type="radio" name="optionsRadios" id="optionsRadios2" value="option2">For the public</label>
-                    <br>
-                    <label>
-                      <input type="radio" name="optionsRadios" id="optionsRadios3" value="option3">For health care professionals</label>
-                    </div>
+              <!--<div class="radio cb-group">-->
+                <!--<strong>Audience</strong>-->
+                <!--<br>-->
+                <!--<label>-->
+                  <!--<input type="radio" name="optionsRadios" id="optionsRadios1" value="option1">For everyone</label>-->
+                  <!--<br>-->
+                  <!--<label>-->
+                    <!--<input type="radio" name="optionsRadios" id="optionsRadios2" value="option2">For the public</label>-->
+                    <!--<br>-->
+                    <!--<label>-->
+                      <!--<input type="radio" name="optionsRadios" id="optionsRadios3" value="option3">For health care professionals</label>-->
+                    <!--</div>-->
 
                   </div>
                 </div>
@@ -91,18 +91,18 @@
               <strong>Audience</strong>
               <br>
               <label>
-                <input type="radio" name="optionsRadios1" id="optionsRadios1" value="option1">For everyone</label>
-                <br>
-                <label>
-                  <input type="radio" name="optionsRadios1" id="optionsRadios2" value="option2">For the public</label>
-                  <br>
-                  <label>
-                    <input type="radio" name="optionsRadios1" id="optionsRadios3" value="option3">For health care professionals</label>
+                <input type="radio" name="optionsRadios" ng-model = "vm.filterOption" value="all" ng-change="vm.filter(vm.filterOption)">For everyone</label>
+              <br>
+              <label>
+                <input type="radio" name="optionsRadios"  ng-model = "vm.filterOption" value="public" ng-change="vm.filter(vm.filterOption)">For the public</label>
+              <br>
+              <label>
+                <input type="radio" name="optionsRadios" ng-model = "vm.filterOption" value="professional" ng-change="vm.filter(vm.filterOption)">For health care professionals</label>
                   </div>
 
                 </div>
                 <div class="col-lg-9 col-md-9 col-sm-8 col-xs-12 right-results ">
-                  <div class="indv-results" dir-paginate='result in vm.resultsArray |orderBy :[vm.sortKey,vm.secondarySort]| itemsPerPage: vm.pageSize' current-page='vm.currentPage'>
+                  <div class="indv-results" dir-paginate='result in vm.resultsArray | filter: (!vm.disableFilter || "") &&  {_source : {tier : vm.filterOption}} |orderBy :[vm.sortKey,vm.secondarySort]| itemsPerPage: vm.pageSize' current-page='vm.currentPage'>
                     <h3><a ui-sref='details({id: result._source.id})'>{{result._source.query}}</a> <span class="liked" ng-if='result._source.liked'>({{result._source.liked}} people like this)</span></h3>
                     {{result._source.response | limitTo: 256}}...
                     <br>

@@ -28,7 +28,7 @@
       },
       {
       'option' : 'featuredRanking',
-      "label" : 'Feautured',
+      "label" : 'Featured',
         'notAvailable' : false
       },
       {
@@ -62,6 +62,11 @@
       }
  //       console.log(vm.resultsArray);
     };
+
+    vm.filter = function(filterKey) {
+        //console.log(filterKey);
+            vm.disableFilter = filterKey ==='all'
+    }
 
     activate();
 
