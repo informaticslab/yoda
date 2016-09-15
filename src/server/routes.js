@@ -266,7 +266,7 @@ function fuzzySearch2(req, res, next) {  //full body
 function fuzzySearch3(req, res, next) {  //full body
   var suggestions = null;
   var preProcessTerms = preProcessSearch(req.params.query);
-  console.log(preProcessTerms);
+ // console.log(preProcessTerms);
   multi_match_snippet.multi_match.query = req.params.query;
   multi_match_snippet_fuzzy.multi_match.query = req.params.query;
   match_field_query.match.query.query = req.params.query;
