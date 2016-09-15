@@ -1,11 +1,14 @@
 var router = require('express').Router();
 var four0four = require('./utils/404')();
 var elasticsearch = require('elasticsearch');
-
 var client = new elasticsearch.Client({
   host: 'localhost:9200',
   log: 'error'
 });
+
+var nlp = require('nlp_compromise');
+var primaryStopWords = require('stopwords').english;
+
 //var index = 'prepared_responses_test';
 //var type = 'prepared_responses_test';
 
@@ -15,7 +18,7 @@ var logicalOperator = 'or';
 var min_score = 0.13  ;
 var tie_breaker = 0.3;
 
-var primaryStopWords = ['how','do','i','what','can','get','are','where','does','from','cause','my','out','have'];
+//var primaryStopWords = ['how','do','i','what','can','get','are','where','does','from','cause','my','out','have'];
 // var secondaryStopWords = ['prevent'];
 var multi_match_snippet_fuzzy =  {
   "multi_match": {
@@ -265,8 +268,11 @@ function fuzzySearch2(req, res, next) {  //full body
 }
 function fuzzySearch3(req, res, next) {  //full body
   var suggestions = null;
+
   var preProcessTerms = preProcessSearch(req.params.query);
- // console.log(preProcessTerms);
+  console.log('nlp ' ,preProcessTerms);
+  var preProcessTerms2 = preProcessSearch2(req.params.query);
+  console.log('stopword ' ,preProcessTerms2);
   multi_match_snippet.multi_match.query = req.params.query;
   multi_match_snippet_fuzzy.multi_match.query = req.params.query;
   match_field_query.match.query.query = req.params.query;
@@ -601,7 +607,20 @@ function getMostRecent(req,res,next){
     }
   });
 }
+
+
 function preProcessSearch(queryString) {
+  var relevantTemrs = [];
+  var nounTokens = nlp.sentence(queryString).terms.filter(function(t){
+    return t.pos.Noun;
+  });
+
+  for (var i=0; i < nounTokens.length; i++) {
+      relevantTemrs.push(nounTokens[i].text);
+    }
+  return relevantTemrs.join(' ');
+}
+function preProcessSearch2(queryString) {
   var relevantTemrs = [];
   var tokens = [];
   tokens = queryString.toLowerCase().split(' ');
@@ -614,8 +633,5 @@ function preProcessSearch(queryString) {
     //   tokens[i] = tokens[i] + '^0.2';
     // }
   }
-  console.log(relevantTemrs);
   return relevantTemrs.join(' ');
 }
-
-
