@@ -12,6 +12,12 @@
     vm.logs = [];
     vm.logDetails = [];
     vm.title = 'Admin';
+    vm.pageSize = 50;
+    vm.currentPage = 1;
+
+    vm.sortType = '"@timestamp"';
+    vm.sortReverse = true;
+    vm.searchLog = '';
 
     activate();
 

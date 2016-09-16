@@ -40,7 +40,7 @@ function getLogs(req, res, next) {
       "query" : {
         "match_all" : {}
       },
-      "size": 100
+      "size": 10000
     }
   })
   .then(function(results) {
