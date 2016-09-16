@@ -6,6 +6,6 @@
       'ngAnimate', 'ngSanitize',
       'blocks.exception', 'blocks.logger', 'blocks.router',
       'ui.router', 'ngplus', 'ui.bootstrap',
-      'angularUtils.directives.dirPagination'
+      'angularUtils.directives.dirPagination', 'angularSpinner'
     ]);
 })();
