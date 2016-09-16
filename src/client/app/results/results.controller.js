@@ -18,8 +18,8 @@
     vm.pageSize = 5;
     vm.noResults = false;
     vm.reverse = true;
-    vm.personPhrase = 'person liked this';
-    vm.peoplePhrase = 'people liked this';
+    vm.personPhrase = 'person likes this';
+    vm.peoplePhrase = 'people like this';
     vm.sortKey='-_score';
     vm.secondarySort = '-_score';
     vm.sortOptions =[
