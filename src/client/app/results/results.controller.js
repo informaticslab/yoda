@@ -74,10 +74,8 @@
     activate();
 
     function activate() {
-      console.log($rootScope.isBusy);
       $rootScope.isBusy = true;
       var promises = [search(vm.searchString)];
-      console.log($rootScope.isBusy);
       return $q.all(promises).then(function(){
         // logger.info('Activated Results View');
         $rootScope.isBusy = false;
