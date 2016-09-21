@@ -58,7 +58,7 @@ function retrievePrToFile(nextUrl){
           id: obj.id,
           prId: obj.extendedAttributes.PrId,
           number: obj.Number,
-          dateModified: obj.dateModified,
+          dateModified: obj.extendedAttributes.LastUpdateDate,
           query: obj.name,
           response: obj.description,
           category: obj.extendedAttributes.Category,
@@ -67,12 +67,12 @@ function retrievePrToFile(nextUrl){
           relatedPrList: obj.extendedAttributes.RelatedPrList,
           resources: obj.extendedAttributes.Resources,
           keywords: obj.extendedAttributes.Keywords,
-          language: obj.language.name,
+          language: obj.extendedAttributes.Language,
           datePublished: obj.datePublished,
           smartTag: obj.extendedAttributes.SmartTag,
           subtopic: obj.extendedAttributes.SubTopic,
           topic: obj.extendedAttributes.Topic,
-          tier: obj.audience
+          tier: obj.extendedAttributes.Audience
         }
         fs.writeSync(fd,JSON.stringify(recipe));
         console.log('saving PR '+recipe.prId);
