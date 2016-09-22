@@ -3,9 +3,9 @@
 
   angular
     .module('app.core', [
-      'ngAnimate', 'ngSanitize',
+      'ngAnimate', 'ngSanitize', 'ngCookies',
       'blocks.exception', 'blocks.logger', 'blocks.router',
       'ui.router', 'ngplus', 'ui.bootstrap',
-      'angularUtils.directives.dirPagination', 'angularSpinner'
+      'angularUtils.directives.dirPagination', 'angularSpinner', 'blocks.Base64'
     ]);
 })();

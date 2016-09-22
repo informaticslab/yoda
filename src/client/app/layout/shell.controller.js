@@ -13,7 +13,7 @@
     $rootScope.isBusy = false;
 
     // vm.isBusy = true;
-    // $rootScope.showSplash = true;
+    $rootScope.showSplash = true;
     
     activate();
 
