@@ -90,6 +90,12 @@
 
       function getStates() { return $state.get(); }
 
+      function checkAuth() {
+        $rootScope.$on('$startChangeStart', function(evt, toState, toStateParams){
+          
+        })
+      }
+
       function updateDocTitle() {
         $rootScope.$on('$stateChangeSuccess',
           function(event, toState, toParams, fromState, fromParams) {

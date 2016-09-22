@@ -24,7 +24,7 @@
           response.message = 'Username/password is incorrect';
         }
         callback(response);
-      }, 1000);
+      }, 300);
 
 
       /* Use this for real authentication
@@ -41,12 +41,16 @@
       $rootScope.globals = {
         currentUser: {
           username: username,
-          authdata: authdata
+          authdata: authdata,
+          authenticated: true
         }
       };
 
+      // console.log($rootScope.globals);
+
       $http.defaults.headers.common['Authorization'] = 'Basic ' + authdata;
       $cookies.put('globals', $rootScope.globals);
+      console.log($cookies);
     }
 
   }

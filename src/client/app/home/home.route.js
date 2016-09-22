@@ -16,7 +16,7 @@
       {
         state: 'home',
         config: {
-          url: '/',
+          url: '/home',
           templateUrl: 'app/home/home.html',
           controller: 'HomeController',
           controllerAs: 'vm',
@@ -24,6 +24,14 @@
           settings: {
             nav: 1,
             content: '<i class="fa fa-dashboard"></i> Home'
+          },
+          resolve: {
+            loggedin: [
+              'identityservice', function(identityservice) {
+                return identityservice.isAuthenticated();
+              }
+            ]
+            
           }
         }
       }

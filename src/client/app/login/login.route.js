@@ -16,7 +16,7 @@
       {
         state: 'login',
         config: {
-          url: '/login',
+          url: '/',
           templateUrl: 'app/login/login.html',
           controller: 'LoginController',
           controllerAs: 'vm',
