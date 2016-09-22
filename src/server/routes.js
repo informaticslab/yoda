@@ -15,7 +15,7 @@ var primaryStopWords = require('stopwords').english;
 var index = 'prepared_responses_alias';  //using index alias
 var type = 'prepared_responses';
 var logicalOperator = 'or';
-var min_score = 0.13  ;
+var min_score = 0.1  ;
 var tie_breaker = 0.3;
 
 //var primaryStopWords = ['how','do','i','what','can','get','are','where','does','from','cause','my','out','have'];
@@ -290,7 +290,7 @@ function fuzzySearch3(req, res, next) {  //full body
             }
           }
         },
-        "min_score": min_score,
+        //"min_score": min_score,
         "query": {
           "bool": {
             "should": [
@@ -300,75 +300,137 @@ function fuzzySearch3(req, res, next) {  //full body
              //  multi_match_snippet_fuzzy,
              //  match_field_query,
              //  match_field_response,
-             //   { "multi_match": {
-             //      "query": req.params.query,
-             //      "type": "most_fields",
-             //      "fields": ["query", "response"],
-             //      "tie_breaker": tie_breaker,
-             //      "minimum_should_match": "100%",
-             //      "operator" : "or"
-             //    }
-             //  },
-              {
-                "match": {
-                  "query": { // name of seach field
-                    query: req.params.query,
-                    fuzziness: 1,
-                    prefix_length: 1,
-                    "operator" : "or",
-                    "minimum_should_match": "100%"
-                    //    "boost" : 4
-                  }
+               { "multi_match": {
+                  "query": req.params.query,
+                  "type": "best_fields",
+                  "fields": ["query", "response","query.en", "response.en"],
+                  //"tie_breaker": tie_breaker,
+                  //"minimum_should_match": "100%",
+                  //fuzziness: 1,
+                  //prefix_length: 1,
+                  "operator" : "and",
+                  "boost" : 3
                 }
               },
-              {
-                "match": {
-                  "response": { // name of seach field
-                    query: req.params.query,
-                    fuzziness: 1,
-                    prefix_length: 1,
-                    "operator" : "or",
-                    "minimum_should_match": "100%"
-                  }
+              { "multi_match": {
+                  "query": req.params.query,
+                  "type": "most_fields",
+                  "fields": ["query", "response","query.en", "response.en"],
+                  //"tie_breaker": tie_breaker,
+                  //"minimum_should_match": "100%",
+                  //fuzziness: 1,
+                  //prefix_length: 1,
+                  "operator" : "and",
+                  "boost" : 3
                 }
               },
-              {
-                "match": {
-                  "query": { // name of seach field
-                    query: req.params.query,
-                    "operator" : "or",
-                    "minimum_should_match": "40%"
-                    //    "boost" : 4
-                  }
+              { //high powered lines
+                  "multi_match": {
+                  "query":preProcessTerms2,
+                  "type": "cross_fields",
+                  "fields": ["query", "response","query.en", "response.en"],
+                  //"tie_breaker": tie_breaker,
+                  //"minimum_should_match": "33%",
+                  //fuzziness: 1,
+                  //prefix_length: 1,
+                  "operator" : "and",
+                  "boost" : 2
                 }
               },
-              {
-                "match": {
-                  "response": { // name of seach field
-                    query: req.params.query,
-                    "operator" : "or",
-                    "minimum_should_match": "40%"
-                  }
+              {//high powered lines dangerous
+                 "multi_match": {
+                  "query":preProcessTerms2,
+                  "type": "cross_fields",
+                  "fields": ["query", "response","query.en", "response.en"],
+                  //"tie_breaker": tie_breaker,
+                  "minimum_should_match": "66%",
+                  //fuzziness: 1,
+                  //prefix_length: 1,
+                  "operator" : "or",
+                  //"boost" : 1
                 }
               },
-              {
-                "match": {
-                  "query": { // name of seach field
-                    query: preProcessTerms,
-                    "operator" : "and",
-                    "boost" :2
-                  }
-                }
-              },
-              {
-                "match": {
-                  "response": { // name of seach field
-                    query: preProcessTerms,
-                    "operator" : "and",
-                    "boost" :2
-                  }
-                }
-              }
+              // {
+              //   "match": {
+              //     "query": { // name of seach field
+              //       query: req.params.query,
+              //       fuzziness: 1,
+              //       prefix_length: 1,
+              //       //"operator" : "or",
+              //       //"minimum_should_match": "100%",
+              //       "operator": "and",
+              //       //"boost" : 1
+              //     }
+              //   }
+              // },
+              // {
+              //   "match": {
+              //     "response": { // name of seach field
+              //       query: req.params.query,
+              //       fuzziness: 1,
+              //       prefix_length: 1,
+              //       //"operator" : "or",
+              //       //"minimum_should_match": "100%",
+              //       "operator": "and",
+              //       //"boost" : 1
+              //     }
+              //   }
+              // },
+              // {
+              //   "match": {
+              //     "query": { // name of seach field
+              //       query: req.params.query,
+              //       "operator" : "or",
+              //       "minimum_should_match": "40%"
+              //       //    "boost" : 4
+              //     }
+              //   }
+              // },
+              // {
+              //   "match": {
+              //     "response": { // name of seach field
+              //       query: req.params.query,
+              //       "operator" : "or",
+              //       "minimum_should_match": "40%"
+              //     }
+              //   }
+              // },
+              // {
+              //   "match": {
+              //     "query": { // name of seach field
+              //       query: preProcessTerms,
+              //       "operator" : "and",
+              //       //"boost" :1
+              //     }
+              //   }
+              // },
+              // {
+              //   "match": {
+              //     "response": { // name of seach field
+              //       query: preProcessTerms,
+              //       "operator" : "and",
+              //       //"boost" :1
+              //     }
+              //   }
+              // },
+              // {
+              //   "match": {
+              //     "query": { // name of seach field
+              //       query: preProcessTerms2,
+              //       "operator" : "or",
+              //       //"boost" :1
+              //     }
+              //   }
+              // },
+              // {
+              //   "match": {
+              //     "response": { // name of seach field
+              //       query: preProcessTerms2,
+              //       "operator" : "or",
+              //       //"boost" :1
+              //     }
+              //   }
+              // }
 
               //{ "wildcard":
               //{ "query":  "*"+req.params.query+"*"
@@ -380,7 +442,7 @@ function fuzzySearch3(req, res, next) {  //full body
           }
         },
         size: 1000,
-        explain: false      //set to 'true' for testing only
+        explain: true      //set to 'true' for testing only
       }
     })
     .then(function(results) {
@@ -423,30 +485,149 @@ function termSearch(req, res, next) {
 function getQuestions(req, res, next) {
   var searchTerm = req.params.query;
   searchTerm = searchTerm.toLowerCase();
+
+  var preProcessTerms = preProcessSearch(searchTerm);
+  console.log('GQ nlp ' ,preProcessTerms);
+  var preProcessTerms2 = preProcessSearch2(searchTerm);
+  console.log('GQ stopword ' ,preProcessTerms2);
+
+
   client.search({
     index: index,
     body: {
        //query: { "wildcard": { query: "*"+searchTerm+"*"} }
     "size": 20,
     //"min_score":.2,
-    "query": {
-    "bool": {
-      "should": [
-        { "wildcard": { "query":  "*"+searchTerm+"*"}},
-        {
-          "match": {
-            "query": { // name of seach field
-              query: searchTerm,
-              fuzziness: 2,
-              prefix_length: 1
-            }
+  //   "query": {
+  //   "bool": {
+  //     "should": [
+  //       { "wildcard": { "query":  "*"+searchTerm+"*"}},
+  //       {
+  //         "match": {
+  //           "query": { // name of seach field
+  //             query: searchTerm,
+  //             fuzziness: 2,
+  //             prefix_length: 1
+  //           }
+  //         }
+  //       },
+
+  //         { "match_phrase": { "query":  searchTerm   }}
+  //     ]
+  //   }
+  // }
+          "query": {
+          "bool": {
+            "should": [
+              // { "match_phrase": { "query":  req.params.query}},
+              // { "match_phrase": { "response":  req.params.query}},
+             //  multi_match_snippet,
+             //  multi_match_snippet_fuzzy,
+             //  match_field_query,
+             //  match_field_response,
+               { "multi_match": {
+                  "query": searchTerm,
+                  "type": "best_fields",
+                  "fields": ["query", "response"],
+                  //"tie_breaker": tie_breaker,
+                  //"minimum_should_match": "100%",
+                  //fuzziness: 1,
+                  //prefix_length: 1,
+                  "operator" : "and",
+                  "boost" : 2
+                }
+              },
+              {
+                "match": {
+                  "query": { // name of seach field
+                    query: searchTerm,
+                    fuzziness: 1,
+                    prefix_length: 1,
+                    //"operator" : "or",
+                    //"minimum_should_match": "100%",
+                    "operator": "and",
+                    //"boost" : 1
+                  }
+                }
+              },
+              {
+                "match": {
+                  "response": { // name of seach field
+                    query: searchTerm,
+                    fuzziness: 1,
+                    prefix_length: 1,
+                    //"operator" : "or",
+                    //"minimum_should_match": "100%",
+                    "operator": "and",
+                    //"boost" : 1
+                  }
+                }
+              },
+              // {
+              //   "match": {
+              //     "query": { // name of seach field
+              //       query: req.params.query,
+              //       "operator" : "or",
+              //       "minimum_should_match": "40%"
+              //       //    "boost" : 4
+              //     }
+              //   }
+              // },
+              // {
+              //   "match": {
+              //     "response": { // name of seach field
+              //       query: req.params.query,
+              //       "operator" : "or",
+              //       "minimum_should_match": "40%"
+              //     }
+              //   }
+              // },
+              // {
+              //   "match": {
+              //     "query": { // name of seach field
+              //       query: preProcessTerms,
+              //       "operator" : "and",
+              //       //"boost" :1
+              //     }
+              //   }
+              // },
+              // {
+              //   "match": {
+              //     "response": { // name of seach field
+              //       query: preProcessTerms,
+              //       "operator" : "and",
+              //       //"boost" :1
+              //     }
+              //   }
+              // },
+              // {
+              //   "match": {
+              //     "query": { // name of seach field
+              //       query: preProcessTerms2,
+              //       "operator" : "or",
+              //       //"boost" :1
+              //     }
+              //   }
+              // },
+              // {
+              //   "match": {
+              //     "response": { // name of seach field
+              //       query: preProcessTerms2,
+              //       "operator" : "or",
+              //       //"boost" :1
+              //     }
+              //   }
+              // }
+
+              //{ "wildcard":
+              //{ "query":  "*"+req.params.query+"*"
+              //
+              //}
+              //},
+
+            ]
           }
         },
-
-          { "match_phrase": { "query":  searchTerm   }}
-      ]
-    }
-  }
   }
   })
   .then(function(results) {
