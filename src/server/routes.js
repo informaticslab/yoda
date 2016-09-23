@@ -343,26 +343,26 @@ function fuzzySearch3(req, res, next) {  //full body
                   "type": "cross_fields",
                   "fields": ["query", "response","query.en", "response.en"],
                   //"tie_breaker": tie_breaker,
-                  "minimum_should_match": "66%",
+                  "minimum_should_match": "2<67%",
                   //fuzziness: 1,
                   //prefix_length: 1,
                   "operator" : "or",
                   //"boost" : 1
                 }
               },
-              // {
-              //   "match": {
-              //     "query": { // name of seach field
-              //       query: req.params.query,
-              //       fuzziness: 1,
-              //       prefix_length: 1,
-              //       //"operator" : "or",
-              //       //"minimum_should_match": "100%",
-              //       "operator": "and",
-              //       //"boost" : 1
-              //     }
-              //   }
-              // },
+              {
+                "match": {
+                  "query": { // name of seach field
+                    query: preProcessTerms2,
+                    fuzziness: "auto",
+                    //prefix_length: 1,
+                    //"operator" : "or",
+                    "minimum_should_match": "2<67%",
+                    "operator": "or",
+                    "boost" : 2
+                  }
+                }
+              },
               // {
               //   "match": {
               //     "response": { // name of seach field
@@ -486,10 +486,10 @@ function getQuestions(req, res, next) {
   var searchTerm = req.params.query;
   searchTerm = searchTerm.toLowerCase();
 
-  var preProcessTerms = preProcessSearch(searchTerm);
-  console.log('GQ nlp ' ,preProcessTerms);
-  var preProcessTerms2 = preProcessSearch2(searchTerm);
-  console.log('GQ stopword ' ,preProcessTerms2);
+  // var preProcessTerms = preProcessSearch(searchTerm);
+  // console.log('GQ nlp ' ,preProcessTerms);
+  // var preProcessTerms2 = preProcessSearch2(searchTerm);
+  // console.log('GQ stopword ' ,preProcessTerms2);
 
 
   client.search({
