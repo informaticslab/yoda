@@ -81,7 +81,10 @@ function retrievePrToFile(nextUrl){
 
   httpClient.get(serviceUrl, function (data, response) {
     // parsed response body as js object
-    pagination = data.meta.pagination;
+    if(Buffer.isBuffer(data)){
+      data = data.toString('utf8');
+    }
+   pagination = data.meta.pagination;
     //prCount = data.meta.pagination.total;
     currentUrl = data.meta.pagination.currentUrl;
     nextUrl = data.meta.pagination.nextUrl;
@@ -132,6 +135,7 @@ function syncPrSingle() {
 
   try {
     content = fs.readFileSync(PRfile).toString().split('\n');
+    content = content.filter(function(line) {return line !==''})
     content.forEach(function(listItem, index){
       if (listItem != '') {
         var obj = JSON.parse(listItem);
