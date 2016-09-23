@@ -497,72 +497,80 @@ function getQuestions(req, res, next) {
     body: {
        //query: { "wildcard": { query: "*"+searchTerm+"*"} }
     "size": 20,
-    //"min_score":.2,
-  //   "query": {
-  //   "bool": {
-  //     "should": [
-  //       { "wildcard": { "query":  "*"+searchTerm+"*"}},
-  //       {
-  //         "match": {
-  //           "query": { // name of seach field
-  //             query: searchTerm,
-  //             fuzziness: 2,
-  //             prefix_length: 1
-  //           }
-  //         }
-  //       },
+    "min_score":.2,
+    "query": {
+    "bool": {
+      "should": [
+        //{ "wildcard": { "query":  "*"+searchTerm+"*"}},
+        {
+          "match": {
+            "query": { // name of seach field
+              query: searchTerm,
+              boost:2
+            }
+          }
+        },
+                {
+          "match": {
+            "query": { // name of seach field
+              query: searchTerm,
+              fuzziness: "auto",
+              //prefix_length: 0
+            }
+          }
+        },
 
-  //         { "match_phrase": { "query":  searchTerm   }}
-  //     ]
-  //   }
-  // }
-          "query": {
-          "bool": {
-            "should": [
-              // { "match_phrase": { "query":  req.params.query}},
-              // { "match_phrase": { "response":  req.params.query}},
-             //  multi_match_snippet,
-             //  multi_match_snippet_fuzzy,
-             //  match_field_query,
-             //  match_field_response,
-               { "multi_match": {
-                  "query": searchTerm,
-                  "type": "best_fields",
-                  "fields": ["query", "response"],
-                  //"tie_breaker": tie_breaker,
-                  //"minimum_should_match": "100%",
-                  //fuzziness: 1,
-                  //prefix_length: 1,
-                  "operator" : "and",
-                  "boost" : 2
-                }
-              },
-              {
-                "match": {
-                  "query": { // name of seach field
-                    query: searchTerm,
-                    fuzziness: 1,
-                    prefix_length: 1,
-                    //"operator" : "or",
-                    //"minimum_should_match": "100%",
-                    "operator": "and",
-                    //"boost" : 1
-                  }
-                }
-              },
-              {
-                "match": {
-                  "response": { // name of seach field
-                    query: searchTerm,
-                    fuzziness: 1,
-                    prefix_length: 1,
-                    //"operator" : "or",
-                    //"minimum_should_match": "100%",
-                    "operator": "and",
-                    //"boost" : 1
-                  }
-                }
-              },
+          //{ "match_phrase": { "query":  searchTerm   }}
+      ]
+    }
+  }
+          // "query": {
+          // "bool": {
+          //   "should": [
+          //     // { "match_phrase": { "query":  req.params.query}},
+          //     // { "match_phrase": { "response":  req.params.query}},
+          //    //  multi_match_snippet,
+          //    //  multi_match_snippet_fuzzy,
+          //    //  match_field_query,
+          //    //  match_field_response,
+          //      { "multi_match": {
+          //         "query": searchTerm,
+          //         "type": "best_fields",
+          //         "fields": ["query", "response"],
+          //         //"tie_breaker": tie_breaker,
+          //         //"minimum_should_match": "100%",
+          //         //fuzziness: 1,
+          //         //prefix_length: 1,
+          //         "operator" : "and",
+          //         "boost" : 2
+          //       }
+          //     },
+          //     {
+          //       "match": {
+          //         "query": { // name of seach field
+          //           query: searchTerm,
+          //           fuzziness: 1,
+          //           prefix_length: 1,
+          //           //"operator" : "or",
+          //           //"minimum_should_match": "100%",
+          //           "operator": "and",
+          //           //"boost" : 1
+          //         }
+          //       }
+          //     },
+          //     {
+          //       "match": {
+          //         "response": { // name of seach field
+          //           query: searchTerm,
+          //           fuzziness: 1,
+          //           prefix_length: 1,
+          //           //"operator" : "or",
+          //           //"minimum_should_match": "100%",
+          //           "operator": "and",
+          //           //"boost" : 1
+          //         }
+          //       }
+          //     },
               // {
               //   "match": {
               //     "query": { // name of seach field
@@ -625,9 +633,9 @@ function getQuestions(req, res, next) {
               //}
               //},
 
-            ]
-          }
-        },
+        //     ]
+        //   }
+        // },
   }
   })
   .then(function(results) {
