@@ -1,3 +1,9 @@
+//read me
+// expected parameters
+// process.argv[2] = 'a' for "all"  or 's' for "single"
+// process.argv[3] = id from syndication engine or PR id from prms  to be determined
+// process.argv[4] = mode of operation  ['update','delete','create']  default to create if mode = 'a'
+
 var restClient = require('node-rest-client').Client;
 var es = require('elasticsearch');
 var esClient = new es.Client({
@@ -25,20 +31,49 @@ var tempIndex =  {
 
 var baseUrl = "https://prototype.cdc.gov/api/v2/resources";
 var service = "media";
-var prKey = "164608";
+var topicId = "12392";
+var prKey = "164611";
 var prContent = "content";
-var serviceUrl = baseUrl+'/'+service+"/"+prKey;
+var singlePrServiceUrl = baseUrl+'/'+service+"/";
+var allPrsServiceUrl = baseUrl+'/'+service+'?topicid='+topicId+'&max=0';
+var serviceUrl = allPrsServiceUrl;
+var mode = 'create' ;
 
 var fd = fs.openSync(path.join(process.cwd(), PRfile), 'a')
 
+if (process.argv[2]) {
+  if (process.argv[2] == 's') {
+    console.log('processing single PR')
+    if (!isNaN(process.argv[3])) {
+      serviceUrl = singlePrServiceUrl + process.argv[3];
+      mode = process.argv[4];
+      retrievePrToFile()
+        .then(switchIndex)
+        .then(syncPrSingle)
+      //.then(confirmInsert)
+      //.then(reindex)
+      //.then(switchIndex);
+    }
+    else {
+      console.log('invalid request parameter for single pr');
+    }
+  }
+  else if (process.argv[2] == 'a') {
+    console.log('processing all pr');
+    retrievePrToFile()
+      .then(switchIndex)
+      .then(deleteAllDoc)
+      .then(syncPrSingle)
+    //.then(confirmInsert)
+    //.then(reindex)
+    //.then(switchIndex);
+  }
 
-retrievePrToFile()
-  .then(switchIndex)
-  .then(deleteAllDoc)
-  .then(syncPrSingle)
-  //.then(confirmInsert)
-  //.then(reindex)
-  //.then(switchIndex);
+}
+
+
+
+
 
 
 function retrievePrToFile(nextUrl){
@@ -58,7 +93,7 @@ function retrievePrToFile(nextUrl){
           id: obj.id,
           prId: obj.extendedAttributes.PrId,
           number: obj.Number,
-          dateModified: obj.extendedAttributes.LastUpdateDate,
+          dateModified: new Date(obj.extendedAttributes.LastUpdateDate).toISOString(),
           query: obj.name,
           response: obj.description,
           category: obj.extendedAttributes.Category,
@@ -74,11 +109,11 @@ function retrievePrToFile(nextUrl){
           topic: obj.extendedAttributes.Topic,
           tier: obj.extendedAttributes.Audience
         }
-        fs.writeSync(fd,JSON.stringify(recipe));
+        fs.writeSync(fd,JSON.stringify(recipe)+'\n');
         console.log('saving PR '+recipe.prId);
     }
 
-    if (nextUrl != ''){
+    if (nextUrl){
       retrievePrToFile(nextUrl);
     }
     else {
@@ -91,7 +126,7 @@ function retrievePrToFile(nextUrl){
 
 function syncPrSingle() {
   //var PRfile = 'PRfile_2016_08_29T18_26_44_586Z';
-  var PRfile = 'cdcinfo_dev_data_single_lines.json';
+  //var PRfile = 'cdcinfo_dev_data_single_lines.json';
   var deferred = Q.defer();
   var content;
 
@@ -100,30 +135,60 @@ function syncPrSingle() {
     content.forEach(function(listItem, index){
       if (listItem != '') {
         var obj = JSON.parse(listItem);
+        if (mode == 'update') {
+          esClient.index({
+              'index': mainIndex.index,
+              'type': mainIndex.type,
+              'id': obj.id,
+              'body': obj,
+              'refresh' : true
+            }, function (err, updateResult) {
+              if (err) {
+                deferred.reject();
+                console.log('update PR ' + obj.prId + ' failed.  Reason:' + err.message)
+              }
+              if (updateResult) {
+                prCount++;
+                checkInsertCompleted(content.length);
 
-        esClient.create({
-          'index': mainIndex.index,
-          'type': mainIndex.type,
-          'id': obj.id,
-          'body': obj
-        }, function (err, insertResult) {
-          if (err) {
-            deferred.reject('Insert PR '+ obj.prId + ' failed');
-            console.log('Insert PR '+ obj.prId + ' failed')
-          }
-          if (insertResult) {
-            prCount++;
-            checkInsertCompleted(content.length);
-
-            if (obj.id != insertResult._id) {
-              console.log('insert PR ' + obj.prId + ' failed');
+                if (obj.id != updateResult._id) {
+                  console.log('update PR ' + obj.prId + ' failed');
+                }
+                else {
+                  console.log('updated PR ' + obj.prId);
+                }
+              }
             }
-            else {
-              console.log('inserted PR ' + obj.prId );
-            }
-          }
+          );
         }
-      );
+        if (mode =='remove') {
+           // tobe implement
+        }
+        if (mode == 'create') {
+          esClient.create({
+              'index': mainIndex.index,
+              'type': mainIndex.type,
+              'id': obj.id,
+              'body': obj
+            }, function (err, insertResult) {
+              if (err) {
+                deferred.reject();
+                console.log('Insert PR ' + obj.prId + ' failed.  Reason:' + err.message)
+              }
+              if (insertResult) {
+                prCount++;
+                checkInsertCompleted(content.length);
+
+                if (obj.id != insertResult._id) {
+                  console.log('insert PR ' + obj.prId + ' failed');
+                }
+                else {
+                  console.log('inserted PR ' + obj.prId);
+                }
+              }
+            }
+          );
+        }
     }
     });
 
