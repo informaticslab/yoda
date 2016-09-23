@@ -405,6 +405,13 @@ margin:0;
     height: 40px;
 }
 
+.spin-body{
+    background-color: white;
+    min-height: 200px;
+  
+    width:100%;
+}
+
 /*#region Angular ng-include, ng-view, ng-repeat shuffle animations*/
 
 .shuffle-animation.ng-enter,

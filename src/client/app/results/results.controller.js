@@ -5,9 +5,9 @@
     .module('app.results')
     .controller('ResultsController', ResultsController);
 
-  ResultsController.$inject = ['logger', '$scope', '$state', '$stateParams', 'dataservice', '$q', '$location', '$anchorScroll'];
+  ResultsController.$inject = ['logger', '$scope', '$state', '$stateParams', 'dataservice', '$q', '$location', '$anchorScroll', '$rootScope'];
   /* @ngInject */
-  function ResultsController(logger, $scope, $state, $stateParams, dataservice, $q, $location, $anchorScroll) {
+  function ResultsController(logger, $scope, $state, $stateParams, dataservice, $q, $location, $anchorScroll, $rootScope) {
     var vm = this;
     vm.title = 'Results';
     vm.searchString = $stateParams.searchString;
@@ -18,8 +18,11 @@
     vm.pageSize = 5;
     vm.noResults = false;
     vm.reverse = true;
+    vm.personPhrase = 'person likes this';
+    vm.peoplePhrase = 'people like this';
     vm.sortKey='-_score';
     vm.secondarySort = '-_score';
+
     vm.sortOptions =[
       {
         'option' : 'dateModified',
@@ -71,27 +74,32 @@
     activate();
 
     function activate() {
+      $rootScope.isBusy = true;
       var promises = [search(vm.searchString)];
       return $q.all(promises).then(function(){
         // logger.info('Activated Results View');
+        $rootScope.isBusy = false;
       });
     }
 
     function search(searchString) {
-      return dataservice.doSearch(searchString).then(function(data){
-        vm.suggestionArray = data.suggestions;
-        vm.resultsArray = data.hits;
-        vm.resultsArray.forEach(function(result) {
-          if (result._source.featuredRanking > 0) {
-            vm.featuredArray.push(result);
+      
+      return dataservice.doSearch(searchString)
+        .then(function(data){
+          vm.suggestionArray = data.suggestions;
+          vm.resultsArray = data.hits;
+          vm.resultsArray.forEach(function(result) {
+            if (result._source.featuredRanking > 0) {
+              vm.featuredArray.push(result);
+            }
+          });
+      //    console.log(vm.featuredArray);
+            vm.sortOptions[1].notAvailable = (vm.featuredArray.length ===0);
+          if (vm.resultsArray.length === 0){
+            vm.noResults = true;
           }
+          
         });
-    //    console.log(vm.featuredArray);
-          vm.sortOptions[1].notAvailable = (vm.featuredArray.length ===0);
-        if (vm.resultsArray.length === 0){
-          vm.noResults = true;
-        }
-      });
     }
 
   }

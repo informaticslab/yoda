@@ -10,6 +10,8 @@
   function ShellController($rootScope, $timeout, config, logger) {
     var vm = this;
     vm.busyMessage = 'Please wait ...';
+    $rootScope.isBusy = false;
+
     // vm.isBusy = true;
     // $rootScope.showSplash = true;
     

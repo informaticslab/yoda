@@ -1,116 +1,112 @@
 <section id='results-view' class="mainbar">
-
-  <div class="row">
+  <div class="row" ng-if="!isBusy">
     <div class="col-lg-9 col-md-8 col-sm-12 search-results">
       <div ng-if="vm.noResults">No results found for <strong>{{vm.searchString}}</strong></div>
       <div ng-if="!vm.noResults"><dir-pagination-controls template-url="/template/dirPaginationRange.tpl.html"></dir-pagination-controls>results for <strong>{{vm.searchString}}</strong></div>
     </div>
     <div class="col-lg-3 col-md-4 col-sm-12 search-results2">
-
       <div class="btn-group" ng-if="!vm.noResults">
         <!--<button class="btn btn-default btn-xs dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">-->
         <!--Sort by <span class="caret"></span>-->
         <!--</button>-->
         <!--<ul class="dropdown-menu">-->
-          <!--<li><a href="#" ng-click="vm.sort('dateModified')">Most Recent</a></li>-->
-          <!--<li><a href="#" ng-click="vm.sort('relevant')">Most Popular (Placeholder)</a></li>-->
-          <!--<li><a href="#" ng-click="vm.sort('featuredRanking')">Featured</a></li>-->
+        <!--<li><a href="#" ng-click="vm.sort('dateModified')">Most Recent</a></li>-->
+        <!--<li><a href="#" ng-click="vm.sort('relevant')">Most Popular (Placeholder)</a></li>-->
+        <!--<li><a href="#" ng-click="vm.sort('featuredRanking')">Featured</a></li>-->
         <!--</ul>-->
         <label>Sort By</label>
-          <select ng-model=vm.sortOption ng-options="option as option.label disable when option.notAvailable for option in vm.sortOptions" ng-change="vm.sort(vm.sortOption.option)">
+        <select ng-model=vm.sortOption ng-options="option as option.label disable when option.notAvailable for option in vm.sortOptions" ng-change="vm.sort(vm.sortOption.option)">
         </select>
       </div>
     </div>
   </div>
-
-<!--   <div class="row"  ng-if="vm.suggestionArray[0].options.length > 0">
- -->
-<!--   <div class="row"  ng-if="vm.resultsArray.length==0 && vm.suggestionArray[0].options.length > 0">
->>>>>>> Stashed changes
-    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 left-filterss2">
-      <label>Did you mean:
-            <label ng-repeat="option in vm.suggestionArray[0].options | limitTo:5" >
-              <a ui-sref="results({searchString: option.text})">{{option.text}}</a>
-              <span ng-show="!$last" >,</span>
-              &nbsp;
-            </label>?
+  <!--   <div class="row"  ng-if="vm.suggestionArray[0].options.length > 0">
+    -->
+    <!--   <div class="row"  ng-if="vm.resultsArray.length==0 && vm.suggestionArray[0].options.length > 0">
+      >>>>>>> Stashed changes
+      <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 left-filterss2">
+        <label>Did you mean:
+          <label ng-repeat="option in vm.suggestionArray[0].options | limitTo:5" >
+            <a ui-sref="results({searchString: option.text})">{{option.text}}</a>
+            <span ng-show="!$last" >,</span>
+            &nbsp;
+          </label>?
         </label>
+      </div>
+    </div> -->
+    <div class="row" ng-if="vm.noResults">
+      <div class="col-lg-12">
+        <br>
+        <p>Here are a few suggestions:</p>
+        <ul>
+          <li ng-if="vm.resultsArray.length==0 && vm.suggestionArray[0].options.length > 0">Did you mean to search for <a ui-sref="results({searchString: vm.suggestionArray[0].options[0].text})">{{vm.suggestionArray[0].options[0].text}}</a>?</li>
+          <li>Verify all words are spelled correctly.</li>
+          <li>Try using different keywords.</li>
+          <li>Try fewer keywords.</li>
+          <li>Try more general keywords.</li>
+        </ul>
+        <br>
+      </div>
     </div>
-  </div> -->
-  <div class="row" ng-if="vm.noResults">
-    <div class="col-lg-12">
-    <br>
-    <p>Here are a few suggestions:</p>
-    <ul>
-      <li ng-if="vm.resultsArray.length==0 && vm.suggestionArray[0].options.length > 0">Did you mean to search for <a ui-sref="results({searchString: vm.suggestionArray[0].options[0].text})">{{vm.suggestionArray[0].options[0].text}}</a>?</li>
-      <li>Verify all words are spelled correctly.</li>
-      <li>Try using different keywords.</li>
-      <li>Try fewer keywords.</li>
-      <li>Try more general keywords.</li>
-    </ul>
-    <br>
-    </div>
-  </div>
+
   <div class="row" ng-if="!vm.noResults">
-  <hr>
-    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 left-filters2">
-      <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
-        <div class="panel panel-default">
-          <div class="panel-heading" role="tab" id="headingOne">
-            <h4 class="panel-title">
-            <i class="indicator glyphicon glyphicon-plus-sign pull-left"></i>&nbsp;&nbsp;<a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">Refine by (Placeholder)
-            </a>
-            </h4>
-          </div>
-          <div id="collapseOne" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
-            <div class="panel-body">
-              <!-- AUDIENCE -->
-              <!--<div class="radio cb-group">-->
+      <div class="spin-body" ng-if='isBusy'></div>
+      <hr ng-if='!isBusy'>
+      <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 left-filters2" ng-if='!isBusy'>
+        <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+          <div class="panel panel-default">
+            <div class="panel-heading" role="tab" id="headingOne">
+              <h4 class="panel-title">
+              <i class="indicator glyphicon glyphicon-plus-sign pull-left"></i>&nbsp;&nbsp;<a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">Refine by (Placeholder)
+              </a>
+              </h4>
+            </div>
+            <div id="collapseOne" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
+              <div class="panel-body">
+                <!-- AUDIENCE -->
+                <!--<div class="radio cb-group">-->
                 <!--<strong>Audience</strong>-->
                 <!--<br>-->
                 <!--<label>-->
-                  <!--<input type="radio" name="optionsRadios" id="optionsRadios1" value="option1">For everyone</label>-->
-                  <!--<br>-->
-                  <!--<label>-->
-                    <!--<input type="radio" name="optionsRadios" id="optionsRadios2" value="option2">For the public</label>-->
-                    <!--<br>-->
-                    <!--<label>-->
-                      <!--<input type="radio" name="optionsRadios" id="optionsRadios3" value="option3">For health care professionals</label>-->
-                    <!--</div>-->
-
-                  </div>
-                </div>
+                <!--<input type="radio" name="optionsRadios" id="optionsRadios1" value="option1">For everyone</label>-->
+                <!--<br>-->
+                <!--<label>-->
+                <!--<input type="radio" name="optionsRadios" id="optionsRadios2" value="option2">For the public</label>-->
+                <!--<br>-->
+                <!--<label>-->
+                <!--<input type="radio" name="optionsRadios" id="optionsRadios3" value="option3">For health care professionals</label>-->
+                <!--</div>-->
               </div>
             </div>
           </div>
-          <div class="col-lg-3 col-md-3 col-sm-4 left-filters">
-            <h4>Refine by (Placeholder)</h4>
-
-            <!-- AUDIENCE -->
-            <div class="radio cb-group">
-              <strong>Audience</strong>
-              <br>
-              <label>
-                <input type="radio" name="optionsRadios" ng-model = "vm.filterOption" value="all" ng-change="vm.filter(vm.filterOption)">For everyone</label>
-              <br>
-              <label>
-                <input type="radio" name="optionsRadios"  ng-model = "vm.filterOption" value="public" ng-change="vm.filter(vm.filterOption)">For the public</label>
+        </div>
+      </div>
+      <div class="col-lg-3 col-md-3 col-sm-4 left-filters" ng-if='!isBusy'>
+        <h4>Refine by (Placeholder)</h4>
+        <!-- AUDIENCE -->
+        <div class="radio cb-group">
+          <strong>Audience</strong>
+          <br>
+          <label>
+            <input type="radio" name="optionsRadios" ng-model = "vm.filterOption" value="all" ng-change="vm.filter(vm.filterOption)">For everyone</label>
+            <br>
+            <label>
+              <input type="radio" name="optionsRadios"  ng-model = "vm.filterOption" value="public" ng-change="vm.filter(vm.filterOption)">For the public</label>
               <br>
               <label>
                 <input type="radio" name="optionsRadios" ng-model = "vm.filterOption" value="professional" ng-change="vm.filter(vm.filterOption)">For health care professionals</label>
-                  </div>
-
-                </div>
-                <div class="col-lg-9 col-md-9 col-sm-8 col-xs-12 right-results ">
-                  <div class="indv-results" dir-paginate='result in vm.resultsArray | filter: (!vm.disableFilter || "") &&  {_source : {tier : vm.filterOption}} |orderBy :[vm.sortKey,vm.secondarySort]| itemsPerPage: vm.pageSize' current-page='vm.currentPage'>
-                    <h3><a ui-sref='details({id: result._source.id})'>{{result._source.query}}</a>&nbsp;<span ng-if="result._source.featuredRanking>0" class="glyphicon glyphicon-star" style="color:gold; vertical-align: middle;margin-top:-4px"></span> <span class="liked" ng-if='result._source.liked'>({{result._source.liked}} people like this)</span></h3>
-                    {{result._source.response | limitTo: 256}}...
-                    <br>
-                    <i>ID:{{result._source.id}}</i>
-                    <br>
-                    <span class="date-color">Content last updated: {{result._source.dateModified | date}}</span>
-                  </div>
-                  <dir-pagination-controls on-page-change='vm.toTop("top")'  boundary-links='true'></dir-pagination-controls>
-                </div>
+        </div>
+      </div>
+            <div class="col-lg-9 col-md-9 col-sm-8 col-xs-12 right-results ">
+              <div class="indv-results" dir-paginate='result in vm.resultsArray | filter: (!vm.disableFilter || "") &&  {_source : {tier : vm.filterOption}} |orderBy :[vm.sortKey,vm.secondarySort]| itemsPerPage: vm.pageSize' current-page='vm.currentPage'>
+                <h3><a ui-sref='details({id: result._source.id})'>{{result._source.query}}</a>&nbsp;<span ng-if="result._source.featuredRanking>0" class="glyphicon glyphicon-star" style="color:gold; vertical-align: middle;margin-top:-4px"></span> <span class="liked" ng-if='result._source.liked'>({{result._source.liked}} {{result._source.liked > 1 ? vm.peoplePhrase : vm.personPhrase}})</span></h3>
+                {{result._source.response | limitTo: 256}}...
+                <br>
+                <i>ID:{{result._source.id}}</i>
+                <br>
+                <span class="date-color">Content last updated: {{result._source.dateModified | date}}</span>
               </div>
-            </section>
+              <dir-pagination-controls on-page-change='vm.toTop("top")'  boundary-links='true'></dir-pagination-controls>
+            </div>
+  </div>
+</section>
