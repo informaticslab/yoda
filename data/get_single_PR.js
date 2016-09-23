@@ -3,12 +3,19 @@ var es = require('elasticsearch');
 var moment = require('moment');
 var config = require('./elastic.config')();
 var bunyan = require('bunyan');
-var bunyanStreamElasticsearch = require('bunyan-elasticsearch');
+var bunyanStreamElasticsearch = require('bunyan-stream-elasticsearch');
+
 
 var esStream = new bunyanStreamElasticsearch({
   indexPattern: '[logstash-]YYYY.MM.DD',
   type: 'logs',
-  host: 'localhost:9200' 
+  host: 'localhost:9200',
+  defaultTemplate: true
+});
+
+// manage error case
+esStream.on('error', function (err) {
+  console.log('Buyan Stream Elasticsearch Error:', err.stack);
 });
 
 var log = bunyan.createLogger({
@@ -21,7 +28,8 @@ var log = bunyan.createLogger({
       period: '1d',
       count: 2  //keep 2 backups
     }
-  ]
+  ],
+  serializers: bunyan.stdSerializers
 });
 
 var esClient = new es.Client({
@@ -58,9 +66,10 @@ var tempIndex =  {
 
 var baseUrl = "https://prototype.cdc.gov/api/v2/resources";
 var service = "media";
-var prKey = "164608";
+var prKey = "164622";
 var prContent = "content";
-var serviceUrl = baseUrl+'/'+service+"/"+prKey;
+// var serviceUrl = baseUrl+'/'+service+"/"+prKey+'.json';
+var serviceUrl = 'http://prototype.cdc.gov/api/v2/resources/media/164622.json';
 
 var fd = fs.openSync(path.join(process.cwd(), PRfile), 'a')
 
@@ -106,6 +115,7 @@ function retrievePrToFile(nextUrl){
   var deferred = Q.defer();
 
   httpClient.get(serviceUrl, function (data, response) {
+    // console.log(data);
     // parsed response body as js object
     pagination = data.meta.pagination;
     //prCount = data.meta.pagination.total;
@@ -137,7 +147,7 @@ function retrievePrToFile(nextUrl){
         }
         fs.writeSync(fd,JSON.stringify(recipe));
         console.log('Saving PR with ID: '+recipe.prId+ ' to local file');
-        log.info('Saving PR with ID: '+ recipe.prId+ ' to local file');
+        log.info({type:'Success'}, 'Saving PR with ID: '+ recipe.prId+ ' to local file');
     }
 
     if (nextUrl != ''){
@@ -158,7 +168,7 @@ function initIndex() {
   var timestamp = moment().format('X');
   newIndexName = baseIndex.index + '-' + timestamp;
   // console.log('creating new index: ' + newIndexName);
-  log.info('Creating new index: ' + newIndexName);
+  log.info({type:'Success'}, 'Creating new index: ' + newIndexName);
   // console.log(newIndexName);
   return esClient.indices.create({
     index: newIndexName
@@ -172,7 +182,7 @@ exports.initIndex = initIndex;
 */
 function configIndex() {
   var body = config.settings;
-  log.info('Configure index: ' + newIndexName);
+  log.info({type:'Success'}, 'Configure index: ' + newIndexName);
   return esClient.indices.putSettings({
     index: newIndexName,
     type: baseIndex.type,
@@ -184,7 +194,7 @@ function configIndex() {
 * Close index
 */
 function closeIndex() {
-  log.info('Close index: ' + newIndexName);
+  log.info({type:'Success'}, 'Close index: ' + newIndexName);
   return esClient.indices.close({
     index: newIndexName
   });
@@ -195,7 +205,7 @@ function closeIndex() {
 */
 
 function openIndex() {
-  log.info('Open index:' + newIndexName);
+  log.info({type:'Success'}, 'Open index:' + newIndexName);
   return esClient.indices.open({
     index: newIndexName
   });
@@ -205,7 +215,7 @@ function openIndex() {
 * Create mappings for the new index
 */
 function putMappings() {
-  log.info('Apply mappings for: ' + newIndexName);
+  log.info({type:'Success'}, 'Apply mappings for: ' + newIndexName);
   var body = config.mappings;
   return esClient.indices.putMapping({
     index: newIndexName,
@@ -219,7 +229,7 @@ function putMappings() {
 * delete old index
 */
 function deleteOldIndex() {
-  log.info('Deleting old index: ' + oldIndex);
+  log.info({type:'Success'}, 'Deleting old index: ' + oldIndex);
   return esClient.indices.delete({
     index: oldIndex
   });
@@ -239,7 +249,7 @@ function getAlias() {
 */
 function updateAliases() {
   // console.log('update alias');
-  log.info('Update alias from ' + oldIndex + ' to ' + newIndexName);
+  log.info({type:'Success'}, 'Update alias from ' + oldIndex + ' to ' + newIndexName);
 
   return esClient.indices.updateAliases({
     body: {
@@ -259,7 +269,7 @@ function syncPrSingle() {
   // console.log('load data');
   try {
     // console.log('load data');
-    log.info('Data syncronization start');
+    log.info({type:'Info'}, 'Data syncronization start');
     content = fs.readFileSync(PRfile).toString().split('\n');
     content.forEach(function(listItem, index){
       if (listItem != '') {
@@ -274,7 +284,7 @@ function syncPrSingle() {
           if (err) {
             deferred.reject('Insert PR '+ obj.prId + ' failed');
             // console.log('Insert PR '+ obj.prId + ' failed')
-            log.warn('Insert PR '+ obj.prId + ' failed');
+            log.warn({type:'Fail'}, 'Insert PR '+ obj.prId + ' failed');
           }
           if (insertResult) {
             prCount++;
@@ -282,11 +292,11 @@ function syncPrSingle() {
 
             if (obj.id != insertResult._id) {
               // console.log('insert PR ' + obj.prId + ' failed');
-              log.warn('Insert PR '+ obj.prId + ' failed');
+              log.warn({type:'Fail'}, 'Insert PR '+ obj.prId + ' failed');
             }
             else {
               // console.log('inserted PR ' + obj.prId );
-              log.info('Sucessfully inserted PR: ' + obj.prId);
+              log.info({type:'Success'},'Sucessfully inserted PR: ' + obj.prId);
             }
           }
         }
@@ -392,12 +402,12 @@ function confirmInsert() {
   httpClient.get('http://localhost:9200/'+newIndexName+'/_count', function(countData){
     if (countData && countData.count == prCount) {
       // console.log('Insert Confirmed: PR count from db : '+ countData.count + ', PR Count from file: ' + prCount);
-      log.info('Insert Confirmed: PR count from db : '+ countData.count + ', PR Count from file: ' + prCount);
+      log.info({type:'Success'}, 'Insert Confirmed: PR count from db : '+ countData.count + ', PR Count from file: ' + prCount);
       deferred.resolve()
     }
     else {
       console.log('Insert Not Confirmed: PR count from db : '+ countData.count + ', PR Count from file: ' + prCount);
-      log.warn('Insert Not Confirmed: PR count from db : '+ countData.count + ', PR Count from file: ' + prCount);
+      log.warn({type: 'Fail'},'Insert Not Confirmed: PR count from db : '+ countData.count + ', PR Count from file: ' + prCount);
       deferred.reject('Insertion not confirmed')
     }
 

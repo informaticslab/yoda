@@ -12,7 +12,7 @@
     "angular-ui-bootstrap": "^2.0.1",
     "body-parser": "^1.8.2",
     "bunyan": "^1.8.1",
-    "bunyan-elasticsearch": "^1.0.0",
+    "bunyan-stream-elasticsearch": "^0.5.0",
     "elasticsearch": "^11.0.1",
     "elasticsearch-browser": "^11.0.1",
     "express": "^4.9.3",

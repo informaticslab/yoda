@@ -10,19 +10,28 @@
   function AdminController(logger, $scope, dataservice, $q) {
     var vm = this;
     vm.logs = [];
-    vm.logDetails = [];
+    vm.logDetails;
     vm.title = 'Admin';
     vm.pageSize = 50;
     vm.currentPage = 1;
 
-    vm.sortType = '"@timestamp"';
-    vm.sortReverse = true;
+    vm.sortType = '_source.date';
+    vm.reverse = true;
+    vm.sortReverse = false;
     vm.searchLog = '';
+
+    // vm.sortBy = function(sortType) {
+    //   vm.sortReverse = (sortType !== null && vm.sortType === sortType) ? !vm.sortReverse : true;
+    //   vm.sortType = sortType;
+      
+    // }
+
+
 
     activate();
 
     function activate() {
-      var promises = [getAllLogs(), getLogDetails()];
+      var promises = [getAllLogs()];
       return $q.all(promises).then(function(){
       });
     }
@@ -38,9 +47,10 @@
       });
     }
 
-    function getLogDetails() {
-      var test = 'logstash-2016.09.12';
-      return dataservice.getLogDetails(test).then(function(data) {
+    vm.getLogDetails = function(selected){
+      console.log('click');
+      return dataservice.getLogDetails(selected).then(function(data) {
+        console.log(data);
         var hits = data.hits;
         console.log(hits);
         vm.logDetails = hits.hits;  
