@@ -15,6 +15,8 @@
     vm.like = 'like';
     vm.dislike = 'dislike';
     vm.showThanks = false;
+    vm.personPhrase = 'person likes this';
+    vm.peoplePhrase = 'people like this';
 
     vm.ratePreparedResponse = function(type) {
       return dataservice.ratePreparedResponse(type, vm.id).then(function(response){

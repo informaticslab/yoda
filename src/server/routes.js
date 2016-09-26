@@ -11,11 +11,66 @@ var client = new elasticsearch.Client({
 
 var index = 'prepared_responses_alias';  //using index alias
 var type = 'prepared_responses';
+var logicalOperator = 'or';
+var min_score = 0.13  ;
+var tie_breaker = 0.3;
 
+var primaryStopWords = ['how','do','i','what','can','get','are','where','does','from','cause','my','out','have'];
+// var secondaryStopWords = ['prevent'];
+var multi_match_snippet_fuzzy =  {
+  "multi_match": {
+    "query": null,
+    "type": "cross_fields",
+    "fields": ["query", "response"],
+    "tie_breaker": tie_breaker,
+    "minimum_should_match": "100%",
+    "operator" : logicalOperator,
+    "fuzziness" : "2",
+    "prefix_length" : 1
+  }
+};
+
+var multi_match_snippet =  {
+  "multi_match": {
+    "query": null,
+    "type": "cross_fields",
+    "fields": ["query", "response"],
+    "tie_breaker": tie_breaker,
+    "minimum_should_match": "100%",
+    "operator" : logicalOperator
+
+   }
+};
+
+var match_field_query = {
+  "match": {
+    "query": { // name of seach field
+      query: null,
+      fuzziness: 2,
+      prefix_length: 1,
+      "operator" : logicalOperator,
+   //  "boost" : 2
+    }
+  }
+ };
+
+var match_field_response = {
+  "match": {
+    "response": { // name of seach field
+      query: null,
+      fuzziness: 2,
+      prefix_length: 1,
+      "operator" : logicalOperator,
+ //     "boost" : 4
+    }
+  }
+};
 // var index = 'prepared_responses_v2';
 // var type = 'prepared_responses_v2';
 
-
+router.get('/getMostRecent/:maxCount',getMostRecent);
+router.get('/getFeatured/:maxCount',getFeatured);
+router.get('/getCommon/:maxCount',getCommon);
 router.get('/termSearch/:query', termSearch);
 router.get('/getPreparedResponsebyId/:id', getPreparedResponsebyId);
 //router.get('/search/:query', doSearch);
@@ -25,6 +80,7 @@ router.get('/*', four0four.notFoundMiddleware);
 //router.get('/fuzzySearch/:query', fuzzySearch);
 router.post('/updatePositiveRating/:id', updatePositiveRating);
 router.post('/updateNegativeRating/:id', updateNegativeRating);
+
 
 module.exports = router;
 
@@ -209,6 +265,14 @@ function fuzzySearch2(req, res, next) {  //full body
 }
 function fuzzySearch3(req, res, next) {  //full body
   var suggestions = null;
+  var preProcessTerms = preProcessSearch(req.params.query);
+ // console.log(preProcessTerms);
+  multi_match_snippet.multi_match.query = req.params.query;
+  multi_match_snippet_fuzzy.multi_match.query = req.params.query;
+  match_field_query.match.query.query = req.params.query;
+  match_field_response.match.response.query = req.params.query;
+
+  //console.log('inused = ',multi_match_snippet)
   client.search({
       index: index,
       body:   {
@@ -220,31 +284,34 @@ function fuzzySearch3(req, res, next) {  //full body
             }
           }
         },
-        "min_score":.2,
+        "min_score": min_score,
         "query": {
           "bool": {
             "should": [
-              //{ "match_phrase": { "query":  req.params.query}},
-              //{ "match_phrase": { "response":  req.params.query}},
-              {
-                "multi_match": {
-                  "query": req.params.query,
-                  "type": "cross_fields",
-                  "fields": ["query", "response"],
-                  "tie_breaker":0.3,
-                  "minimum_should_match": "100%",
-                  "operator" : "or"
-                }
-              },
-
+              // { "match_phrase": { "query":  req.params.query}},
+              // { "match_phrase": { "response":  req.params.query}},
+             //  multi_match_snippet,
+             //  multi_match_snippet_fuzzy,
+             //  match_field_query,
+             //  match_field_response,
+             //   { "multi_match": {
+             //      "query": req.params.query,
+             //      "type": "most_fields",
+             //      "fields": ["query", "response"],
+             //      "tie_breaker": tie_breaker,
+             //      "minimum_should_match": "100%",
+             //      "operator" : "or"
+             //    }
+             //  },
               {
                 "match": {
                   "query": { // name of seach field
                     query: req.params.query,
-                    fuzziness: 2,
+                    fuzziness: 1,
                     prefix_length: 1,
                     "operator" : "or",
-                    "boost" : 4
+                    "minimum_should_match": "100%"
+                    //    "boost" : 4
                   }
                 }
               },
@@ -252,12 +319,51 @@ function fuzzySearch3(req, res, next) {  //full body
                 "match": {
                   "response": { // name of seach field
                     query: req.params.query,
-                    fuzziness: 2,
+                    fuzziness: 1,
                     prefix_length: 1,
-                    "operator" : "or"
+                    "operator" : "or",
+                    "minimum_should_match": "100%"
                   }
                 }
               },
+              {
+                "match": {
+                  "query": { // name of seach field
+                    query: req.params.query,
+                    "operator" : "or",
+                    "minimum_should_match": "40%"
+                    //    "boost" : 4
+                  }
+                }
+              },
+              {
+                "match": {
+                  "response": { // name of seach field
+                    query: req.params.query,
+                    "operator" : "or",
+                    "minimum_should_match": "40%"
+                  }
+                }
+              },
+              {
+                "match": {
+                  "query": { // name of seach field
+                    query: preProcessTerms,
+                    "operator" : "and",
+                    "boost" :2
+                  }
+                }
+              },
+              {
+                "match": {
+                  "response": { // name of seach field
+                    query: preProcessTerms,
+                    "operator" : "and",
+                    "boost" :2
+                  }
+                }
+              }
+
               //{ "wildcard":
               //{ "query":  "*"+req.params.query+"*"
               //
@@ -281,7 +387,7 @@ function fuzzySearch3(req, res, next) {  //full body
         "hits" : hits,
         "suggestions" : suggestions
       }
-      //  console.log(resultPackage);
+     //console.log(JSON.stringify(resultPackage));
       res.send(resultPackage);
     }, function(err) {
       console.trace(err.message);
@@ -389,13 +495,127 @@ function updateNegativeRating(req, res, next) {
 
   });
 
-  function getCommon(req,res,next){
-    client.search()
-  }
-  function getFeatured(req,res,next){
 
-  }
 
+
+}
+
+function getFeatured(req,res,next){
+  var maxCount = req.params.maxCount;
+  client.search({
+    'index' : index,
+    'body' : {
+    "fields": ["id","prId","query", "response", "featuredRanking","dateModified","datePublished"],
+    "query": {
+    "bool": {
+      "must": [
+        {
+          "range": {
+            "featuredRanking": {
+              "gt": "0"
+            }
+          }
+        }
+      ]
+    }
+  },
+    "from": 0,
+    "size": maxCount,
+    "sort": [{"featuredRanking": {"order":"desc"}} ],
+    "aggs": { }
+  }
+  }, function (error, response) {
+    if(!error){
+      res.send(response);
+    } else {
+      res.send(error);
+      console.trace(error.message);
+    }
+  });
+}
+
+function getCommon(req,res,next){
+  var maxCount = req.params.maxCount;
+  client.search({
+    'index' : index,
+    'body' : {
+      "fields": ["id","prId","query", "response", "commonQuestionRanking","dateModified","datePublished"],
+      "query": {
+        "bool": {
+          "must": [
+            {
+              "range": {
+                "commonQuestionRanking": {
+                  "gt": "0"
+                }
+              }
+            }
+          ]
+        }
+      },
+      "from": 0,
+      "size": maxCount,
+      "sort": [{"commonQuestionRanking": {"order":"desc"}} ],
+      "aggs": { }
+    }
+  }, function (error, response) {
+    if(!error){
+      res.send(response);
+    } else {
+      res.send(error);
+      console.trace(error.message);
+    }
+  });
+}
+function getMostRecent(req,res,next){
+  var maxCount = req.params.maxCount;
+  client.search({
+    'index' : index,
+    'body' : {
+      "fields": ["id","prId","query", "response", "commonQuestionRanking","dateModified","datePublished"],
+      "query": {
+        "bool": {
+          "should": [
+            {
+            "range" : {
+              "dateModified" : {
+                "gte": "1970/01/01",
+                "format": "yyyy/MM/dd||yyyy"
+              }
+            }
+          }
+          ]
+        }
+      },
+      "from": 0,
+      "size": maxCount,
+      "sort": [{"dateModified": {"order":"desc"}} ],
+      "aggs": { }
+    }
+  }, function (error, response) {
+    if(!error){
+      res.send(response);
+    } else {
+      res.send(error);
+      console.trace(error.message);
+    }
+  });
+}
+function preProcessSearch(queryString) {
+  var relevantTemrs = [];
+  var tokens = [];
+  tokens = queryString.toLowerCase().split(' ');
+
+  for (var i=0; i < tokens.length; i++) {
+    if (primaryStopWords.indexOf(tokens[i]) === -1){
+      relevantTemrs.push(tokens[i]);
+    }
+    // else {
+    //   tokens[i] = tokens[i] + '^0.2';
+    // }
+  }
+  console.log(relevantTemrs);
+  return relevantTemrs.join(' ');
 }
 
 
