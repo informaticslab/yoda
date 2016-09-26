@@ -9,6 +9,8 @@ var session = require('express-session');
 var logger = require('morgan');
 var port = process.env.PORT || 8001;
 var four0four = require('./utils/404')();
+var passport = require('passport');
+var auth = require('./config/auth');
 
 var environment = process.env.NODE_ENV;
 
@@ -16,9 +18,16 @@ app.use(favicon(__dirname + '/favicon.ico'));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(session({secret:'use the force',resave:false,saveUninitialized:false}));
+app.use(passport.initialize());
+app.use(passport.session());
 app.use(logger('dev'));
 
 app.use('/api', require('./routes'));
+
+require('./config/passport')();
+app.post('/login', auth.authenticate);
+
+// app.use('/api/users', require())
 
 console.log('About to crank up node');
 console.log('PORT=' + port);

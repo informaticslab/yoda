@@ -17,6 +17,8 @@
     "express-session": "^1.14.0",
     "morgan": "^1.1.1",
     "node-rest-client": "^2.0.1",
+    "passport": "^0.3.2",
+    "passport-local": "^1.0.0",
     "serve-favicon": "^2.0.1"
   },
   "devDependencies": {

@@ -1,6 +1,7 @@
 var router = require('express').Router();
 var four0four = require('./utils/404')();
 var elasticsearch = require('elasticsearch');
+var users = require('./controllers/users');
 
 var client = new elasticsearch.Client({
   host: 'localhost:9200',
@@ -67,7 +68,7 @@ var match_field_response = {
 };
 // var index = 'prepared_responses_v2';
 // var type = 'prepared_responses_v2';
-
+router.get('/getUsers', users.getUsers);
 router.get('/getMostRecent/:maxCount',getMostRecent);
 router.get('/getFeatured/:maxCount',getFeatured);
 router.get('/getCommon/:maxCount',getCommon);
@@ -80,6 +81,7 @@ router.get('/*', four0four.notFoundMiddleware);
 //router.get('/fuzzySearch/:query', fuzzySearch);
 router.post('/updatePositiveRating/:id', updatePositiveRating);
 router.post('/updateNegativeRating/:id', updateNegativeRating);
+
 
 
 module.exports = router;
