@@ -59,16 +59,12 @@ var oldIndex;
 var baseIndex =  {
   "index"  : "prepared_responses",
   "type"   : "prepared_responses"
-}
+};
 
 var mainIndex =  {
   "index"  : "prepared_responses",
   "type"   : "prepared_responses"
-}
-var tempIndex =  {
-  "index"  : "prepared_responses_2",
-  "type"   : "prepared_responses_2"
-}
+};
 
 var baseUrl = "https://prototype.cdc.gov/api/v2/resources";
 var service = "media";
@@ -83,52 +79,73 @@ var mode = 'create' ;
 var fd = fs.openSync(path.join(process.cwd(), PRfile), 'a')
 
 
-retrievePrToFile()    //NEED TO RENABLE!!!!
-  // .then(switchIndex)
-  .then(initIndex)
-  .then(getAlias()
-    .then(function(response){
-      var keys = Object.keys(response); 
-      oldIndex = keys[0];
-    }))
-  .then(closeIndex)
-  .then(configIndex)
-  .then(openIndex)
-  .then(syncPrSingle)
-  .then(putMappings);
-  //.then(confirmInsert)
-  //.then(reindex)
-  //.then(switchIndex);
+// retrievePrToFile()    
+//   // .then(switchIndex)
+//   .then(initIndex)
+//   .then(getAlias()
+//     .then(function(response){
+//       var keys = Object.keys(response); 
+//       oldIndex = keys[0];
+//     }))
+//   .then(closeIndex)
+//   .then(configIndex)
+//   .then(openIndex)
+//   .then(syncPrSingle)
+//   .then(putMappings);
+//   //.then(confirmInsert)
+//   //.then(reindex)
+//   //.then(switchIndex);
 
-// if (process.argv[2]) {
-//   if (process.argv[2] == 's') {
-//     console.log('processing single PR')
-//     if (!isNaN(process.argv[3])) {
-//       serviceUrl = singlePrServiceUrl + process.argv[3];
-//       mode = process.argv[4];
-//       retrievePrToFile()
-//         .then(switchIndex)
-//         .then(syncPrSingle)
-//       //.then(confirmInsert)
-//       //.then(reindex)
-//       //.then(switchIndex);
-//     }
-//     else {
-//       console.log('invalid request parameter for single pr');
-//     }
-//   }
-//   else if (process.argv[2] == 'a') {
-//     console.log('processing all pr');
-//     retrievePrToFile()
-//       .then(switchIndex)
-//       .then(deleteAllDoc)
-//       .then(syncPrSingle)
-//     //.then(confirmInsert)
-//     //.then(reindex)
-//     //.then(switchIndex);
-//   }
+if (process.argv[2]) {
+  if (process.argv[2] == 's') {
+    console.log('processing single PR')
+    if (!isNaN(process.argv[3])) {
+      serviceUrl = singlePrServiceUrl + process.argv[3];
+      mode = process.argv[4];
+      retrievePrToFile()
+        .then(initIndex)
+        .then(getAlias()
+          .then(function(response){
+            var keys = Object.keys(response); 
+            oldIndex = keys[0];
+          }))
+        .then(closeIndex)
+        // .then(configIndex)
+        .then(putMappings)
+        .then(openIndex)
+        
+        .then(syncPrSingle);
+        
+      //.then(confirmInsert)
+      //.then(reindex)
+      //.then(switchIndex);
+    }
+    else {
+      console.log('invalid request parameter for single pr');
+    }
+  }
+  else if (process.argv[2] == 'a') {
+    console.log('processing all pr');
+    retrievePrToFile()
+      .then(initIndex)
+      .then(getAlias()
+        .then(function(response){
+          var keys = Object.keys(response); 
+          oldIndex = keys[0];
+        }))
+      .then(closeIndex)
+      // .then(configIndex)
+      .then(putMappings)
+      .then(openIndex)
+       
+      .then(syncPrSingle);
+     
+    //.then(confirmInsert)
+    //.then(reindex)
+    //.then(switchIndex);
+  }
 
-// }
+}
 
 function retrievePrToFile(nextUrl){
   var deferred = Q.defer();
@@ -205,12 +222,12 @@ exports.initIndex = initIndex;
 * Update settings for the new index
 */
 function configIndex() {
-  var body = config.settings;
+  // var body = config.settings;
   log.info({type:'Success'}, 'Configure index: ' + newIndexName);
   return esClient.indices.putSettings({
     index: newIndexName,
-    type: baseIndex.type,
-    body: body
+    type: baseIndex.type
+    // body: body
   })
 }
 
@@ -241,6 +258,7 @@ function openIndex() {
 function putMappings() {
   log.info({type:'Success'}, 'Apply mappings for: ' + newIndexName);
   var body = config.mappings;
+  console.log('mappings', body);
   return esClient.indices.putMapping({
     index: newIndexName,
     type: baseIndex.type,
