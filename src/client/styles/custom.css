@@ -287,7 +287,8 @@ margin:0;
     border-left: 1px solid #eee;
 }
 .indv-results {
-    margin-bottom:35px;
+    margin-bottom:20px;
+    line-height: 20px;
 }
 .date-color {
     color:#a3a3a3;

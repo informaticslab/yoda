@@ -15,7 +15,7 @@
     vm.suggestionArray = [];
     vm.featuredArray =[];
     vm.currentPage = 1;
-    vm.pageSize = 5;
+    vm.pageSize = 10;
     vm.noResults = false;
     vm.reverse = true;
     vm.personPhrase = 'person likes this';
