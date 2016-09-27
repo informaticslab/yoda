@@ -19,6 +19,7 @@ app.use(session({secret:'use the force',resave:false,saveUninitialized:false}));
 app.use(logger('dev'));
 
 app.use('/api', require('./routes'));
+app.use('/logs', require('./logs'));
 
 console.log('About to crank up node');
 console.log('PORT=' + port);
