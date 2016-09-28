@@ -49,12 +49,12 @@ if(environment === 'build') {
     });
     // Any deep link calls should return index.html
     app.use('/*', express.static('./build/index.html'));
-    https.createServer(options, app).listen('4400', function() {
-      console.log('Express server listening on port ' + '4400');
-      console.log('env = ' + app.get('env') +
-        '\n__dirname = ' + __dirname +
-        '\nprocess.cwd = ' + process.cwd());
-    });
+    // https.createServer(options, app).listen('4400', function() {
+    //   console.log('Express server listening on port ' + '4400');
+    //   console.log('env = ' + app.get('env') +
+    //     '\n__dirname = ' + __dirname +
+    //     '\nprocess.cwd = ' + process.cwd());
+    // });
     // break;
 } else {
   // default:
@@ -69,14 +69,11 @@ if(environment === 'build') {
     // Any deep link calls should return index.html
     app.use('/*', express.static('./src/client/index.html'));
   
-    app.listen(port, function() {
+  }
+
+   app.listen(port, function() {
       console.log('Express server listening on port ' + port);
       console.log('env = ' + app.get('env') +
         '\n__dirname = ' + __dirname +
         '\nprocess.cwd = ' + process.cwd());
     });
-
-  }
-    
-
-
