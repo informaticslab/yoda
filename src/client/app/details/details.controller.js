@@ -40,12 +40,12 @@
     function getPreparedResponse(id) {
       if (id !== null){
         return dataservice.getPreparedResponsebyId(id).then(function(data) {
-          vm.data = data;
+          vm.data = data; // not sure why we need to do this;
           vm.data = vm.data._source;
+          vm.data.relatedPR = data.relatedPR;
           return vm.data;
         });
       }
-      
     }
 
   }

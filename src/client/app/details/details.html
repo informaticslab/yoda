@@ -107,14 +107,15 @@
             </div>
         </div>
 
-        <div class="row">
+        <div class="row" ng-show="vm.data.relatedPR.length > 0">
             <div class="col-lg-12">
-                <strong>OTHER RELATED QUESTIONS &amp; TOPICS (Placeholder)</strong><br>
-                <a href="#">Who can contract the Zika virus?</a><br>
-                <a href="#">Can dogs get Zika?</a><br>
-                <a href="#">How do I know if I have Zika?</a><br>
-                <a href="#">Where did Zika come from?</a><br>
-                <a href="#">What is the Zika virus?</a><br>
+                <strong>OTHER RELATED QUESTIONS &amp; TOPICS</strong><br>
+                <a ng-repeat="onePR in vm.data.relatedPR" ui-sref='details({id: onePR.prId})'>{{onePR.query}}</a><br>
+                <!--<a href="#">Who can contract the Zika virus?</a><br>-->
+                <!--<a href="#">Can dogs get Zika?</a><br>-->
+                <!--<a href="#">How do I know if I have Zika?</a><br>-->
+                <!--<a href="#">Where did Zika come from?</a><br>-->
+                <!--<a href="#">What is the Zika virus?</a><br>-->
             </div>
         </div>
 
