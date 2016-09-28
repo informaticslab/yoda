@@ -9,3 +9,4 @@ build/
 report/
 
 data/logs/
+.vscode/
