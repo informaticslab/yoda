@@ -9,6 +9,8 @@ var session = require('express-session');
 var logger = require('morgan');
 var port = process.env.PORT || 8001;
 var four0four = require('./utils/404')();
+var https = require('https');
+var fs = require('fs');
 
 var environment = process.env.NODE_ENV;
 
@@ -25,8 +27,20 @@ console.log('About to crank up node');
 console.log('PORT=' + port);
 console.log('NODE_ENV=' + environment);
 
-switch (environment) {
-  case 'build':
+
+var https = require('https'),      // module for https
+    fs =    require('fs');         // required to read certs and keys
+
+var options = {
+    key:    fs.readFileSync('../../sec/certs/server-key.pem'),
+    cert:   fs.readFileSync('../../sec/certs/server-cert.pem'),
+    // ca:     [fs.readFileSync('/sec/certs/gd_bundle-g2.crt'),fs.readFileSync('/sec/certs/HHSPIVcachn.pem')],
+    // requestCert:        true,
+    // rejectUnauthorized: false,
+};
+
+if(environment === 'build') {
+  // case 'build':
     console.log('** BUILD **');
     app.use(express.static('./build/'));
     // Any invalid calls for templateUrls are under app/* and should return 404
@@ -35,8 +49,15 @@ switch (environment) {
     });
     // Any deep link calls should return index.html
     app.use('/*', express.static('./build/index.html'));
-    break;
-  default:
+    https.createServer(options, app).listen('4400', function() {
+      console.log('Express server listening on port ' + '4400');
+      console.log('env = ' + app.get('env') +
+        '\n__dirname = ' + __dirname +
+        '\nprocess.cwd = ' + process.cwd());
+    });
+    // break;
+} else {
+  // default:
     console.log('** DEV **');
     app.use(express.static('./src/client/'));
     app.use(express.static('./'));
@@ -47,12 +68,15 @@ switch (environment) {
     });
     // Any deep link calls should return index.html
     app.use('/*', express.static('./src/client/index.html'));
-    break;
-}
+  
+    app.listen(port, function() {
+      console.log('Express server listening on port ' + port);
+      console.log('env = ' + app.get('env') +
+        '\n__dirname = ' + __dirname +
+        '\nprocess.cwd = ' + process.cwd());
+    });
 
-app.listen(port, function() {
-  console.log('Express server listening on port ' + port);
-  console.log('env = ' + app.get('env') +
-    '\n__dirname = ' + __dirname +
-    '\nprocess.cwd = ' + process.cwd());
-});
+  }
+    
+
+
