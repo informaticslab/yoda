@@ -1,28 +1,23 @@
 <section class='mainbar'>
   <div class='row'>
-    <div class='col-lg-12'>
+    <!--<div class='col-lg-12'>-->
       <h3>Data Sync Logs</h3>
-      <div>
-        <table class=' table table-responsive table-bordered'>
+      <div class='col-lg-3'>
+        <table class=' table table-responsive table-striped'>
           <thead>
             <tr>
-              <th>Log</th>
-              <th>Status</th>
+              <th>Logs</th>
             </tr>
           </thead>
           <tbody>
             <tr ng-repeat="log in vm.logs | orderBy:log:vm.reverse">
               <td><button class="btn btn-default" ng-click="vm.getLogDetails(log)">{{log}}</button></td>
-              <td>Status</td>
             </tr>
           </tbody>
         </table>
       </div>
-    </div>
-  </div>
-  <div class='row'>
-    <div class='col-lg-12'>
-      <form>
+      <div class='col-lg-9'>
+      <form ng-if='vm.logDetails'>
         <div class="form-group">
           <div class="input-group">
             <div class="input-group-addon"><i class="fa fa-search"></i></div>
@@ -53,5 +48,7 @@
       </table>
       <dir-pagination-controls on-page-change='vm.toTop("top")' boundary-links='true'></dir-pagination-controls>
     </div>
+    <!--</div>-->
   </div>
+  
 </section>
