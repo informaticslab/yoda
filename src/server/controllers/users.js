@@ -1,16 +1,17 @@
-exports.getUsers = function(req, res) {
-  var collection = [
-    {
-      username: 'labuser',
-      password: 'testwiththelab',
-      type: 'testuser'
-    },
-    {
-      username: 'labadmin',
-      password: 'ihavethepower',
-      type: 'testadmin'
-    }
-  ];
+var _ =           require('underscore')
+    , User =      require('../models/User.js')
+    , userRoles = require('../../client/app/core/accessConfig').userRoles;
 
-  res.send(collection);
-}
+module.exports = {
+    index: function(req, res) {
+        var users = User.findAll();
+        _.each(users, function(user) {
+            delete user.password;
+            delete user.twitter;
+            delete user.facebook;
+            delete user.google;
+            delete user.linkedin;
+        });
+        res.json(users);
+    }
+};

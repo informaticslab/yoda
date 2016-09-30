@@ -11,21 +11,30 @@ var port = process.env.PORT || 8001;
 var four0four = require('./utils/404')();
 var passport = require('passport');
 var auth = require('./config/auth');
+var cookieParser = require('cookie-parser');
+var User = require('./models/User');
 
 var environment = process.env.NODE_ENV;
 
 app.use(favicon(__dirname + '/favicon.ico'));
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(session({secret:'use the force',resave:false,saveUninitialized:false}));
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(logger('dev'));
 
+
+
+passport.use(User.localStrategy);
+passport.serializeUser(User.serializeUser);
+passport.deserializeUser(User.deserializeUser);
+
 app.use('/api', require('./routes'));
 
-require('./config/passport')();
-app.post('/login', auth.authenticate);
+
+// app.post('/login', auth.authenticate);
 
 // app.use('/api/users', require())
 
@@ -57,6 +66,8 @@ switch (environment) {
     app.use('/*', express.static('./src/client/index.html'));
     break;
 }
+
+// require('./config/passport')();
 
 app.listen(port, function() {
   console.log('Express server listening on port ' + port);

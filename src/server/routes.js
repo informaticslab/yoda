@@ -2,6 +2,7 @@ var router = require('express').Router();
 var four0four = require('./utils/404')();
 var elasticsearch = require('elasticsearch');
 var users = require('./controllers/users');
+var auth = require('./controllers/auth');
 
 var client = new elasticsearch.Client({
   host: 'localhost:9200',
@@ -68,7 +69,15 @@ var match_field_response = {
 };
 // var index = 'prepared_responses_v2';
 // var type = 'prepared_responses_v2';
-router.get('/getUsers', users.getUsers);
+
+router.get('/users', users.index);
+
+router.post('/login', auth.login);
+router.post('/logout', function(req, res) {
+  req.logout();
+  res.end();
+});
+
 router.get('/getMostRecent/:maxCount',getMostRecent);
 router.get('/getFeatured/:maxCount',getFeatured);
 router.get('/getCommon/:maxCount',getCommon);
@@ -78,6 +87,7 @@ router.get('/getPreparedResponsebyId/:id', getPreparedResponsebyId);
 router.get('/search/:query', fuzzySearch3);
 router.get('/questions/:query', getQuestions);
 router.get('/*', four0four.notFoundMiddleware);
+
 //router.get('/fuzzySearch/:query', fuzzySearch);
 router.post('/updatePositiveRating/:id', updatePositiveRating);
 router.post('/updateNegativeRating/:id', updateNegativeRating);
@@ -396,6 +406,7 @@ function fuzzySearch3(req, res, next) {  //full body
     });
 }
 function termSearch(req, res, next) {
+  console.log(req)
   client.search({
     index:index,
     body:{
@@ -503,6 +514,7 @@ function updateNegativeRating(req, res, next) {
 }
 
 function getFeatured(req,res,next){
+
   var maxCount = req.params.maxCount;
   client.search({
     'index' : index,
