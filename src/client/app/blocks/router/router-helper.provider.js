@@ -26,9 +26,9 @@
     };
 
     this.$get = RouterHelper;
-    RouterHelper.$inject = ['$location', '$rootScope', '$state', 'logger'];
+    RouterHelper.$inject = ['$location', '$rootScope', '$state', 'logger', 'authservice'];
     /* @ngInject */
-    function RouterHelper($location, $rootScope, $state, logger) {
+    function RouterHelper($location, $rootScope, $state, logger, authservice) {
       var handlingStateChangeError = false;
       var hasOtherwise = false;
       var stateCounts = {
@@ -40,6 +40,7 @@
         configureStates: configureStates,
         getStates: getStates,
         stateCounts: stateCounts
+        // checkAuth: checkAuth
       };
 
       init();
@@ -84,6 +85,7 @@
       }
 
       function init() {
+        checkAuth()
         handleRoutingErrors();
         updateDocTitle();
       }
@@ -91,9 +93,28 @@
       function getStates() { return $state.get(); }
 
       function checkAuth() {
-        $rootScope.$on('$startChangeStart', function(evt, toState, toStateParams){
-          
-        })
+       
+        $rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams){
+          // console.log('in check auth');
+          // console.log('toState: ', toState);
+          if(!('data' in toState) || !('access' in toState.data)){
+              $rootScope.error = "Access undefined for this state";
+              event.preventDefault();
+          }
+           if (!authservice.authorize(toState.data.access)) {
+              $rootScope.error = "Seems like you tried accessing a route you don't have access to...";
+              event.preventDefault();
+
+              if(fromState.url === '^') {
+                  if(authservice.isLoggedIn()) {
+                      $state.go('home');
+                  } else {
+                      $rootScope.error = null;
+                      $state.go('login');
+                  }
+              }
+          }
+        });
       }
 
       function updateDocTitle() {

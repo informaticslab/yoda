@@ -5,52 +5,65 @@
     .module('app.core')
     .factory('authservice', authservice);
 
-  authservice.$inject = ['$http', '$cookies', '$rootScope', '$timeout', 'Base64'];
+  authservice.$inject = ['$http', '$cookieStore', '$rootScope'];
   /* @ngInject */
-  function authservice($http, $cookies, $rootScope, $timeout, Base64) {
+  function authservice($http, $cookieStore, $rootScope) {
+
+    var accessLevels = accessConfig.accessLevels,
+        userRoles = accessConfig.userRoles,
+        currentUser = $cookieStore.get('user') || { username: '', role: userRoles.public };
+    
+    $cookieStore.remove('user');
+
+    function changeUser(user) {
+      angular.extend(currentUser, user);
+    }
+    
     var service = {
+      accessLevels: accessLevels,
+      userRoles: userRoles,
+      user: currentUser,
+      authorize: authorize,
+      isLoggedIn: isLoggedIn,
       login: login,
-      setCredentials: setCredentials
+      logout: logout
     };
 
     return service;
 
-    function login(username, password, callback) {
-      /* Dummy authentication for testing, uses $timeout to simulate api call
-             ----------------------------------------------*/
-      $timeout(function() {
-        var response = {success: username ==='labuser' && password ==='testwiththelab'}; 
-        if (!response.success) {
-          response.message = 'Username/password is incorrect';
-        }
-        callback(response);
-      }, 300);
+    /////////////
 
-
-      /* Use this for real authentication
-       ----------------------------------------------*/
-      //$http.post('/api/authenticate', { username: username, password: password })
-      //    .success(function (response) {
-      //        callback(response);
-      //    });
+    function authorize(accessLevel, role) {
+      if(role === undefined) {
+        role = currentUser.role;
+      }
+      return accessLevel.bitMask & role.bitMask;
     }
 
-    function setCredentials(username, password) {
-      var authdata = Base64.encode(username + ':' + password);
+    function isLoggedIn(user) {
+      if(user ===  undefined) {
+        user = currentUser;
+      }
+      return user.role.title === userRoles.user.title || user.role.title === userRoles.admin.title;
+    }
 
-      $rootScope.globals = {
-        currentUser: {
-          username: username,
-          authdata: authdata,
-          authenticated: true
-        }
-      };
+    function login(user, success, error) {
+      $http.post('/api/login', user).success(function(user) {
+      
+        changeUser(user);
 
-      // console.log($rootScope.globals);
+        success();
+      }).error(error);
+    }
 
-      $http.defaults.headers.common['Authorization'] = 'Basic ' + authdata;
-      $cookies.put('globals', $rootScope.globals);
-      console.log($cookies);
+    function logout(success, error) {
+      $http.post('/api/logout').success(function() {
+        changeUser({
+          username: '',
+          role: userRoles.public
+        });
+        success();
+      }).error(error);
     }
 
   }

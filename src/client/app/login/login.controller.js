@@ -11,19 +11,36 @@
     var vm = this;
     vm.title = 'Login';
 
+    // vm.login = function(username, password){
+    //   // console.log(username);
+    //   // console.log(password);
+    //   authservice.authenticateUser(username, password).then(function(success) {
+    //     // console.log(success);
+    //     console.log(success);
+    //     if(success) {
+    //       $state.go('home');
+    //       // $scope.ok();
+    //     } else {
+    //       alert('Incorrect username/password');
+    //     }
+    //   });
+    // };
+
     vm.login = function() {
-      vm.dataLoading = true;
-      authservice.login(vm.username, vm. password, function(res) {
-        console.log(res);
-        if(res.success) {
-          authservice.setCredentials(vm.username, vm.password);
-          $state.go('home');
-        } else {
-          vm.error = res.message;
-          vm.dataLoading = false;
-        }
-      })
+      authservice.login({
+        username: vm.username,
+        password: vm.password
+      },
+      function(res){
+        $state.go('home');
+        $rootScope.isLoggedIn = authservice.isLoggedIn();
+      },
+      function(err) {
+        $rootScope.error = err;
+      });
     }
+
+  
 
     activate();
 

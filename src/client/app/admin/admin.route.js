@@ -12,6 +12,8 @@
   }
 
   function getStates() {
+    var access = accessConfig.accessLevels;
+
     return [
       {
         state: 'admin',
@@ -21,6 +23,9 @@
           controller: 'AdminController',
           controllerAs: 'vm',
           title: 'Admin',
+          data: {
+            access: access.admin
+          },
           settings: {
             nav: 4,
             content: '<i class="fa fa-lock"></i> Admin'

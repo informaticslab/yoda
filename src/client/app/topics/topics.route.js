@@ -12,6 +12,7 @@
   }
 
   function getStates() {
+    var access = accessConfig.accessLevels
     return [
       {
         state: 'topics',
@@ -21,6 +22,9 @@
           controller: 'TopicsController',
           controllerAs: 'vm',
           title: 'Topics',
+          data: {
+            access: access.user
+          },
           settings: {
             nav: 2,
             content: '<i class="fa fa-lock"></i> Topics'

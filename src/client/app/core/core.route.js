@@ -8,6 +8,7 @@
   /* @ngInject */
   function appRun(routerHelper) {
     var otherwise = '/404';
+    // routerHelper.checkAuth();
     routerHelper.configureStates(getStates(), otherwise);
   }
 

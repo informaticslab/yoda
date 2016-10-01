@@ -12,15 +12,20 @@
   }
 
   function getStates() {
+    var access = accessConfig.accessLevels;
+
     return [
       {
         state: 'login',
         config: {
-          url: '/',
+          url: '/login',
           templateUrl: 'app/login/login.html',
           controller: 'LoginController',
           controllerAs: 'vm',
           title: 'login',
+          data: {
+            access: access.public
+          },
           settings: {
             nav: 4,
             content: '<i class="fa fa-dashboard"></i> Home'
