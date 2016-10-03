@@ -166,7 +166,7 @@ span[class*=sprite-48],i[class*=sprite-48] {
     background-color: #075290;
     color:#ffffff;
     font-size:22px;
-    font-height:24px;
+    line-height:24px;
 
     padding:11px 0 11px 5px;
     margin-top:20px;
@@ -415,7 +415,7 @@ margin:0;
 	-moz-border-radius-topright: 4px;
 	border-top-left-radius: 4px;
 	border-top-right-radius: 4px; 
-	padding:30px; margin:0px;"
+	padding:30px; margin:0px;
 }
 .login-content-cont {
 	margin-top:-10px; 
