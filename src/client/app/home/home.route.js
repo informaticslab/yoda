@@ -12,6 +12,8 @@
   }
 
   function getStates() {
+    var access = accessConfig.accessLevels;
+
     return [
       {
         state: 'home',
@@ -21,6 +23,9 @@
           controller: 'HomeController',
           controllerAs: 'vm',
           title: 'home',
+          data: {
+            access: access.user
+          },
           settings: {
             nav: 1,
             content: '<i class="fa fa-dashboard"></i> Home'

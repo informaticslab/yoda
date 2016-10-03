@@ -37,7 +37,9 @@
 
 <body>
   <div>
+    
     <div ng-include="'app/layout/shell.html'"></div>
+    
     <!-- <div id="splash-page" ng-show="showSplash">
       <div class="page-splash">
         <div class="page-splash-message">
@@ -49,6 +51,7 @@
       </div>
     </div> -->
   </div>
+
 
   <!-- build:js js/lib.js -->
   <!-- bower:js -->
@@ -65,6 +68,8 @@
   <script src="/bower_components/angularUtils-pagination/dirPagination.js"></script>
   <script src="/bower_components/spin.js/spin.js"></script>
   <script src="/bower_components/angular-spinner/angular-spinner.js"></script>
+  <script src="/bower_components/angular-cookies/angular-cookies.js"></script>
+  <script src="/bower_components/angular-resource/angular-resource.js"></script>
   <!-- endbower -->
   <!-- endbuild -->
 
@@ -73,27 +78,35 @@
   <script src="/src/client/app/app.module.js"></script>
   <script src="/src/client/app/admin/admin.module.js"></script>
   <script src="/src/client/app/bingSearch/bingSearch.module.js"></script>
+  <script src="/src/client/app/blocks/Base64/Base64.module.js"></script>
   <script src="/src/client/app/blocks/exception/exception.module.js"></script>
   <script src="/src/client/app/blocks/logger/logger.module.js"></script>
   <script src="/src/client/app/blocks/router/router.module.js"></script>
+  <script src="/src/client/app/blocks/user/user.module.js"></script>
   <script src="/src/client/app/core/core.module.js"></script>
   <script src="/src/client/app/details/details.module.js"></script>
   <script src="/src/client/app/home/home.module.js"></script>
   <script src="/src/client/app/layout/layout.module.js"></script>
+  <script src="/src/client/app/login/login.module.js"></script>
   <script src="/src/client/app/results/results.module.js"></script>
   <script src="/src/client/app/search/search.module.js"></script>
   <script src="/src/client/app/topics/topics.module.js"></script>
   <script src="/src/client/app/admin/admin.controller.js"></script>
   <script src="/src/client/app/admin/admin.route.js"></script>
   <script src="/src/client/app/bingSearch/bingSearch.directive.js"></script>
+  <script src="/src/client/app/blocks/Base64/Base64.js"></script>
   <script src="/src/client/app/blocks/exception/exception-handler.provider.js"></script>
   <script src="/src/client/app/blocks/exception/exception.js"></script>
   <script src="/src/client/app/blocks/logger/logger.js"></script>
   <script src="/src/client/app/blocks/router/router-helper.provider.js"></script>
+  <script src="/src/client/app/blocks/user/user.js"></script>
+  <script src="/src/client/app/core/accessConfig.js"></script>
+  <script src="/src/client/app/core/authservice.js"></script>
   <script src="/src/client/app/core/config.js"></script>
   <script src="/src/client/app/core/constants.js"></script>
   <script src="/src/client/app/core/core.route.js"></script>
   <script src="/src/client/app/core/dataservice.js"></script>
+  <script src="/src/client/app/core/identityservice.js"></script>
   <script src="/src/client/app/details/details.controller.js"></script>
   <script src="/src/client/app/details/details.route.js"></script>
   <script src="/src/client/app/home/home.controller.js"></script>
@@ -101,6 +114,8 @@
   <script src="/src/client/app/layout/footer.directive.js"></script>
   <script src="/src/client/app/layout/shell.controller.js"></script>
   <script src="/src/client/app/layout/top-nav.directive.js"></script>
+  <script src="/src/client/app/login/login.controller.js"></script>
+  <script src="/src/client/app/login/login.route.js"></script>
   <script src="/src/client/app/results/results.controller.js"></script>
   <script src="/src/client/app/results/results.route.js"></script>
   <script src="/src/client/app/search/search.directive.js"></script>

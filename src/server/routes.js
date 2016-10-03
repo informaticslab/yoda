@@ -1,6 +1,12 @@
 var router = require('express').Router();
 var four0four = require('./utils/404')();
 var elasticsearch = require('elasticsearch');
+// <<<<<<< HEAD
+// =======
+var users = require('./controllers/users');
+var auth = require('./controllers/auth');
+
+// >>>>>>> development
 var client = new elasticsearch.Client({
   host: 'localhost:9200',
   log: 'error'
@@ -71,6 +77,14 @@ var match_field_response = {
 // var index = 'prepared_responses_v2';
 // var type = 'prepared_responses_v2';
 
+router.get('/users', users.index);
+
+router.post('/login', auth.login);
+router.post('/logout', function(req, res) {
+  req.logout();
+  res.end();
+});
+
 router.get('/getMostRecent/:maxCount',getMostRecent);
 router.get('/getFeatured/:maxCount',getFeatured);
 router.get('/getCommon/:maxCount',getCommon);
@@ -80,9 +94,11 @@ router.get('/getPreparedResponsebyId/:id', getPreparedResponsebyId);
 router.get('/search/:query', fuzzySearch3);
 router.get('/questions/:query', getQuestions);
 router.get('/*', four0four.notFoundMiddleware);
+
 //router.get('/fuzzySearch/:query', fuzzySearch);
 router.post('/updatePositiveRating/:id', updatePositiveRating);
 router.post('/updateNegativeRating/:id', updateNegativeRating);
+
 
 
 module.exports = router;
@@ -98,8 +114,45 @@ function getPreparedResponsebyId(req, res, next) {
   })
   .then(function(results) {
     var preparedResponse = results;
-    res.send(preparedResponse);
-  }, function(err) {
+   // console.log(results);
+    // build related pr urls
+    if (results._source.relatedPrList) {
+      var prIds = results._source.relatedPrList.split(',');
+      // preparedResponse.relatedPRs = getRelatedPRs(prIds);
+      client.search({
+        index: index,
+        type: type,
+        body  : {
+          //"fields": ["prId", "query"],
+          "query" : {
+            "bool" : {
+              "filter" : {
+                "terms" : {
+                  "prId" : prIds
+                }
+              }
+            }
+          }
+        }
+      }).then(function(prs) {
+        var relatedPR = [];
+     //   console.log('get related pr ', prs.hits.hits);
+        prs.hits.hits.forEach(function(pr) {
+          var onePr = {
+            'prId' : pr._source.prId,
+            'query' : pr._source.query
+          }
+          relatedPR.push(onePr);
+        });
+        preparedResponse['relatedPR'] = relatedPR;
+        res.send(preparedResponse);
+      });
+    }
+    else {
+      res.send(preparedResponse);
+    }
+
+    }, function(err) {
     console.trace(err.message);
   });
 }
@@ -290,7 +343,7 @@ function fuzzySearch3(req, res, next) {  //full body
             }
           }
         },
-        //"min_score": min_score,
+        "min_score": min_score,
         "query": {
           "bool": {
             "should": [
@@ -310,7 +363,7 @@ function fuzzySearch3(req, res, next) {  //full body
                     fuzziness: 1,
                     //prefix_length: 1,
                     "operator" : "and",
-                    //"boost" : 3
+                    "boost" : 3
                 }
               },
               // // most_fields - orig string
@@ -326,20 +379,20 @@ function fuzzySearch3(req, res, next) {  //full body
               //     "boost" : 3
               //   }
               // },
-              // { //best_fields - orig string
-              //     "multi_match": {
-              //     "query":req.params.query,
-              //     "type": "phrase",
-              //     "fields": ["query", "response","query.en", "response.en"],
-              //     "slop":50,
-              //     //"tie_breaker": tie_breaker,
-              //     //"minimum_should_match": "2<67%",
-              //     //fuzziness: 1,
-              //     //prefix_length: 1,
-              //     //"operator" : "or",
-              //     //"boost" : 2
-              //   }
-              // },
+              { //best_fields - orig string
+                  "multi_match": {
+                  "query":req.params.query,
+                  "type": "phrase",
+                  "fields": ["query", "response","query.en", "response.en"],
+                  "slop":2,
+                  //"tie_breaker": tie_breaker,
+                  "minimum_should_match": "2<67%",
+                  //fuzziness: 1,
+                  //prefix_length: 1,
+                  //"operator" : "or",
+                  //"boost" : 2
+                }
+              },
               { //best_fields - processed string
                   "multi_match": {
                   "query":preProcessTerms2,
@@ -350,7 +403,7 @@ function fuzzySearch3(req, res, next) {  //full body
                   fuzziness: 1,
                   //prefix_length: 1,
                   "operator" : "and",
-                  "boost" : 3
+                  //"boost" : 2
                 }
               },
               // {// phrase match - cross_fields - or - processed string
@@ -479,6 +532,7 @@ function fuzzySearch3(req, res, next) {  //full body
     });
 }
 function termSearch(req, res, next) {
+  console.log(req)
   client.search({
     index:index,
     body:{
@@ -713,6 +767,7 @@ function updateNegativeRating(req, res, next) {
 }
 
 function getFeatured(req,res,next){
+
   var maxCount = req.params.maxCount;
   client.search({
     'index' : index,
@@ -841,3 +896,40 @@ function preProcessSearch2(queryString) {
   }
   return relevantTemrs.join(' ');
 }
+// <<<<<<< HEAD
+// =======
+
+// function getRelatedPRs(prList){
+//   client.search({
+//     index: index,
+//     type: type,
+//     body  : {
+//     //"fields": ["prId", "query"],
+//     "query" : {
+//     "bool" : {
+//       "filter" : {
+//         "terms" : {
+//           "prId" : prList
+//           }
+//         }
+//       }
+//     }
+//   }
+// }).then(function(prs) {
+//       var relatedPR = [];
+//       console.log('get related pr ', prs.hits.hits);
+//       prs.hits.hits.forEach(function(pr) {
+//         var onePr = {
+//            prId : pr._source.prId,
+//           query : pr._source.query
+//         }
+//         relatedPR.push(onePr);
+//       });
+//     // console.log(relatedPR);
+//      return relatedPR;
+//
+//  });
+// }
+
+
+// >>>>>>> development

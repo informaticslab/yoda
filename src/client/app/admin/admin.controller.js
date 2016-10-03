@@ -12,7 +12,7 @@
     vm.logs = [];
     vm.logDetails;
     vm.title = 'Admin';
-    vm.pageSize = 50;
+    vm.pageSize = 25;
     vm.currentPage = 1;
 
     vm.sortType = '_source.date';

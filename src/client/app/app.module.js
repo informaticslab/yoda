@@ -9,7 +9,8 @@
     'app.results',
     'app.search',
     'app.details',
-    'app.topics'
+    'app.topics',
+    'app.login'
   ]);
 
 })();

@@ -2,7 +2,7 @@
   'use strict';
 
   angular
-    .module('app.topics')
+    .module('app.login')
     .run(appRun);
 
   appRun.$inject = ['routerHelper'];
@@ -12,22 +12,23 @@
   }
 
   function getStates() {
-    var access = accessConfig.accessLevels
+    var access = accessConfig.accessLevels;
+
     return [
       {
-        state: 'topics',
+        state: 'login',
         config: {
-          url: '/topics',
-          templateUrl: 'app/topics/topics.html',
-          controller: 'TopicsController',
+          url: '/login',
+          templateUrl: 'app/login/login.html',
+          controller: 'LoginController',
           controllerAs: 'vm',
-          title: 'Topics',
+          title: 'login',
           data: {
-            access: access.user
+            access: access.public
           },
           settings: {
-            nav: 2,
-            content: '<i class="fa fa-lock"></i> Topics'
+            nav: 4,
+            content: '<i class="fa fa-dashboard"></i> Home'
           }
         }
       }

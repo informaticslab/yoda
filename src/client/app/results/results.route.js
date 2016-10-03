@@ -12,6 +12,7 @@
   }
 
   function getStates() {
+    var access = accessConfig.accessLevels
     return [
       {
         state: 'results',
@@ -21,6 +22,9 @@
           controller: 'ResultsController',
           controllerAs: 'vm',
           title: 'results',
+          data: {
+            access: access.user
+          },
           params: { searchString: null },  //required to pass along state params
           settings: {
             nav: 2,
