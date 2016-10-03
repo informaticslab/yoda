@@ -102,8 +102,8 @@
                 {{result._source.response | limitTo: 256}}...
                 <br>
                 <i>ID:{{result._source.id}}</i>
-                <br>
-                <span class="date-color">Content last updated: {{result._source.dateModified | date}}</span>
+                
+                &nbsp<span class="date-color">Content last updated: {{result._source.dateModified | date}}</span>
               </div>
               <dir-pagination-controls on-page-change='vm.toTop("top")'  boundary-links='true'></dir-pagination-controls>
             </div>
