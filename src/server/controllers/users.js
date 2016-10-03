@@ -1,6 +1,6 @@
 var _ =           require('underscore')
     , User =      require('../models/User.js')
-    , userRoles = require('../../client/app/core/accessConfig').userRoles;
+    , userRoles = require('../accessConfig').userRoles;
 
 module.exports = {
     index: function(req, res) {
