@@ -20,6 +20,7 @@
     "express-session": "^1.14.0",
     "moment": "^2.14.1",
     "morgan": "^1.1.1",
+    "nlp_compromise": "^6.5.0",
     "node-rest-client": "^2.0.1",
     "passport": "^0.3.2",
     "passport-http": "^0.3.0",
