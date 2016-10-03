@@ -21,7 +21,7 @@ var primaryStopWords = require('stopwords').english;
 var index = 'prepared_responses_alias';  //using index alias
 var type = 'prepared_responses';
 var logicalOperator = 'or';
-var min_score = 0.1  ;
+var min_score = 0.05;
 var tie_breaker = 0.3;
 
 //var primaryStopWords = ['how','do','i','what','can','get','are','where','does','from','cause','my','out','have'];
@@ -384,7 +384,7 @@ function fuzzySearch3(req, res, next) {  //full body
                   "query":req.params.query,
                   "type": "phrase",
                   "fields": ["query", "response","query.en", "response.en"],
-                  "slop":2,
+                  "slop":50,
                   //"tie_breaker": tie_breaker,
                   "minimum_should_match": "2<67%",
                   //fuzziness: 1,
