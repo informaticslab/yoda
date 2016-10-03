@@ -85,7 +85,7 @@
       }
 
       function init() {
-        checkAuth()
+        // checkAuth()
         handleRoutingErrors();
         updateDocTitle();
       }

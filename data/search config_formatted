@@ -77,46 +77,68 @@ curl -XPUT 'localhost:9200/prepared_responses/_settings' -d '{
 curl -XPUT 'http://localhost:9200/prepared_responses/prepared_responses/_mapping' -d '
 {
   "prepared_responses": {
-    "properties": {
-
-      "query": {
-        "type": "string",
-        "copy_to": [
-          "did_you_mean",
-          "autocomplete",
-          "all_search_fields"
-        ]
-      },
-
-      "response": {
-        "type": "string",
-        "copy_to": [
-          "autocomplete",
-          "did_you_mean",
-          "all_search_fields"
-        ]
-      },
-       "keywords": {
-        "type": "string",
-        "copy_to": [
-          "autocomplete",
-          "did_you_mean",
-          "all_search_fields"
-        ]
-      },
-      "did_you_mean": {
+          "properties": {
+            "category": {
+              "type": "string"
+            },
+            "commonQuestionRanking": {
+              "type": "long"
+            },
+            "dateModified": {
+              "format": "strict_date_optional_time||epoch_millis",
+              "type": "date"
+            },
+            "datePublished": {
+              "format": "strict_date_optional_time||epoch_millis",
+              "type": "date"
+            },
+            "featuredRanking": {
+              "type": "long"
+            },
+            "id": {
+              "type": "long"
+            },
+            "keywords": {
+              "type": "string"
+            },
+            "language": {
+              "type": "string"
+            },
+            "prId": {
+              "type": "long"
+            },
+            "query": {
               "type": "string",
-              "analyzer": "didYouMean"
-      },
-      "autocomplete": {
-        "type": "string",
-        "analyzer": "autocomplete"
-      },
-      "all_search_fields" :{
-        "type" : "string"
-      }
-    }
-  }
+              "fields": {
+                "en": { 
+                  "type":     "string",
+                  "analyzer": "english"
+                }
+              }  
+            },
+            "response": {
+              "type": "string",
+              "fields": {
+                "en": { 
+                  "type":     "string",
+                  "analyzer": "english"
+                }
+              }  
+            },
+            "smartTag": {
+              "type": "string"
+            },
+            "subtopic": {
+              "type": "string"
+            },
+            "tier": {
+              "type": "string"
+            },
+            "topic": {
+              "type": "string"
+            }
+          }
+        }
 }'
 
 5. Load data:
