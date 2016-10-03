@@ -300,70 +300,87 @@ function fuzzySearch3(req, res, next) {  //full body
              //  multi_match_snippet_fuzzy,
              //  match_field_query,
              //  match_field_response,
-               { "multi_match": {
-                  "query": req.params.query,
-                  "type": "best_fields",
-                  "fields": ["query", "response","query.en", "response.en"],
-                  //"tie_breaker": tie_breaker,
-                  //"minimum_should_match": "100%",
-                  //fuzziness: 1,
-                  //prefix_length: 1,
-                  "operator" : "and",
-                  "boost" : 3
+               { // best_fields - orig string
+                  "multi_match": {
+                    "query": req.params.query,
+                    "type": "best_fields",
+                    "fields": ["query^2", "response","query.en^2", "response.en"],
+                    //"tie_breaker": tie_breaker,
+                    //"minimum_should_match": "100%",
+                    fuzziness: 1,
+                    //prefix_length: 1,
+                    "operator" : "and",
+                    //"boost" : 3
                 }
               },
-              { "multi_match": {
-                  "query": req.params.query,
-                  "type": "most_fields",
-                  "fields": ["query", "response","query.en", "response.en"],
-                  //"tie_breaker": tie_breaker,
-                  //"minimum_should_match": "100%",
-                  //fuzziness: 1,
-                  //prefix_length: 1,
-                  "operator" : "and",
-                  "boost" : 3
-                }
-              },
-              { //high powered lines
+              // // most_fields - orig string
+              // { "multi_match": {
+              //     "query": req.params.query,
+              //     "type": "most_fields",
+              //     "fields": ["query^2", "response","query.en^2", "response.en"],
+              //     //"tie_breaker": tie_breaker,
+              //     //"minimum_should_match": "100%",
+              //     //fuzziness: 1,
+              //     //prefix_length: 1,
+              //     "operator" : "and",
+              //     "boost" : 3
+              //   }
+              // },
+              // { //best_fields - orig string
+              //     "multi_match": {
+              //     "query":req.params.query,
+              //     "type": "phrase",
+              //     "fields": ["query", "response","query.en", "response.en"],
+              //     "slop":50,
+              //     //"tie_breaker": tie_breaker,
+              //     //"minimum_should_match": "2<67%",
+              //     //fuzziness: 1,
+              //     //prefix_length: 1,
+              //     //"operator" : "or",
+              //     //"boost" : 2
+              //   }
+              // },
+              { //best_fields - processed string
                   "multi_match": {
                   "query":preProcessTerms2,
-                  "type": "cross_fields",
-                  "fields": ["query", "response","query.en", "response.en"],
+                  "type": "best_fields",
+                  "fields": ["query^2", "response","query.en^2", "response.en"],
                   //"tie_breaker": tie_breaker,
                   //"minimum_should_match": "33%",
-                  //fuzziness: 1,
+                  fuzziness: 1,
                   //prefix_length: 1,
                   "operator" : "and",
-                  "boost" : 2
+                  "boost" : 3
                 }
               },
-              {//high powered lines dangerous
-                 "multi_match": {
-                  "query":preProcessTerms2,
-                  "type": "cross_fields",
-                  "fields": ["query", "response","query.en", "response.en"],
-                  //"tie_breaker": tie_breaker,
-                  "minimum_should_match": "2<67%",
-                  //fuzziness: 1,
-                  //prefix_length: 1,
-                  "operator" : "or",
-                  //"boost" : 1
-                }
-              },
-              {
-                "match": {
-                  "query": { // name of seach field
-                    query: preProcessTerms2,
-                    fuzziness: "auto",
-                    //prefix_length: 1,
-                    //"operator" : "or",
-                    "minimum_should_match": "2<67%",
-                    "operator": "or",
-                    "boost" : 2
-                  }
-                }
-              },
-              // {
+              // {// phrase match - cross_fields - or - processed string
+              //    "multi_match": {
+              //     "query":preProcessTerms2,
+              //     "type": "phrase",
+              //     "fields": ["query^2", "response","query.en^2", "response.en"],
+              //     "slop":2,
+              //     //"tie_breaker": tie_breaker,
+              //     //"minimum_should_match": "2<67%",
+              //     //fuzziness: 1,
+              //     //prefix_length: 1,
+              //     //"operator" : "or",
+              //     "boost" : 3
+              //   }
+              // },
+              // { // fuzzy match - and
+              //   "match": {
+              //     "query": { // name of seach field
+              //       query: preProcessTerms2,
+              //       fuzziness: 1,
+              //       //prefix_length: 1,
+              //       //"operator" : "or",
+              //       "minimum_should_match": "2<67%",
+              //       //"operator": "or",
+              //       //"boost" : 1
+              //     }
+              //   }
+              // },
+              // { // fuzzy match - or
               //   "match": {
               //     "response": { // name of seach field
               //       query: req.params.query,
