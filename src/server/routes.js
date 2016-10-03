@@ -107,8 +107,45 @@ function getPreparedResponsebyId(req, res, next) {
   })
   .then(function(results) {
     var preparedResponse = results;
-    res.send(preparedResponse);
-  }, function(err) {
+   // console.log(results);
+    // build related pr urls
+    if (results._source.relatedPrList) {
+      var prIds = results._source.relatedPrList.split(',');
+      // preparedResponse.relatedPRs = getRelatedPRs(prIds);
+      client.search({
+        index: index,
+        type: type,
+        body  : {
+          //"fields": ["prId", "query"],
+          "query" : {
+            "bool" : {
+              "filter" : {
+                "terms" : {
+                  "prId" : prIds
+                }
+              }
+            }
+          }
+        }
+      }).then(function(prs) {
+        var relatedPR = [];
+     //   console.log('get related pr ', prs.hits.hits);
+        prs.hits.hits.forEach(function(pr) {
+          var onePr = {
+            'prId' : pr._source.prId,
+            'query' : pr._source.query
+          }
+          relatedPR.push(onePr);
+        });
+        preparedResponse['relatedPR'] = relatedPR;
+        res.send(preparedResponse);
+      });
+    }
+    else {
+      res.send(preparedResponse);
+    }
+
+    }, function(err) {
     console.trace(err.message);
   });
 }
@@ -631,5 +668,37 @@ function preProcessSearch(queryString) {
   console.log(relevantTemrs);
   return relevantTemrs.join(' ');
 }
+
+// function getRelatedPRs(prList){
+//   client.search({
+//     index: index,
+//     type: type,
+//     body  : {
+//     //"fields": ["prId", "query"],
+//     "query" : {
+//     "bool" : {
+//       "filter" : {
+//         "terms" : {
+//           "prId" : prList
+//           }
+//         }
+//       }
+//     }
+//   }
+// }).then(function(prs) {
+//       var relatedPR = [];
+//       console.log('get related pr ', prs.hits.hits);
+//       prs.hits.hits.forEach(function(pr) {
+//         var onePr = {
+//            prId : pr._source.prId,
+//           query : pr._source.query
+//         }
+//         relatedPR.push(onePr);
+//       });
+//     // console.log(relatedPR);
+//      return relatedPR;
+//
+//  });
+// }
 
 

@@ -32,69 +32,69 @@
                       <h4 class="panel-title">
                         <i class="indicator glyphicon glyphicon-plus-sign pull-LEFT"></i>
                         <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                          RESOURCES (Placeholder)
+                          RESOURCES
                         </a>
                       </h4>
                     </div>
                     <div id="collapseOne" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
-                      <div class="panel-body">
-
-                        <strong>CDC Publications</strong><br>
-                        General Recommendations on Immunization: Recommendations of the Advisory Committee on Immunization Practices, January 28, 2011<br>
-                        Centers for Disease Control and Prevention<br>
-                        <a href="#">http://www.cdc.gov/mmwr/pdf/rr/rr6002.pdf</a><br>
-                        <br>
-                        Do Your Part for Vaccine Safety - Report to VAERS<br>
-                        Centers for Disease Control and Prevention and the United States Food and Drug Administration<br>
-                        <a href="#">http://vaers.hhs.gov/resources/VAERS-Brochure.pdf</a><br>
-                        <br>
-                        Parents' Guide to Childhood Immunizations, 2010<br>
-                        National Center for Immunization and Respiratory Diseases, Immunization Services Division<br>
-                        <a href="#">http://www.cdc.gov/vaccines/pubs/parents-guide/downloads/parents-guide-508.pdf</a><br>
-                         <br>
-                        <strong>CDC Resources</strong><br>
-                        Advisory Committee on Immunization Practices (ACIP) Recommendations<br>
-                        Centers for Disease Control and Prevention<br>
-                        <a href="#">http://www.cdc.gov/vaccines/acip/recs/index.html</a><br>
-                         <br>
-                        VAERS: Vaccine Adverse Event Reporting System<br>
-                        Centers for Disease Control and Prevention and the United States Food and Drug Administration<br>
-                        1-800-822-7967<br>
-                        <a href="#">http://vaers.hhs.gov/</a><br>
-                         <br>
-                        Vaccine Safety and Adverse Events<br>
-                        National Center for Immunization and Respiratory Diseases, Immunization Services Division<br>
-                        <a href="#">http://www.cdc.gov/vaccines/vac-gen/safety/default.htm</a><br>
-                         <br>
-                        Parents' Guide to Childhood Immunizations<br>
-                        National Center for Immunization and Respiratory Diseases, Immunization Services Division<br>
-                        <a href="#">http://www.cdc.gov/vaccines/pubs/parents-guide/default.htm</a><br>
-                         <br>
-                        Vaccines and Immunizations<br>
-                        National Center for Immunization and Respiratory Diseases, Immunization Services Division<br>
-                        <a href="#">http://www.cdc.gov/vaccines/</a><br>
-                         <br>
-                        <strong>External Resources</strong><br>
-                        The National Medication Errors Reporting Program (ISMP MERP)<br>
-                        Institute for Safe Medication Practices<br>
-                        <a href="#">https://www.ismp.org/orderforms/report-errortoISMP.asp</a><br>
-                         <br>
-                        Vaccine Safety: Dosing Safety: Childrens Hospital of Philadelphia<br>
-                        <a href="#">http://www.chop.edu/centers-programs/vaccine-education-center/vaccine-safety/dosing-safety#.Vw-uNfLVyos</a><br>
-                        <br>
-                        What is the Zika virus?<br>
-                        <a href="#">http://www.cdc.gov/zika</a><br>
-                        <br>
-                        <strong>CDC Resources</strong><br>
-                        Zika - General Information<br>
-                        National Center for Emerging and Zoonotic Infectious Diseases<br>
-                        <a href="#">http://www.cdc.gov/zika/basics/</a><br>
-                        <br>
-                        <strong>Questions and Answers</strong><br>
-                        Zika - General Information<br>
-                        Office of Public Health Preparedness and Response<br>
-                        <a href="#">http://www.cdc.gov/zika/basics/</a>
-                      </div>
+                      <div class="panel-body" ng-bind-html="vm.data.resources" ng-if="vm.data.resources != null"></div>
+                      <!--<div class="panel-body" ng-if="vm.data.resources == null">-->
+                        <!--<strong>CDC Publications</strong><br>-->
+                        <!--General Recommendations on Immunization: Recommendations of the Advisory Committee on Immunization Practices, January 28, 2011<br>-->
+                        <!--Centers for Disease Control and Prevention<br>-->
+                        <!--<a href="#">http://www.cdc.gov/mmwr/pdf/rr/rr6002.pdf</a><br>-->
+                        <!--<br>-->
+                        <!--Do Your Part for Vaccine Safety - Report to VAERS<br>-->
+                        <!--Centers for Disease Control and Prevention and the United States Food and Drug Administration<br>-->
+                        <!--<a href="#">http://vaers.hhs.gov/resources/VAERS-Brochure.pdf</a><br>-->
+                        <!--<br>-->
+                        <!--Parents' Guide to Childhood Immunizations, 2010<br>-->
+                        <!--National Center for Immunization and Respiratory Diseases, Immunization Services Division<br>-->
+                        <!--<a href="#">http://www.cdc.gov/vaccines/pubs/parents-guide/downloads/parents-guide-508.pdf</a><br>-->
+                        <!-- <br>-->
+                        <!--<strong>CDC Resources</strong><br>-->
+                        <!--Advisory Committee on Immunization Practices (ACIP) Recommendations<br>-->
+                        <!--Centers for Disease Control and Prevention<br>-->
+                        <!--<a href="#">http://www.cdc.gov/vaccines/acip/recs/index.html</a><br>-->
+                        <!-- <br>-->
+                        <!--VAERS: Vaccine Adverse Event Reporting System<br>-->
+                        <!--Centers for Disease Control and Prevention and the United States Food and Drug Administration<br>-->
+                        <!--1-800-822-7967<br>-->
+                        <!--<a href="#">http://vaers.hhs.gov/</a><br>-->
+                        <!-- <br>-->
+                        <!--Vaccine Safety and Adverse Events<br>-->
+                        <!--National Center for Immunization and Respiratory Diseases, Immunization Services Division<br>-->
+                        <!--<a href="#">http://www.cdc.gov/vaccines/vac-gen/safety/default.htm</a><br>-->
+                        <!-- <br>-->
+                        <!--Parents' Guide to Childhood Immunizations<br>-->
+                        <!--National Center for Immunization and Respiratory Diseases, Immunization Services Division<br>-->
+                        <!--<a href="#">http://www.cdc.gov/vaccines/pubs/parents-guide/default.htm</a><br>-->
+                        <!-- <br>-->
+                        <!--Vaccines and Immunizations<br>-->
+                        <!--National Center for Immunization and Respiratory Diseases, Immunization Services Division<br>-->
+                        <!--<a href="#">http://www.cdc.gov/vaccines/</a><br>-->
+                        <!-- <br>-->
+                        <!--<strong>External Resources</strong><br>-->
+                        <!--The National Medication Errors Reporting Program (ISMP MERP)<br>-->
+                        <!--Institute for Safe Medication Practices<br>-->
+                        <!--<a href="#">https://www.ismp.org/orderforms/report-errortoISMP.asp</a><br>-->
+                        <!-- <br>-->
+                        <!--Vaccine Safety: Dosing Safety: Childrens Hospital of Philadelphia<br>-->
+                        <!--<a href="#">http://www.chop.edu/centers-programs/vaccine-education-center/vaccine-safety/dosing-safety#.Vw-uNfLVyos</a><br>-->
+                        <!--<br>-->
+                        <!--What is the Zika virus?<br>-->
+                        <!--<a href="#">http://www.cdc.gov/zika</a><br>-->
+                        <!--<br>-->
+                        <!--<strong>CDC Resources</strong><br>-->
+                        <!--Zika - General Information<br>-->
+                        <!--National Center for Emerging and Zoonotic Infectious Diseases<br>-->
+                        <!--<a href="#">http://www.cdc.gov/zika/basics/</a><br>-->
+                        <!--<br>-->
+                        <!--<strong>Questions and Answers</strong><br>-->
+                        <!--Zika - General Information<br>-->
+                        <!--Office of Public Health Preparedness and Response<br>-->
+                        <!--<a href="#">http://www.cdc.gov/zika/basics/</a>-->
+                      <!--</div>-->
                     </div>
                   </div>
                 </div>
@@ -107,14 +107,15 @@
             </div>
         </div>
 
-        <div class="row">
+        <div class="row" ng-show="vm.data.relatedPR.length > 0">
             <div class="col-lg-12">
-                <strong>OTHER RELATED QUESTIONS &amp; TOPICS (Placeholder)</strong><br>
-                <a href="#">Who can contract the Zika virus?</a><br>
-                <a href="#">Can dogs get Zika?</a><br>
-                <a href="#">How do I know if I have Zika?</a><br>
-                <a href="#">Where did Zika come from?</a><br>
-                <a href="#">What is the Zika virus?</a><br>
+                <strong>OTHER RELATED QUESTIONS &amp; TOPICS</strong><br>
+                <a ng-repeat="onePR in vm.data.relatedPR" ui-sref='details({id: onePR.prId})'>{{onePR.query}}</a><br>
+                <!--<a href="#">Who can contract the Zika virus?</a><br>-->
+                <!--<a href="#">Can dogs get Zika?</a><br>-->
+                <!--<a href="#">How do I know if I have Zika?</a><br>-->
+                <!--<a href="#">Where did Zika come from?</a><br>-->
+                <!--<a href="#">What is the Zika virus?</a><br>-->
             </div>
         </div>
 

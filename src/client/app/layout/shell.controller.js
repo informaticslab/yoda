@@ -8,6 +8,7 @@
   ShellController.$inject = ['$rootScope', '$timeout', 'config', 'logger', '$cookies', 'authservice'];
   /* @ngInject */
   function ShellController($rootScope, $timeout, config, logger, $cookies, authservice) {
+
     var vm = this;
     $rootScope.isLoggedIn;
     vm.busyMessage = 'Please wait ...';
@@ -15,7 +16,16 @@
     $rootScope.isBusy = false;
 
     // vm.isBusy = true;
-    $rootScope.showSplash = true;
+// <<<<<<< HEAD
+//     $rootScope.showSplash = true;
+// =======
+//     // $rootScope.showSplash = true;
+
+//     vm.isAdminState = function() {
+//       var state =  $state.is('admin');
+//       return state;
+//     };
+// >>>>>>> development
     
     activate();
 

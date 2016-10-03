@@ -392,6 +392,10 @@ margin:0;
     padding-right: 30px; 
 }
 
+.sort-label {
+    padding-right: 5px;
+}
+
 .inner-addon .glyphicon {
   position: absolute;
   padding: 10px;

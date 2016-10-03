@@ -14,7 +14,7 @@
         <!--<li><a href="#" ng-click="vm.sort('relevant')">Most Popular (Placeholder)</a></li>-->
         <!--<li><a href="#" ng-click="vm.sort('featuredRanking')">Featured</a></li>-->
         <!--</ul>-->
-        <label>Sort By</label>
+        <label class='sort-label'>Sort By</label>
         <select ng-model=vm.sortOption ng-options="option as option.label disable when option.notAvailable for option in vm.sortOptions" ng-change="vm.sort(vm.sortOption.option)">
         </select>
       </div>
@@ -82,11 +82,10 @@
         </div>
       </div>
       <div class="col-lg-3 col-md-3 col-sm-4 left-filters" ng-if='!isBusy'>
-        <h4>Refine by (Placeholder)</h4>
+        <h3>Refine by</h3>
         <!-- AUDIENCE -->
         <div class="radio cb-group">
-          <strong>Audience</strong>
-          <br>
+          <h5>Audience</h5>
           <label>
             <input type="radio" name="optionsRadios" ng-model = "vm.filterOption" value="all" ng-change="vm.filter(vm.filterOption)">For everyone</label>
             <br>
@@ -99,7 +98,7 @@
       </div>
             <div class="col-lg-9 col-md-9 col-sm-8 col-xs-12 right-results ">
               <div class="indv-results" dir-paginate='result in vm.resultsArray | filter: (!vm.disableFilter || "") &&  {_source : {tier : vm.filterOption}} |orderBy :[vm.sortKey,vm.secondarySort]| itemsPerPage: vm.pageSize' current-page='vm.currentPage'>
-                <h3><a ui-sref='details({id: result._source.id})'>{{result._source.query}}</a>&nbsp;<span ng-if="result._source.featuredRanking>0" class="glyphicon glyphicon-star" style="color:gold; vertical-align: middle;margin-top:-4px"></span> <span class="liked" ng-if='result._source.liked'>({{result._source.liked}} {{result._source.liked > 1 ? vm.peoplePhrase : vm.personPhrase}})</span></h3>
+                <h3><a ui-sref='details({id: result._source.id})'>{{result._source.query}}</a>&nbsp;<i ng-if="result._source.featuredRanking>0" class="fa fa-star" style="color: gold; vertical-align: middle;margin-top:-4px"></i> <span class="liked" ng-if='result._source.liked'>({{result._source.liked}} {{result._source.liked > 1 ? vm.peoplePhrase : vm.personPhrase}})</span></h3>
                 {{result._source.response | limitTo: 256}}...
                 <br>
                 <i>ID:{{result._source.id}}</i>
