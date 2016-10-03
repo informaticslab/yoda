@@ -26,6 +26,7 @@
     "passport-http": "^0.3.0",
     "passport-local": "^1.0.0",
     "serve-favicon": "^2.0.1",
+    "stopwords": "0.0.5",
     "underscore": "^1.8.3"
   },
   "devDependencies": {
