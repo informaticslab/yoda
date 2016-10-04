@@ -360,7 +360,7 @@ function fuzzySearch3(req, res, next) {  //full body
                     "fields": ["query^2", "response","query.en^2", "response.en"],
                     //"tie_breaker": tie_breaker,
                     //"minimum_should_match": "100%",
-                    fuzziness: 1,
+                    //fuzziness: 1,
                     //prefix_length: 1,
                     "operator" : "and",
                     "boost" : 3
@@ -399,10 +399,10 @@ function fuzzySearch3(req, res, next) {  //full body
                   "type": "best_fields",
                   "fields": ["query^2", "response","query.en^2", "response.en"],
                   //"tie_breaker": tie_breaker,
-                  //"minimum_should_match": "33%",
-                  fuzziness: 1,
+                  "minimum_should_match": "3<75%",
+                  fuzziness: 2,
                   //prefix_length: 1,
-                  "operator" : "and",
+                  //"operator" : "and",
                   //"boost" : 2
                 }
               },
@@ -875,6 +875,12 @@ function preProcessSearch(queryString) {
   var nounTokens = nlp.sentence(queryString).terms.filter(function(t){
     return t.pos.Noun;
   });
+
+  var tags = nlp.text(queryString).tags(function(t){
+    return t.pos.Noun;
+  });
+
+  console.log("nlp tags:",tags[0]);
 
   for (var i=0; i < nounTokens.length; i++) {
       relevantTemrs.push(nounTokens[i].text);
