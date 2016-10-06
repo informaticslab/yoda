@@ -33,23 +33,23 @@ module.exports = function() {
             "prId": {
               "type": "long"
             },
-            "query": {
+            "title": {
               "type": "string",
               "fields": {
-                "en": { 
+                "en": {
                   "type":     "string",
                   "analyzer": "english"
                 }
-              }  
+              }
             },
-            "response": {
+            "description": {
               "type": "string",
               "fields": {
-                "en": { 
+                "en": {
                   "type":     "string",
                   "analyzer": "english"
                 }
-              }  
+              }
             },
             "smartTag": {
               "type": "string"
@@ -65,7 +65,7 @@ module.exports = function() {
             }
           }
         }
-      } 
+      }
   };
 
   return config;

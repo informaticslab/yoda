@@ -4,11 +4,11 @@
 
 curl -XPUT 'localhost:9200/prepared_responses/'
 
-2. Close the index: 
+2. Close the index:
 
 curl -XPOST 'localhost:9200/prepared_responses/_close'
 
-3. Update Config: 
+3. Update Config:
 
 curl -XPUT 'localhost:9200/prepared_responses/_settings' -d '{
   "settings": {
@@ -72,7 +72,7 @@ curl -XPUT 'localhost:9200/prepared_responses/_settings' -d '{
   }
 }'
 
-4. Add Mapping: 
+4. Add Mapping:
 
 curl -XPUT 'http://localhost:9200/prepared_responses/prepared_responses/_mapping' -d '
 {
@@ -107,23 +107,23 @@ curl -XPUT 'http://localhost:9200/prepared_responses/prepared_responses/_mapping
             "prId": {
               "type": "long"
             },
-            "query": {
+            "title": {
               "type": "string",
               "fields": {
-                "en": { 
+                "en": {
                   "type":     "string",
                   "analyzer": "english"
                 }
-              }  
+              }
             },
-            "response": {
+            "description": {
               "type": "string",
               "fields": {
-                "en": { 
+                "en": {
                   "type":     "string",
                   "analyzer": "english"
                 }
-              }  
+              }
             },
             "smartTag": {
               "type": "string"

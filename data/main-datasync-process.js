@@ -79,12 +79,12 @@ var mode = 'create' ;
 var fd = fs.openSync(path.join(process.cwd(), PRfile), 'a')
 
 
-// retrievePrToFile()    
+// retrievePrToFile()
 //   // .then(switchIndex)
 //   .then(initIndex)
 //   .then(getAlias()
 //     .then(function(response){
-//       var keys = Object.keys(response); 
+//       var keys = Object.keys(response);
 //       oldIndex = keys[0];
 //     }))
 //   .then(closeIndex)
@@ -106,16 +106,16 @@ if (process.argv[2]) {
         .then(initIndex)
         .then(getAlias()
           .then(function(response){
-            var keys = Object.keys(response); 
+            var keys = Object.keys(response);
             oldIndex = keys[0];
           }))
         .then(closeIndex)
         // .then(configIndex)
         .then(putMappings)
         .then(openIndex)
-        
+
         .then(syncPrSingle);
-        
+
       //.then(confirmInsert)
       //.then(reindex)
       //.then(switchIndex);
@@ -130,16 +130,16 @@ if (process.argv[2]) {
       .then(initIndex)
       .then(getAlias()
         .then(function(response){
-          var keys = Object.keys(response); 
+          var keys = Object.keys(response);
           oldIndex = keys[0];
         }))
       .then(closeIndex)
       // .then(configIndex)
       .then(putMappings)
       .then(openIndex)
-       
+
       .then(syncPrSingle);
-     
+
     //.then(confirmInsert)
     //.then(reindex)
     //.then(switchIndex);
@@ -169,8 +169,8 @@ function retrievePrToFile(nextUrl){
           prId: obj.extendedAttributes.PrId,
           number: obj.Number,
           dateModified: new Date(obj.extendedAttributes.LastUpdateDate).toISOString(),
-          query: obj.name,
-          response: obj.description,
+          title: obj.name,
+          description: obj.description,
           category: obj.extendedAttributes.Category,
           commonQuestionRanking: obj.extendedAttributes.CommonQuestionRanking,
           featuredRanking: obj.extendedAttributes.FeaturedRanking,
@@ -205,7 +205,7 @@ function retrievePrToFile(nextUrl){
 /**
 * create the new index
 */
-function initIndex() {  
+function initIndex() {
   var timestamp = moment().format('X');
   newIndexName = baseIndex.index + '-' + timestamp;
   // console.log('creating new index: ' + newIndexName);
@@ -286,7 +286,7 @@ function getAlias() {
   });
 }
 
-/** 
+/**
 * Update alias
 */
 function updateAliases() {
@@ -300,16 +300,16 @@ function updateAliases() {
         { add: { index: newIndexName, alias: indexAlias} }
       ]
     }
-  });  
+  });
 }
 
 
 //////////////////////////////////////////////
-// LOOK HERE WILL SETUP FOR TESTING DATA ONLY 
+// LOOK HERE WILL SETUP FOR TESTING DATA ONLY
 // NEED TO CHANGE WHEN SE data is viable
 //////////////////////////////////////////////
 
-function syncPrSingle() {   
+function syncPrSingle() {
   //var PRfile = 'PRfile_2016_08_29T18_26_44_586Z';
   var PRfile = 'cdcinfo_dev_data_single_lines_2.json';   //OVERRIDE HERE!!!!!!!!!!!!!!!
   var deferred = Q.defer();

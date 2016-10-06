@@ -2,7 +2,7 @@
  * Created by trungnguyen on 8/19/16.
  */
 fs = require('fs');
-prJsonData = require('./cdcinfo_dev_data.json');
+prJsonData = JSON.parse(require('./cdcinfo_dev_data.json'));
 var featureCount = 10;
 var featuredPRs=[];
 var commonPRs = [];
