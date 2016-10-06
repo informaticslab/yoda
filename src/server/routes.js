@@ -213,7 +213,7 @@ function fuzzySearch3(req, res, next) {  //full body
                   "fields": ["query", "response","query.en", "response.en"],
                   "slop":50,
                   //"tie_breaker": tie_breaker,
-                  "minimum_should_match": "2<67%",
+                  //"minimum_should_match": "2<67%",
                   //fuzziness: 1,
                   //prefix_length: 1,
                   //"operator" : "or",
@@ -227,7 +227,7 @@ function fuzzySearch3(req, res, next) {  //full body
                   "fields": ["query^2", "response","query.en^2", "response.en"],
                   //"tie_breaker": tie_breaker,
                   "minimum_should_match": "3<75%",
-                  fuzziness: 2,
+                  //fuzziness: 2,
                   //prefix_length: 1,
                   //"operator" : "and",
                   //"boost" : 2
