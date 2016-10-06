@@ -220,6 +220,22 @@ function fuzzySearch3(req, res, next) {  //full body
                   //"boost" : 2
                 }
               },
+
+              { //best_fields - orig string
+                  "multi_match": {
+                  "query":req.params.query,
+                  "type": "best_fields",
+                  "fields": ["query", "response","query.en", "response.en"],
+                  //"slop":50,
+                  //"tie_breaker": tie_breaker,
+                  "minimum_should_match": "3<75%",
+                  //fuzziness: 1,
+                  //prefix_length: 1,
+                  //"operator" : "or",
+                  "boost" : 2
+                }
+              },
+
               { //best_fields - processed string
                   "multi_match": {
                   "query":preProcessTerms2,
