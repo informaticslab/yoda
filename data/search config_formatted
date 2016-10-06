@@ -8,71 +8,7 @@ curl -XPUT 'localhost:9200/prepared_responses/'
 
 curl -XPOST 'localhost:9200/prepared_responses/_close'
 
-3. Update Config:
-
-curl -XPUT 'localhost:9200/prepared_responses/_settings' -d '{
-  "settings": {
-    "index": {
-      "analysis": {
-        "filter": {
-          "stemmer": {
-            "type": "stemmer",
-            "language": "english"
-          },
-          "autocompleteFilter": {
-            "max_shingle_size": "5",
-            "min_shingle_size": "2",
-            "type": "shingle"
-          },
-          "stopwords": {
-            "type": "stop",
-            "stopwords": [
-              "_english_"
-            ]
-          }
-        },
-        "analyzer": {
-          "didYouMean": {
-            "filter": [
-              "lowercase"
-            ],
-            "char_filter": [
-              "html_strip"
-            ],
-            "type": "custom",
-            "tokenizer": "standard",
-            "stopwords" : ["have"]
-          },
-          "autocomplete": {
-            "filter": [
-              "lowercase",
-              "autocompleteFilter"
-            ],
-            "char_filter": [
-              "html_strip"
-            ],
-            "type": "custom",
-            "tokenizer": "standard"
-          },
-          "default": {
-            "filter": [
-              "lowercase",
-              "stopwords",
-              "stemmer"
-            ],
-             "char_filter": [
-              "html_strip"
-            ],
-            "type": "custom",
-            "tokenizer": "standard"
-          }
-        }
-      }
-    }
-  }
-}'
-
-4. Add Mapping:
+3. Add Mapping:
 
 curl -XPUT 'http://localhost:9200/prepared_responses/prepared_responses/_mapping' -d '
 {
@@ -141,9 +77,13 @@ curl -XPUT 'http://localhost:9200/prepared_responses/prepared_responses/_mapping
         }
 }'
 
+4. Open index: 
+
+curl -XPOST 'localhost:9200/prepared_responses/_open'
+
 5. Load data:
 
-node load_formatted_PRs.js
+node load_PR_formatted.js
 
 6. Create alias for index:
 
