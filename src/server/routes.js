@@ -1,12 +1,9 @@
 var router = require('express').Router();
 var four0four = require('./utils/404')();
 var elasticsearch = require('elasticsearch');
-// <<<<<<< HEAD
-// =======
 var users = require('./controllers/users');
 var auth = require('./controllers/auth');
 
-// >>>>>>> development
 var client = new elasticsearch.Client({
   host: 'localhost:9200',
   log: 'error'
@@ -14,9 +11,6 @@ var client = new elasticsearch.Client({
 
 var nlp = require('nlp_compromise');
 var primaryStopWords = require('stopwords').english;
-
-//var index = 'prepared_responses_test';
-//var type = 'prepared_responses_test';
 
 var index = 'prepared_responses_alias';  //using index alias
 var type = 'prepared_responses';
@@ -74,8 +68,6 @@ var match_field_response = {
     }
   }
 };
-// var index = 'prepared_responses_v2';
-// var type = 'prepared_responses_v2';
 
 router.get('/users', users.index);
 
@@ -90,12 +82,9 @@ router.get('/getFeatured/:maxCount',getFeatured);
 router.get('/getCommon/:maxCount',getCommon);
 router.get('/termSearch/:query', termSearch);
 router.get('/getPreparedResponsebyId/:id', getPreparedResponsebyId);
-//router.get('/search/:query', doSearch);
 router.get('/search/:query', fuzzySearch3);
 router.get('/questions/:query', getQuestions);
 router.get('/*', four0four.notFoundMiddleware);
-
-//router.get('/fuzzySearch/:query', fuzzySearch);
 router.post('/updatePositiveRating/:id', updatePositiveRating);
 router.post('/updateNegativeRating/:id', updateNegativeRating);
 
@@ -157,168 +146,6 @@ function getPreparedResponsebyId(req, res, next) {
   });
 }
 
-function doSearch(req, res, next) {  //full body
-
-  client.search({
-    index: index,
-    body: {
-      query: {
-        query_string: {
-          query: req.params.query
-        }
-      },
-      size: 1000,
-      // explain: true      //set to 'true' for testing only
-    }
-  })
-  .then(function(results) {
-    var hits = results.hits.hits;
-    res.send(hits);
-  }, function(err) {
-    console.trace(err.message);
-  });
-}
-
-function fuzzySearch(req, res, next) {  //full body
-  var suggestions = null;
-  client.search({
-      index: index,
-      body:   {
-      "suggest": {
-        "didYouMean": {
-        "text": req.params.query,
-          "phrase": {
-              "field": "query"
-          }
-      }
-    },
-
-  //  "query": {
-  //    "multi_match": {
-  //      "query": req.params.query,
-  //      "fields": [
-  //          "response",
-  //          "query"
-  //     ]
-  //  }
-  //},
-        "query": {
-          "bool": {
-            "should": [
-              {
-                "multi_match": {
-                  "query": req.params.query,
-                  "type": "phrase_prefix",
-                  "fields": ["query", "response"],
-                  "operator" : "or"
-                }
-              },
-
-              {
-                "match": {
-                  "query": { // name of seach field
-                    query: req.params.query,
-                    fuzziness: 2,
-                    prefix_length: 1,
-                    "operator" : "or"
-                  }
-                }
-              },
-              { "wildcard":
-                { "query":  "*"+req.params.query+"*"
-
-                }
-              }
-            ]
-          }
-        }
-  ,
-        size: 1000,
-        explain: false      //set to 'true' for testing only
-      }
-    })
-    .then(function(results) {
-      //console.log('my result ',results);
-      if (results.suggest.didYouMean  ) {
-        suggestions = results.suggest.didYouMean;
-      }
-      var hits = results.hits.hits;
-      var resultPackage = {
-        "hits" : hits,
-        "suggestions" : suggestions
-      }
-    //  console.log(resultPackage);
-      res.send(resultPackage);
-    }, function(err) {
-      console.trace(err.message);
-    });
-}
-function fuzzySearch2(req, res, next) {  //full body
-  var suggestions = null;
-  client.search({
-      index: index,
-      body:   {
-        "suggest": {
-          "didYouMean": {
-            "text": req.params.query,
-            "phrase": {
-              "field": "query"
-            }
-          }
-        },
-        "query": {
-          "bool": {
-            "should": [
-              { "match_phrase": { "query":  req.params.query   }},
-              { "match_phrase": { "response":  req.params.query   }},
-              //{
-              //  "multi_match": {
-              //    "query": req.params.query,
-              //    "type": "phrase_prefix",
-              //    "fields": ["query", "response"],
-              //    "operator" : "or"
-              //  }
-              //},
-
-              {
-                "match": {
-                  "query": { // name of seach field
-                    query: req.params.query,
-                    fuzziness: 2,
-                    prefix_length: 1,
-                    "operator" : "or"
-                  }
-                }
-              },
-              { "wildcard":
-              { "query":  "*"+req.params.query+"*"
-
-              }
-              }
-            ]
-          }
-        }
-        ,
-        size: 1000,
-        explain: false      //set to 'true' for testing only
-      }
-    })
-    .then(function(results) {
-      //console.log('my result ',results);
-      if (results.suggest.didYouMean  ) {
-        suggestions = results.suggest.didYouMean;
-      }
-      var hits = results.hits.hits;
-      var resultPackage = {
-        "hits" : hits,
-        "suggestions" : suggestions
-      }
-      //  console.log(resultPackage);
-      res.send(resultPackage);
-    }, function(err) {
-      console.trace(err.message);
-    });
-}
 function fuzzySearch3(req, res, next) {  //full body
   var suggestions = null;
 
@@ -531,6 +358,7 @@ function fuzzySearch3(req, res, next) {  //full body
       console.trace(err.message);
     });
 }
+
 function termSearch(req, res, next) {
   console.log(req)
   client.search({
@@ -834,6 +662,7 @@ function getCommon(req,res,next){
     }
   });
 }
+
 function getMostRecent(req,res,next){
   var maxCount = req.params.maxCount;
   client.search({
@@ -869,7 +698,6 @@ function getMostRecent(req,res,next){
   });
 }
 
-
 function preProcessSearch(queryString) {
   var relevantTemrs = [];
   var nounTokens = nlp.sentence(queryString).terms.filter(function(t){
@@ -887,6 +715,7 @@ function preProcessSearch(queryString) {
     }
   return relevantTemrs.join(' ');
 }
+
 function preProcessSearch2(queryString) {
   var relevantTemrs = [];
   var tokens = [];
