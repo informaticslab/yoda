@@ -11,21 +11,6 @@
     var vm = this;
     vm.title = 'Login';
 
-    // vm.login = function(username, password){
-    //   // console.log(username);
-    //   // console.log(password);
-    //   authservice.authenticateUser(username, password).then(function(success) {
-    //     // console.log(success);
-    //     console.log(success);
-    //     if(success) {
-    //       $state.go('home');
-    //       // $scope.ok();
-    //     } else {
-    //       alert('Incorrect username/password');
-    //     }
-    //   });
-    // };
-
     vm.login = function() {
       authservice.login({
         username: vm.username,
@@ -33,7 +18,6 @@
       },
       function(res){
         $state.go('home');
-        $rootScope.isLoggedIn = authservice.isLoggedIn();
       },
       function(err) {
         $rootScope.error = err;
