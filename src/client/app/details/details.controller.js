@@ -18,7 +18,8 @@
     vm.personPhrase = 'person likes this';
     vm.peoplePhrase = 'people like this';
     vm.myUrl = $location.absUrl();
-
+    vm.dummyResources =  "<h2>Resources</h2><p>Genital Herpes - CDC Fact Sheet<br>National Center for HIV/AIDS, Viral Hepatitis, STD, and TB Prevention, Division of STD Prevention<br><a href=\"http://www.cdc.gov/std/Herpes/STDFact-Herpes.htm\">http://www.cdc.gov/std/Herpes/STDFact-Herpes.htm</a></p><p>Genital Herpes<br>National Center for HIV/AIDS, Viral Hepatitis, STD, and TB Prevention, Division of STD Prevention<br><a href=\"http://www.cdc.gov/std/Herpes/default.htm\">http://www.cdc.gov/std/Herpes/default.htm</a></p><p>Condom Fact Sheet In Brief<br>National Center for HIV/AIDS, Viral Hepatitis, STD, and TB Prevention<br><a href=\"http://www.cdc.gov/condomeffectiveness/brief.html\">http://www.cdc.gov/condomeffectiveness/brief.html</a></p><p>Sexually Transmitted Diseases (STDs)<br>National Center for HIV/AIDS, Viral Hepatitis, STD, and TB Prevention, Division of STD Prevention<br><a href=\"http://www.cdc.gov/std/\">http://www.cdc.gov/std/</a></p><h2>Publications</h2><p>CDC Fact Sheet: Genital Herpes<br>National Center for HIV/AIDS, Viral Hepatitis, STD, and TB Prevention, Division of STD Prevention<br><a href=\"http://www.cdc.gov/std/herpes/herpes-factsheet-july-2014.pdf\">http://www.cdc.gov/std/herpes/herpes-factsheet-july-2014.pdf</a><br>Publication ID 127497</p><p>Condom Fact Sheet In Brief<br>National Center for HIV/AIDS, Viral Hepatitis, STD, and TB Prevention<br><a href=\"http://www.cdc.gov/condomeffectiveness/brief.htmlCondom_fact_Sheet_in_Brief.pdf\">http://www.cdc.gov/condomeffectiveness/brief.htmlCondom_fact_Sheet_in_Brief.pdf</a><br>Publication ID 127498</p>";
+    vm.dummyRelated = "5252,1548,2658";
 
     vm.ratePreparedResponse = function(type) {
       return dataservice.ratePreparedResponse(type, vm.id).then(function(response){
@@ -73,6 +74,7 @@
           vm.data = data; // not sure why we need to do this;
           vm.data = vm.data._source;
           vm.data.relatedPR = data.relatedPR;
+          vm.data.resources = data.resources || vm.dummyResources;
           return vm.data;
         });
       }

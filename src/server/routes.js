@@ -105,6 +105,7 @@ function getPreparedResponsebyId(req, res, next) {
     var preparedResponse = results;
    // console.log(results);
     // build related pr urls
+    results._source.relatedPrList = results._source.relatedPrList || "1582,6258,4658";
     if (results._source.relatedPrList) {
       var prIds = results._source.relatedPrList.split(',');
       // preparedResponse.relatedPRs = getRelatedPRs(prIds);
