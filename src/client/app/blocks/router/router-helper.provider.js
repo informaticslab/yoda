@@ -26,9 +26,9 @@
     };
 
     this.$get = RouterHelper;
-    RouterHelper.$inject = ['$location', '$rootScope', '$state', 'logger', 'authservice'];
+    RouterHelper.$inject = ['$location', '$rootScope', '$state', 'logger', 'authservice', '$http'];
     /* @ngInject */
-    function RouterHelper($location, $rootScope, $state, logger, authservice) {
+    function RouterHelper($location, $rootScope, $state, logger, authservice, $http) {
       var handlingStateChangeError = false;
       var hasOtherwise = false;
       var stateCounts = {
@@ -86,37 +86,37 @@
 
       function init() {
         // checkAuth()
+        isLoggedIn();
         handleRoutingErrors();
         updateDocTitle();
       }
 
       function getStates() { return $state.get(); }
 
-      function checkAuth() {
-       
-        $rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams){
-          // console.log('in check auth');
-          // console.log('toState: ', toState);
-          if(!('data' in toState) || !('access' in toState.data)){
-              $rootScope.error = "Access undefined for this state";
-              event.preventDefault();
-          }
-           if (!authservice.authorize(toState.data.access)) {
-              $rootScope.error = "Seems like you tried accessing a route you don't have access to...";
-              event.preventDefault();
-
-              if(fromState.url === '^') {
-                  if(authservice.isLoggedIn()) {
-                      $state.go('home');
-                  } else {
-                      $rootScope.error = null;
-                      $state.go('login');
-                  }
+      function isLoggedIn() {
+        $rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromParams, fromState) {
+         
+          
+            // console.log('from state url: ', fromState);
+            $http.get('/api/isLoggedIn').success(function(data) {
+              // console.log('data: ', data);
+              // console.log('state.current: ', $state.current.name);
+              if(data.state === 'success') {
+                $rootScope.authenticated = true;
+                $rootScope.currentUser = data.user.username;
+      
+              } else {
+                // console.log('go to login')
+                $rootScope.authenticated = false;
+                $rootScope.currentUser = '';
+                $state.go('login');
               }
-          }
+            });
+          
+          
         });
       }
-
+      
       function updateDocTitle() {
         $rootScope.$on('$stateChangeSuccess',
           function(event, toState, toParams, fromState, fromParams) {

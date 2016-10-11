@@ -9,10 +9,11 @@
   /* @ngInject */
   function authservice($http, $cookieStore, $rootScope) {
 
+    
     var accessLevels = accessConfig.accessLevels,
         userRoles = accessConfig.userRoles,
         currentUser = $cookieStore.get('user') || { username: '', role: userRoles.public };
-    
+
     $cookieStore.remove('user');
 
     function changeUser(user) {
@@ -23,8 +24,6 @@
       accessLevels: accessLevels,
       userRoles: userRoles,
       user: currentUser,
-      authorize: authorize,
-      isLoggedIn: isLoggedIn,
       login: login,
       logout: logout
     };
@@ -33,19 +32,6 @@
 
     /////////////
 
-    function authorize(accessLevel, role) {
-      if(role === undefined) {
-        role = currentUser.role;
-      }
-      return accessLevel.bitMask & role.bitMask;
-    }
-
-    function isLoggedIn(user) {
-      if(user ===  undefined) {
-        user = currentUser;
-      }
-      return user.role.title === userRoles.user.title || user.role.title === userRoles.admin.title;
-    }
 
     function login(user, success, error) {
       $http.post('/api/login', user).success(function(user) {

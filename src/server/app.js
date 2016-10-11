@@ -13,49 +13,47 @@ var four0four = require('./utils/404')();
 var passport = require('passport');
 // var auth = require('./config/auth');
 var cookieParser = require('cookie-parser');
+
 var User = require('./models/User');
 
 var https = require('https');
 var fs = require('fs');
 
+var userRoles = require('./accessConfig');
+
 
 var environment = process.env.NODE_ENV;
 
 app.use(favicon(__dirname + '/favicon.ico'));
-app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(session({secret:'use the force',resave:false,saveUninitialized:false}));
+
+app.use(logger('dev'));
 app.use(passport.initialize());
 app.use(passport.session());
-app.use(logger('dev'));
-
-
-
-passport.use(User.localStrategy);
-passport.serializeUser(User.serializeUser);
-passport.deserializeUser(User.deserializeUser);
-
 app.use('/api', require('./routes'));
 app.use('/logs', require('./logs'));
 
 
-// app.post('/login', auth.authenticate);
-
-// app.use('/api/users', require())
-
-console.log('About to crank up node');
-console.log('PORT=' + port);
-console.log('NODE_ENV=' + environment);
 
 
 var https = require('https'),      // module for https
     fs =    require('fs');         // required to read certs and keys
 
+passport.use(User.localStrategy);
+passport.serializeUser(User.serializeUser);
+passport.deserializeUser(User.deserializeUser);
 // var options = {
 //     key:    fs.readFileSync('../../sec/certs/server-key.pem'),
 //     cert:   fs.readFileSync('../../sec/certs/server-cert.pem'),
 // };
+
+
+console.log('About to crank up node');
+console.log('PORT=' + port);
+console.log('NODE_ENV=' + environment);
 
 if(environment === 'build') {
   // case 'build':
@@ -83,9 +81,11 @@ if(environment === 'build') {
     // Any invalid calls for templateUrls are under app/* and should return 404
     app.use('/app/*', function(req, res, next) {
       four0four.send404(req, res);
-    });
+    })
+  
     // Any deep link calls should return index.html
-    app.use('/*', express.static('./src/client/index.html'));
+    // app.use('/*', express.static('./src/client/index.html'));
+    app.use('/*',  express.static('./src/client/index.html'));
 
 }
 

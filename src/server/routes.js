@@ -72,6 +72,15 @@ var match_field_response = {
 router.get('/users', users.index);
 
 router.post('/login', auth.login);
+
+router.get('/isLoggedIn', function(req, res){
+  if (req.isAuthenticated()){
+    res.send({state: 'success', user: req.user});
+  } else {
+    res.send({state: 'fail', user: null});
+  }
+});
+
 router.post('/logout', function(req, res) {
   req.logout();
   res.end();
