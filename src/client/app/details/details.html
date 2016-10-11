@@ -7,7 +7,12 @@
                 <span class="date-color"> Last updated: {{vm.data.dateModified | date}}</span>
             </div>
             <div class="col-lg-2 col-md-2 col-sm-3 share-section">
-                <a href ng-click="vm.shareFacebook(myUrl,vm.data.title)"><i class="glyphicon glyphicon-share-alt"></i></a>&nbsp;&nbsp;&nbsp;<a href={{vm.mailtoStr}} target="_top"><i class="glyphicon glyphicon-envelope"></i></a>&nbsp;&nbsp;&nbsp;<a href ng-click='vm.printPage()'><i class="glyphicon glyphicon glyphicon-print"></i></a>
+              <!--<a class="share_button tp-link-policy" title="Facebook" href="http://api.addthis.com/oexchange/0.8/forward/facebook/offer?url={{vm.myUrl}}&amp;title={{vm.data.title}}&amp;description={{vm.data.title}}&amp;via=CDCgov&amp;ct=0&amp;media=http://www.cdc.gov/homepage/images/centers-for-disease-control-and-prevention.png" rel="nofollow" target="_blank"><span class="tp-sr-only">Recommend on Facebook</span><span id="share_facebook" class="facebookRecommend"></span><img src='https://www.cdc.gov/TemplatePackage/3.0/images/social/facebook-32.png' height='16' width='16' alt='Share' style="display: inline;"></a>-->
+              <a class="share_button tp-link-policy dd-toggle" href ng-click="vm.shareTwitter(myUrl,vm.data.title)"><img src='https://www.cdc.gov/TemplatePackage/3.0/images/social/twitter-32.png' height='16' width='16' alt='Share' style="display: inline;"></a>&nbsp;&nbsp
+              <a class="share_button tp-link-policy dd-toggle" href ng-click="vm.shareFacebook(myUrl,vm.data.title)"><img src='https://www.cdc.gov/TemplatePackage/3.0/images/social/facebook-32.png' height='16' width='16' alt='Share' style="display: inline;"></a>&nbsp;&nbsp
+              <a class="share_button tp-link-policy dd-toggle" href><img src='https://www.cdc.gov/TemplatePackage/3.0/images/social/addthis-32.png' height='16' width='16' alt='Share' style="display: inline;"></a>&nbsp;&nbsp;&nbsp;
+              <a href={{vm.mailtoStr}} target="_top"><i class="glyphicon glyphicon-envelope"></i></a>&nbsp;&nbsp;&nbsp;
+              <a href ng-click='vm.printPage()'><i class="glyphicon glyphicon glyphicon-print"></i></a>
             </div>
         </div>
 
