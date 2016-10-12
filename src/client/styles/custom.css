@@ -662,5 +662,8 @@ h3,h4 {
     margin-top:10px;
 }}
 
-
+@media print {
+  /* All your print styles go here */
+  p {font-size: 12pt; page-break-after: avoid;}
+}
 
