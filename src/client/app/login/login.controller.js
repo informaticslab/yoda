@@ -13,8 +13,8 @@
 
     vm.login = function() {
       authservice.login({
-        username: vm.username,
-        password: vm.password
+        username: vm.username.toLowerCase(),
+        password: vm.password.toLowerCase()
       },
       function(res){
         $state.go('home');
