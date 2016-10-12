@@ -214,16 +214,31 @@ function fuzzySearch3(req, res, next) {  //full body
                   "fields": ["title","title.en","description","description.en"],
                   "type":"phrase",
                   "query":preProcessTerms2,
-                  "slop":4,
+                  "slop":50,
                   //"boost":2,
                   //"fuzziness":2,
                   //"prefix_length": 1,
                   //"operator":"and",
                   //"minimum_should_match": "2<67%",
                 }
-              }
-            ]
-          }
+              },
+              { //best_fields - orig string
+                "multi_match": {
+                  "query":preProcessTerms2,
+                  "type": "best_fields",
+                  "fields": ["title","title.en","description","description.en"],
+                  //"slop":50,
+                  //"tie_breaker": tie_breaker,
+                  "minimum_should_match": "3<75%",
+                  //fuzziness: 1,
+                  //prefix_length: 1,
+                  //"operator" : "or",
+                  //"boost" : 2
+                }
+              },
+          ]
+        },
+
 
           // "bool": {
           //   "should": [
@@ -321,7 +336,7 @@ function fuzzySearch3(req, res, next) {  //full body
         "hits" : hits,
         "suggestions" : suggestions
       }
-     console.log(JSON.stringify(resultPackage));
+     //console.log(JSON.stringify(resultPackage));
       res.send(resultPackage);
     }, function(err) {
       console.trace(err.message);
