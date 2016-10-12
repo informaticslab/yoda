@@ -91,7 +91,7 @@ router.get('/getFeatured/:maxCount',getFeatured);
 router.get('/getCommon/:maxCount',getCommon);
 router.get('/termSearch/:query', termSearch);
 router.get('/getPreparedResponsebyId/:id', getPreparedResponsebyId);
-router.get('/search/:query', fuzzySearch3);
+router.get('/search/:query/:page', fuzzySearch3);
 router.get('/questions/:query', getQuestions);
 router.get('/*', four0four.notFoundMiddleware);
 router.post('/updatePositiveRating/:id', updatePositiveRating);
@@ -157,6 +157,26 @@ function getPreparedResponsebyId(req, res, next) {
 }
 
 function fuzzySearch3(req, res, next) {  //full body
+  
+  var size = 10;
+  var page = req.params.page;
+  var startFrom;
+  var sortArray = [];
+  // var sortBy = {'dateModified'};
+  if(req.params.sort === 'dateModified'){
+    var sortParam = req.params.sort;
+    sortArray.push({'dateModified':{'order':'desc'}});
+  }
+  
+  // sortArray.push({'dateModified':{'order':'desc'}});
+  console.log('param page', page);
+  if(page == 1) {
+    startFrom = 0;
+  } else {
+    startFrom = (page - 1) * size + 1;
+  }
+  
+  console.log('startFrom ', startFrom);
   var suggestions = null;
 
   var preProcessTerms = preProcessSearch(req.params.query);
@@ -264,8 +284,10 @@ function fuzzySearch3(req, res, next) {  //full body
             ]
           }
         },
-        size: 1000,
-        explain: true      //set to 'true' for testing only
+        "sort": sortArray,
+        size: size,
+        from: startFrom,
+        explain: false     //set to 'true' for testing only
       }
     })
     .then(function(results) {
@@ -275,10 +297,12 @@ function fuzzySearch3(req, res, next) {  //full body
       }
       var hits = results.hits.hits;
       var resultPackage = {
+        "total" : results.hits.total,
         "hits" : hits,
         "suggestions" : suggestions
       }
      //console.log(JSON.stringify(resultPackage));
+    //  res.send(results);
       res.send(resultPackage);
     }, function(err) {
       console.trace(err.message);

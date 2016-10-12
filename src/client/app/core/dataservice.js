@@ -28,8 +28,10 @@
 
     function getMessageCount() { return $q.when(72); }
 
-    function doSearch(query) {
-      return $http.get('/api/search/' + query)
+    function doSearch(query, page) {
+
+      // console.log('in do search: ',query, page);
+      return $http.get('/api/search/' + query +'/' +page)
       .then(success)
       .catch(fail);
 

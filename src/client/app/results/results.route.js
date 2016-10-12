@@ -17,7 +17,7 @@
       {
         state: 'results',
         config: {
-          url: '/results/:searchString',
+          url: '/results/:searchString/:page',
           templateUrl: 'app/results/results.html',
           controller: 'ResultsController',
           controllerAs: 'vm',
@@ -25,7 +25,11 @@
           data: {
             access: access.user
           },
-          params: { searchString: null },  //required to pass along state params
+          params: { searchString: null,
+                    page: '1', 
+                    newSearch: null,
+                    sort: null,
+                  },  //required to pass along state params
           settings: {
             nav: 2,
             content: '<i class="fa fa-dashboard"></i> Home'

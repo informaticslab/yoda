@@ -32,9 +32,13 @@
       };
 
       vm.goToResults = function($item) {
-        console.log($item);
+        var options = {
+          searchString: $item,
+          page: '1'
+        };
+        // console.log('item: ',$item);
         if(!($item === undefined)) {
-          $state.go('results', {searchString: $item});
+          $state.go('results', options);
           vm.selected = undefined;
         }
       }
@@ -48,9 +52,15 @@
       };
 
       vm.checkKey = function($event,$item) {
-        // console.log($event);
+      
+        var options = {
+          searchString: $item,
+          page: '1',
+          newSearch: true
+        };
+
         if ($event.which === 13) {  // enter key press, do search
-          $state.go('results', {searchString: $item});
+          $state.go('results', options);
           vm.selected = undefined;
         }
       };
