@@ -20,29 +20,29 @@ var tie_breaker = 0.3;
 
 //var primaryStopWords = ['how','do','i','what','can','get','are','where','does','from','cause','my','out','have'];
 // var secondaryStopWords = ['prevent'];
-var multi_match_snippet_fuzzy =  {
+var multi_match_snippet_fuzzy = {
   "multi_match": {
     "query": null,
     "type": "cross_fields",
     "fields": ["query", "response"],
     "tie_breaker": tie_breaker,
     "minimum_should_match": "100%",
-    "operator" : logicalOperator,
-    "fuzziness" : "2",
-    "prefix_length" : 1
+    "operator": logicalOperator,
+    "fuzziness": "2",
+    "prefix_length": 1
   }
 };
 
-var multi_match_snippet =  {
+var multi_match_snippet = {
   "multi_match": {
     "query": null,
     "type": "cross_fields",
     "fields": ["query", "response"],
     "tie_breaker": tie_breaker,
     "minimum_should_match": "100%",
-    "operator" : logicalOperator
+    "operator": logicalOperator
 
-   }
+  }
 };
 
 var match_field_query = {
@@ -51,11 +51,11 @@ var match_field_query = {
       query: null,
       fuzziness: 2,
       prefix_length: 1,
-      "operator" : logicalOperator,
-   //  "boost" : 2
+      "operator": logicalOperator,
+      //  "boost" : 2
     }
   }
- };
+};
 
 var match_field_response = {
   "match": {
@@ -63,8 +63,8 @@ var match_field_response = {
       query: null,
       fuzziness: 2,
       prefix_length: 1,
-      "operator" : logicalOperator,
- //     "boost" : 4
+      "operator": logicalOperator,
+      //     "boost" : 4
     }
   }
 };
@@ -73,22 +73,22 @@ router.get('/users', users.index);
 
 router.post('/login', auth.login);
 
-router.get('/isLoggedIn', function(req, res){
-  if (req.isAuthenticated()){
-    res.send({state: 'success', user: req.user});
+router.get('/isLoggedIn', function (req, res) {
+  if (req.isAuthenticated()) {
+    res.send({ state: 'success', user: req.user });
   } else {
-    res.send({state: 'fail', user: null});
+    res.send({ state: 'fail', user: null });
   }
 });
 
-router.post('/logout', function(req, res) {
+router.post('/logout', function (req, res) {
   req.logout();
   res.end();
 });
 
-router.get('/getMostRecent/:maxCount',getMostRecent);
-router.get('/getFeatured/:maxCount',getFeatured);
-router.get('/getCommon/:maxCount',getCommon);
+router.get('/getMostRecent/:maxCount', getMostRecent);
+router.get('/getFeatured/:maxCount', getFeatured);
+router.get('/getCommon/:maxCount', getCommon);
 router.get('/termSearch/:query', termSearch);
 router.get('/getPreparedResponsebyId/:id', getPreparedResponsebyId);
 router.get('/search/:query/:page', fuzzySearch3);
@@ -110,79 +110,79 @@ function getPreparedResponsebyId(req, res, next) {
     type: type,
     id: req.params.id
   })
-  .then(function(results) {
-    var preparedResponse = results;
-   // console.log(results);
-    // build related pr urls
-    results._source.relatedPrList = results._source.relatedPrList || "1582,6258,4658";
-    if (results._source.relatedPrList) {
-      var prIds = results._source.relatedPrList.split(',');
-      // preparedResponse.relatedPRs = getRelatedPRs(prIds);
-      client.search({
-        index: index,
-        type: type,
-        body  : {
-          //"fields": ["prId", "query"],
-          "query" : {
-            "bool" : {
-              "filter" : {
-                "terms" : {
-                  "prId" : prIds
+    .then(function (results) {
+      var preparedResponse = results;
+      // console.log(results);
+      // build related pr urls
+      results._source.relatedPrList = results._source.relatedPrList || "1582,6258,4658";
+      if (results._source.relatedPrList) {
+        var prIds = results._source.relatedPrList.split(',');
+        // preparedResponse.relatedPRs = getRelatedPRs(prIds);
+        client.search({
+          index: index,
+          type: type,
+          body: {
+            //"fields": ["prId", "query"],
+            "query": {
+              "bool": {
+                "filter": {
+                  "terms": {
+                    "prId": prIds
+                  }
                 }
               }
             }
           }
-        }
-      }).then(function(prs) {
-        var relatedPR = [];
-     //   console.log('get related pr ', prs.hits.hits);
-        prs.hits.hits.forEach(function(pr) {
-          var onePr = {
-            'prId' : pr._source.prId,
-            'title' : pr._source.title
-          }
-          relatedPR.push(onePr);
+        }).then(function (prs) {
+          var relatedPR = [];
+          //   console.log('get related pr ', prs.hits.hits);
+          prs.hits.hits.forEach(function (pr) {
+            var onePr = {
+              'prId': pr._source.prId,
+              'title': pr._source.title
+            }
+            relatedPR.push(onePr);
+          });
+          preparedResponse['relatedPR'] = relatedPR;
+          res.send(preparedResponse);
         });
-        preparedResponse['relatedPR'] = relatedPR;
+      }
+      else {
         res.send(preparedResponse);
-      });
-    }
-    else {
-      res.send(preparedResponse);
-    }
+      }
 
-    }, function(err) {
-    console.trace(err.message);
-  });
+    }, function (err) {
+      console.trace(err.message);
+    });
 }
 
 function fuzzySearch3(req, res, next) {  //full body
-  
+
   var size = 10;
   var page = req.params.page;
   var startFrom;
   var sortArray = [];
   // var sortBy = {'dateModified'};
-  if(req.params.sort === 'dateModified'){
+  if (req.params.sort === 'dateModified') {
     var sortParam = req.params.sort;
-    sortArray.push({'dateModified':{'order':'desc'}});
+    sortArray.push({ 'dateModified': { 'order': 'desc' } });
   }
-  
+
   // sortArray.push({'dateModified':{'order':'desc'}});
   console.log('param page', page);
-  if(page == 1) {
+  if (page == 1) {
     startFrom = 0;
   } else {
     startFrom = (page - 1) * size + 1;
   }
-  
+
   console.log('startFrom ', startFrom);
   var suggestions = null;
 
   var preProcessTerms = preProcessSearch(req.params.query);
-  console.log('nlp ' ,preProcessTerms);
+  console.log('nlp ', preProcessTerms);
   var preProcessTerms2 = preProcessSearch2(req.params.query);
-  console.log('stopword ' ,preProcessTerms2);
+  console.log('stopword ', preProcessTerms2);
   multi_match_snippet.multi_match.query = req.params.query;
   multi_match_snippet_fuzzy.multi_match.query = req.params.query;
   match_field_query.match.query.query = req.params.query;
@@ -190,165 +190,177 @@ function fuzzySearch3(req, res, next) {  //full body
 
   //console.log('inused = ',multi_match_snippet)
   client.search({
-      index: index,
-      body:   {
-      "suggest" : {
-          "text" : req.params.query,
-          "didYouMean" : {
-            "phrase" : {
-              "analyzer" : "standard",
-              "field" : "title",
-              "size" : 1,
-              "real_word_error_likelihood" : 0.95,
-              "max_errors" : 2,
-              //"gram_size" : 2,
-              "direct_generator" : [ {
-                "field" : "title",
-                "suggest_mode" : "always",
-                "min_word_length" : 1
-              } ],
-              "highlight": {
-                "pre_tag": "<em>",
-                "post_tag": "</em>"
-              }
+    index: index,
+    body: {
+      "suggest": {
+        "text": req.params.query,
+        "didYouMean": {
+          "phrase": {
+            "analyzer": "standard",
+            "field": "title",
+            "size": 1,
+            "real_word_error_likelihood": 0.95,
+            "max_errors": 2,
+            //"gram_size" : 2,
+            "direct_generator": [{
+              "field": "title",
+              "suggest_mode": "always",
+              "min_word_length": 1
+            }],
+            "highlight": {
+              "pre_tag": "<em>",
+              "post_tag": "</em>"
             }
           }
-        },
-        "min_score": min_score,
-        "query": {
-          "bool":{
-            "should":[
-              {
-                "multi_match":{
-                  "fields": ["title","description","title.en","description.en"],
-                  "type":"phrase",
-                  "query":req.params.query,
-                  "slop":4,
-                  //"boost":3
-                  //"operator":"and",
-                  //"minimum_should_match": "2<67%",
-                }
-              },
-              {
-                "multi_match":{
-                  "fields": ["title","title.en","description","description.en"],
-                  "type":"phrase",
-                  "query":preProcessTerms2,
-                  "slop":4,
-                  //"boost":2,
-                  //"fuzziness":2,
-                  //"prefix_length": 1,
-                  //"operator":"and",
-                  //"minimum_should_match": "2<67%",
-                }
+        }
+      },
+      "min_score": min_score,
+      "query": {
+        "bool": {
+          "should": [
+            {
+              "multi_match": {
+                "fields": ["title", "description", "title.en", "description.en"],
+                "type": "phrase",
+                "query": req.params.query,
+                "slop": 4,
+                //"boost":3
+                //"operator":"and",
+                //"minimum_should_match": "2<67%",
               }
-            ]
-          }
-
-          // "bool": {
-          //   "should": [
-          //     // { "match_phrase": { "query":  req.params.query}},
-          //     // { "match_phrase": { "response":  req.params.query}},
-          //    //  multi_match_snippet,
-          //    //  multi_match_snippet_fuzzy,
-          //    //  match_field_query,
-          //    //  match_field_response,
-          //      { // best_fields - orig string
-          //         "multi_match": {
-          //           "query": req.params.query,
-          //           "type": "best_fields",
-          //           "fields": ["title^2", "description","title.en^2", "description.en"],
-          //           //"tie_breaker": tie_breaker,
-          //           //"minimum_should_match": "100%",
-          //           //fuzziness: 1,
-          //           //prefix_length: 1,
-          //           "operator" : "and",
-          //           "boost" : 3
-          //       }
-          //     },
-          //     // // most_fields - orig string
-          //     // { "multi_match": {
-          //     //     "query": req.params.query,
-          //     //     "type": "most_fields",
-          //     //     "fields": ["query^2", "response","query.en^2", "response.en"],
-          //     //     //"tie_breaker": tie_breaker,
-          //     //     //"minimum_should_match": "100%",
-          //     //     //fuzziness: 1,
-          //     //     //prefix_length: 1,
-          //     //     "operator" : "and",
-          //     //     "boost" : 3
-          //     //   }
-          //     // },
-          //     { //best_fields - orig string
-          //         "multi_match": {
-          //         "query":req.params.query,
-          //         "type": "phrase",
-          //         "fields": ["title", "description","title.en", "description.en"],
-          //         "slop":50,
-          //         //"tie_breaker": tie_breaker,
-          //         //"minimum_should_match": "2<67%",
-          //         //fuzziness: 1,
-          //         //prefix_length: 1,
-          //         //"operator" : "or",
-          //         //"boost" : 2
-          //       }
-          //     },
-
-          //     { //best_fields - orig string
-          //         "multi_match": {
-          //         "query":req.params.query,
-          //         "type": "best_fields",
-          //         "fields": ["title", "description","title.en", "description.en"],
-          //         //"slop":50,
-          //         //"tie_breaker": tie_breaker,
-          //         "minimum_should_match": "3<75%",
-          //         //fuzziness: 1,
-          //         //prefix_length: 1,
-          //         //"operator" : "or",
-          //         "boost" : 2
-          //       }
-          //     },
-
-          //     { //best_fields - processed string
-          //         "multi_match": {
-          //         "query":preProcessTerms2,
-          //         "type": "best_fields",
-          //         "fields": ["title^2", "description","title.en^2", "description.en"],
-          //         //"tie_breaker": tie_breaker,
-          //         "minimum_should_match": "3<75%",
-          //         //fuzziness: 2,
-          //         //prefix_length: 1,
-          //         //"operator" : "and",
-          //         //"boost" : 2
-          //       }
-          //     },
-
-
-          //   ]
-          // }
+            },
+            {
+              "multi_match": {
+                "fields": ["title", "title.en", "description", "description.en"],
+                "type": "phrase",
+                "query": preProcessTerms2,
+                "slop": 50,
+                //"boost":2,
+                //"fuzziness":2,
+                //"prefix_length": 1,
+                //"operator":"and",
+                //"minimum_should_match": "2<67%",
+              }
+            },
+            { //best_fields - orig string
+              "multi_match": {
+                "query": preProcessTerms2,
+                "type": "best_fields",
+                "fields": ["title", "title.en", "description", "description.en"],
+                //"slop":50,
+                //"tie_breaker": tie_breaker,
+                "minimum_should_match": "3<75%",
+                //fuzziness: 1,
+                //prefix_length: 1,
+                //"operator" : "or",
+                //"boost" : 2
+              }
+            },
+          ]
         },
-        "sort": sortArray,
-        size: size,
-        from: startFrom,
-        explain: false     //set to 'true' for testing only
-      }
-    })
-    .then(function(results) {
+
+
+        // "bool": {
+        //   "should": [
+        //     // { "match_phrase": { "query":  req.params.query}},
+        //     // { "match_phrase": { "response":  req.params.query}},
+        //    //  multi_match_snippet,
+        //    //  multi_match_snippet_fuzzy,
+        //    //  match_field_query,
+        //    //  match_field_response,
+        //      { // best_fields - orig string
+        //         "multi_match": {
+        //           "query": req.params.query,
+        //           "type": "best_fields",
+        //           "fields": ["title^2", "description","title.en^2", "description.en"],
+        //           //"tie_breaker": tie_breaker,
+        //           //"minimum_should_match": "100%",
+        //           //fuzziness: 1,
+        //           //prefix_length: 1,
+        //           "operator" : "and",
+        //           "boost" : 3
+        //       }
+        //     },
+        //     // // most_fields - orig string
+        //     // { "multi_match": {
+        //     //     "query": req.params.query,
+        //     //     "type": "most_fields",
+        //     //     "fields": ["query^2", "response","query.en^2", "response.en"],
+        //     //     //"tie_breaker": tie_breaker,
+        //     //     //"minimum_should_match": "100%",
+        //     //     //fuzziness: 1,
+        //     //     //prefix_length: 1,
+        //     //     "operator" : "and",
+        //     //     "boost" : 3
+        //     //   }
+        //     // },
+        //     { //best_fields - orig string
+        //         "multi_match": {
+        //         "query":req.params.query,
+        //         "type": "phrase",
+        //         "fields": ["title", "description","title.en", "description.en"],
+        //         "slop":50,
+        //         //"tie_breaker": tie_breaker,
+        //         //"minimum_should_match": "2<67%",
+        //         //fuzziness: 1,
+        //         //prefix_length: 1,
+        //         //"operator" : "or",
+        //         //"boost" : 2
+        //       }
+        //     },
+
+        //     { //best_fields - orig string
+        //         "multi_match": {
+        //         "query":req.params.query,
+        //         "type": "best_fields",
+        //         "fields": ["title", "description","title.en", "description.en"],
+        //         //"slop":50,
+        //         //"tie_breaker": tie_breaker,
+        //         "minimum_should_match": "3<75%",
+        //         //fuzziness: 1,
+        //         //prefix_length: 1,
+        //         //"operator" : "or",
+        //         "boost" : 2
+        //       }
+        //     },
+
+        //     { //best_fields - processed string
+        //         "multi_match": {
+        //         "query":preProcessTerms2,
+        //         "type": "best_fields",
+        //         "fields": ["title^2", "description","title.en^2", "description.en"],
+        //         //"tie_breaker": tie_breaker,
+        //         "minimum_should_match": "3<75%",
+        //         //fuzziness: 2,
+        //         //prefix_length: 1,
+        //         //"operator" : "and",
+        //         //"boost" : 2
+        //       }
+        //     },
+
+
+        //   ]
+        // }
+      },
+      "sort": sortArray,
+      size: size,
+      from: startFrom,
+      explain: false     //set to 'true' for testing only
+    }
+  })
+    .then(function (results) {
       //console.log('my result %',results.hits);
-      if (results.suggest.didYouMean  ) {
+      if (results.suggest.didYouMean) {
         suggestions = results.suggest.didYouMean;
       }
       var hits = results.hits.hits;
       var resultPackage = {
-        "total" : results.hits.total,
-        "hits" : hits,
-        "suggestions" : suggestions
+        "total": results.hits.total,
+        "hits": hits,
+        "suggestions": suggestions
       }
-
-    //  console.log(JSON.stringify(resultPackage));
-
       res.send(resultPackage);
-    }, function(err) {
+    }, function (err) {
       console.trace(err.message);
     });
 }
@@ -356,9 +368,9 @@ function fuzzySearch3(req, res, next) {  //full body
 function termSearch(req, res, next) {
   console.log(req)
   client.search({
-    index:index,
-    body:{
-      query:{
+    index: index,
+    body: {
+      query: {
         term: {
           query: req.params.query
         }
@@ -367,12 +379,12 @@ function termSearch(req, res, next) {
       explain: true
     }
   })
-  .then(function(results) {
-    var hits = results.hits.hits;
-    res.send(hits);
-  }, function(err) {
-    console.trace(err.message);
-  });
+    .then(function (results) {
+      var hits = results.hits.hits;
+      res.send(hits);
+    }, function (err) {
+      console.trace(err.message);
+    });
 }
 
 function getQuestions(req, res, next) {
@@ -388,44 +400,44 @@ function getQuestions(req, res, next) {
   client.search({
     index: index,
     body: {
-       //query: { "wildcard": { query: "*"+searchTerm+"*"} }
-    "size": 20,
-    "min_score":.2,
-    "query": {
-    "bool": {
-      "should": [
-        //{ "wildcard": { "query":  "*"+searchTerm+"*"}},
-        {
-          "match": {
-            "title": { // name of seach field
-              query: searchTerm,
-              boost:2
-            }
-          }
-        },
-                {
-          "match": {
-            "title": { // name of seach field
-              query: searchTerm,
-              fuzziness: "auto",
-              //prefix_length: 0
-            }
-          }
-        },
+      //query: { "wildcard": { query: "*"+searchTerm+"*"} }
+      "size": 20,
+      "min_score": .2,
+      "query": {
+        "bool": {
+          "should": [
+            //{ "wildcard": { "query":  "*"+searchTerm+"*"}},
+            {
+              "match": {
+                "title": { // name of seach field
+                  query: searchTerm,
+                  boost: 2
+                }
+              }
+            },
+            {
+              "match": {
+                "title": { // name of seach field
+                  query: searchTerm,
+                  fuzziness: "auto",
+                  //prefix_length: 0
+                }
+              }
+            },
 
-          //{ "match_phrase": { "query":  searchTerm   }}
-      ]
+            //{ "match_phrase": { "query":  searchTerm   }}
+          ]
+        }
+      }
+
     }
-  }
-
-  }
   })
-  .then(function(results) {
-    var hits = results.hits.hits;
-    res.send(hits);
-  }, function(err) {
-    console.trace(err.message);
-  });
+    .then(function (results) {
+      var hits = results.hits.hits;
+      res.send(hits);
+    }, function (err) {
+      console.trace(err.message);
+    });
 }
 
 function updatePositiveRating(req, res, next) {
@@ -439,8 +451,8 @@ function updatePositiveRating(req, res, next) {
         liked: 1
       }
     }
-  }, function(error, response) {
-    if(!error){
+  }, function (error, response) {
+    if (!error) {
       res.send(response);
     } else {
       res.send(error);
@@ -462,48 +474,48 @@ function updateNegativeRating(req, res, next) {
         disliked: 1
       }
     }
-  }, function(error, response) {
-    if(!error){
-      res.send(response);
-    } else {
-      res.send(error);
-      console.trace(error.message);
-    }
-
-  });
-
-
-
-
-}
-
-function getFeatured(req,res,next){
-
-  var maxCount = req.params.maxCount;
-  client.search({
-    'index' : index,
-    'body' : {
-    "fields": ["id","prId","title", "description", "featuredRanking","dateModified","datePublished"],
-    "query": {
-    "bool": {
-      "must": [
-        {
-          "range": {
-            "featuredRanking": {
-              "gt": "0"
-            }
-          }
-        }
-      ]
-    }
-  },
-    "from": 0,
-    "size": maxCount,
-    "sort": [{"featuredRanking": {"order":"desc"}} ],
-    "aggs": { }
-  }
   }, function (error, response) {
-    if(!error){
+    if (!error) {
+      res.send(response);
+    } else {
+      res.send(error);
+      console.trace(error.message);
+    }
+
+  });
+
+
+
+
+}
+
+function getFeatured(req, res, next) {
+
+  var maxCount = req.params.maxCount;
+  client.search({
+    'index': index,
+    'body': {
+      "fields": ["id", "prId", "title", "description", "featuredRanking", "dateModified", "datePublished"],
+      "query": {
+        "bool": {
+          "must": [
+            {
+              "range": {
+                "featuredRanking": {
+                  "gt": "0"
+                }
+              }
+            }
+          ]
+        }
+      },
+      "from": 0,
+      "size": maxCount,
+      "sort": [{ "featuredRanking": { "order": "desc" } }],
+      "aggs": {}
+    }
+  }, function (error, response) {
+    if (!error) {
       res.send(response);
     } else {
       res.send(error);
@@ -512,12 +524,12 @@ function getFeatured(req,res,next){
   });
 }
 
-function getCommon(req,res,next){
+function getCommon(req, res, next) {
   var maxCount = req.params.maxCount;
   client.search({
-    'index' : index,
-    'body' : {
-      "fields": ["id","prId","title", "description", "commonQuestionRanking","dateModified","datePublished"],
+    'index': index,
+    'body': {
+      "fields": ["id", "prId", "title", "description", "commonQuestionRanking", "dateModified", "datePublished"],
       "query": {
         "bool": {
           "must": [
@@ -533,11 +545,11 @@ function getCommon(req,res,next){
       },
       "from": 0,
       "size": maxCount,
-      "sort": [{"commonQuestionRanking": {"order":"desc"}} ],
-      "aggs": { }
+      "sort": [{ "commonQuestionRanking": { "order": "desc" } }],
+      "aggs": {}
     }
   }, function (error, response) {
-    if(!error){
+    if (!error) {
       res.send(response);
     } else {
       res.send(error);
@@ -546,33 +558,33 @@ function getCommon(req,res,next){
   });
 }
 
-function getMostRecent(req,res,next){
+function getMostRecent(req, res, next) {
   var maxCount = req.params.maxCount;
   client.search({
-    'index' : index,
-    'body' : {
-      "fields": ["id","prId","title", "description", "commonQuestionRanking","dateModified","datePublished"],
+    'index': index,
+    'body': {
+      "fields": ["id", "prId", "title", "description", "commonQuestionRanking", "dateModified", "datePublished"],
       "query": {
         "bool": {
           "should": [
             {
-            "range" : {
-              "dateModified" : {
-                "gte": "1970/01/01",
-                "format": "yyyy/MM/dd||yyyy"
+              "range": {
+                "dateModified": {
+                  "gte": "1970/01/01",
+                  "format": "yyyy/MM/dd||yyyy"
+                }
               }
             }
-          }
           ]
         }
       },
       "from": 0,
       "size": maxCount,
-      "sort": [{"dateModified": {"order":"desc"}} ],
-      "aggs": { }
+      "sort": [{ "dateModified": { "order": "desc" } }],
+      "aggs": {}
     }
   }, function (error, response) {
-    if(!error){
+    if (!error) {
       res.send(response);
     } else {
       res.send(error);
@@ -583,19 +595,19 @@ function getMostRecent(req,res,next){
 
 function preProcessSearch(queryString) {
   var relevantTemrs = [];
-  var nounTokens = nlp.sentence(queryString).terms.filter(function(t){
+  var nounTokens = nlp.sentence(queryString).terms.filter(function (t) {
     return t.pos.Noun;
   });
 
-  var tags = nlp.text(queryString).tags(function(t){
+  var tags = nlp.text(queryString).tags(function (t) {
     return t.pos.Noun;
   });
 
-  console.log("nlp tags:",tags[0]);
+  console.log("nlp tags:", tags[0]);
 
-  for (var i=0; i < nounTokens.length; i++) {
-      relevantTemrs.push(nounTokens[i].text);
-    }
+  for (var i = 0; i < nounTokens.length; i++) {
+    relevantTemrs.push(nounTokens[i].text);
+  }
   return relevantTemrs.join(' ');
 }
 
@@ -604,8 +616,8 @@ function preProcessSearch2(queryString) {
   var tokens = [];
   tokens = queryString.toLowerCase().split(' ');
 
-  for (var i=0; i < tokens.length; i++) {
-    if (primaryStopWords.indexOf(tokens[i]) === -1){
+  for (var i = 0; i < tokens.length; i++) {
+    if (primaryStopWords.indexOf(tokens[i]) === -1) {
       relevantTemrs.push(tokens[i]);
     }
     // else {
