@@ -5,7 +5,6 @@
     .module('app.core', [
       'ngAnimate', 'ngSanitize', 'ngCookies', 'ngResource',
       'blocks.exception', 'blocks.logger', 'blocks.router', 'blocks.user',
-      'ui.router', 'ngplus', 'ui.bootstrap',
-      'angularUtils.directives.dirPagination', 'angularSpinner', 'blocks.Base64'
+      'ui.router', 'ngplus', 'ui.bootstrap', 'angularSpinner', 'blocks.Base64'
     ]);
 })();
