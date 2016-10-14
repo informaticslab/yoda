@@ -20,15 +20,17 @@
     vm.pageSize = 10;
     vm.noResults = false;
     vm.reverse = true;
+    vm.maxSize = 7;
     vm.personPhrase = 'person likes this';
     vm.peoplePhrase = 'people like this';
     vm.sortKey='-_score';
     vm.secondarySort = '-_score';
+    vm.options = {};
 
-    vm.options = {
-      searchString: vm.searchString,
-      page: vm.currentPage
-    };
+    // vm.options = {
+    //   searchString: vm.searchString,
+    //   page: vm.currentPage
+    // };
 
     vm.sortOptions =[
       {
@@ -48,22 +50,23 @@
       }
      ];
 
+
+    // if($stateParams.page !== 1) {
+    //   vm.currentPage = $stateParams.page;
+    // } else {
+    //   vm.currentPage = 1;
+    // }
      
-    vm.pageChanged = function(newPageNumber, oldPageNumber) {
-      console.log(newPageNumber, oldPageNumber);
-      console.log(vm.options.newSearch);
-      vm.options.searchString = '';
-      if (!vm.options.newSearch){
-        console.log('get here?');
-        vm.options.searchString = $stateParams.searchString;
-        vm.options.page = newPageNumber;
-        $state.go('.', vm.options);
-      }
+    vm.pageChanged = function(newPageNumber) {
+      vm.options.searchString = vm.searchString;
+      vm.options.page = newPageNumber;
+      $state.go('.', vm.options);
+      
       // console.log('new', newPageNumber, 'old', oldPageNumber);
       // search(vm.searchString, newPageNumber);
       
       // updateQueryString({page: newPageNumber});
-    } 
+    };
 
     vm.sortOption = vm.sortOptions[2];
 
@@ -88,11 +91,9 @@
         vm.sortKey = '-_source.' + keyname;   //set the sortKey to the param passed
         vm.reverse = true;
       }
- //       console.log(vm.resultsArray);
     };
 
     vm.filter = function(filterKey) {
-        //console.log(filterKey);
             vm.disableFilter = filterKey ==='all'
     }
 
@@ -100,28 +101,22 @@
 
     function activate() {
       $rootScope.isBusy = true;
-      if($stateParams.newSearch){
-        console.log('this is true in activate()');
-        var promises = [search(vm.searchString, '1')];
-      } else {
-        console.log('this is false in activate()');
-      
-        var promises = [search(vm.searchString, vm.currentPage)];
-      }
+    
+      // var promises = [search($stateParams.searchString, $stateParams.page)];
+      var promises = [search()];
       // var promises = [search(vm.searchString, vm.currentPage)];
-      vm.options.searchString = vm.searchString;
-      vm.options.newSearch = false;
       return $q.all(promises).then(function(){
         // logger.info('Activated Results View');
         $rootScope.isBusy = false;
       });
     }
 
-    function search(searchString, page) {
-      // console.log('in "search"', searchString, page);
-      // console.log(searchString);
-      return dataservice.doSearch(searchString, page)
+    function search() {
+      // console.log('searchString ', searchString);
+      // console.log('page ', page);
+      return dataservice.doSearch($stateParams.searchString, $stateParams.page)
         .then(function(data){
+          vm.currentPage = $stateParams.page;
           vm.suggestionArray = data.suggestions;
           vm.resultsArray = data.hits;
           vm.totalResults = data.total;
@@ -138,13 +133,5 @@
           
         });
     }
-
-    // function updateQueryString(params) {
-      
-    //   vm.options.page = params.page;
-    //   console.log('in updateQueryString', vm.options);
-    //   $state.go('results', vm.options);
-    // }
-
   }
 })();
