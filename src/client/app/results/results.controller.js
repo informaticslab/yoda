@@ -8,7 +8,7 @@
   ResultsController.$inject = ['logger', '$scope', '$state', '$stateParams', 'dataservice', '$q', '$location', '$anchorScroll', '$rootScope'];
   /* @ngInject */
   function ResultsController(logger, $scope, $state, $stateParams, dataservice, $q, $location, $anchorScroll, $rootScope) {
-    console.log($stateParams);
+    // console.log($stateParams);
     var vm = this;
     vm.title = 'Results';
     vm.searchString = $stateParams.searchString;
@@ -26,11 +26,7 @@
     vm.sortKey='-_score';
     vm.secondarySort = '-_score';
     vm.options = {};
-
-    // vm.options = {
-    //   searchString: vm.searchString,
-    //   page: vm.currentPage
-    // };
+    vm.range = {};
 
     vm.sortOptions =[
       {
@@ -49,23 +45,11 @@
         'notAvailable' : false
       }
      ];
-
-
-    // if($stateParams.page !== 1) {
-    //   vm.currentPage = $stateParams.page;
-    // } else {
-    //   vm.currentPage = 1;
-    // }
      
     vm.pageChanged = function(newPageNumber) {
       vm.options.searchString = vm.searchString;
       vm.options.page = newPageNumber;
       $state.go('.', vm.options);
-      
-      // console.log('new', newPageNumber, 'old', oldPageNumber);
-      // search(vm.searchString, newPageNumber);
-      
-      // updateQueryString({page: newPageNumber});
     };
 
     vm.sortOption = vm.sortOptions[2];
@@ -130,8 +114,14 @@
           if (vm.resultsArray.length === 0){
             vm.noResults = true;
           }
-          
+          updateRangeValues();
         });
     }
+
+    function updateRangeValues() {
+      vm.range.lower = (vm.currentPage - 1) * vm.pageSize + 1;
+      vm.range.upper = Math.min(vm.currentPage * vm.pageSize, vm.totalResults);
+    }
+
   }
 })();
