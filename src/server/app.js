@@ -11,7 +11,6 @@ var port = process.env.PORT || 8001;
 var four0four = require('./utils/404')();
 
 var passport = require('passport');
-// var auth = require('./config/auth');
 var cookieParser = require('cookie-parser');
 
 var User = require('./models/User');
