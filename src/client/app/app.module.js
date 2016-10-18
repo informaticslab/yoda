@@ -10,7 +10,8 @@
     'app.search',
     'app.details',
     'app.topics',
-    'app.login'
+    'app.login',
+    'app.about'
   ]);
 
 })();
