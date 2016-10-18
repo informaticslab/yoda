@@ -245,7 +245,7 @@ module.exports = function () {
                   //"slop":4,
                   //"boost":3
                   //"operator":"and",
-                  //"minimum_should_match": "2<67%",
+                  //"minimum_should_match": "2<67%", //not used here. Contolled by min_score
                 }
               },
             ]
