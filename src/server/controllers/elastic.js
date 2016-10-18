@@ -122,6 +122,7 @@ module.exports = function () {
               relatedPR.push(onePr);
             });
             preparedResponse['relatedPR'] = relatedPR;
+            console.log(relatedPR);
             res.send(preparedResponse);
           });
         }
@@ -135,26 +136,27 @@ module.exports = function () {
   }
 
   function fuzzySearch3(req, res, next) {  //full body
-
+    console.log('params ', req.params);
     var size = 10;
     var page = req.params.page;
     var startFrom;
     var sortArray = [];
+    console.log('sort param: ', req.params.sort);
     // var sortBy = {'dateModified'};
-    if (req.params.sort === 'dateModified') {
+    if (req.params.sort === 'recent') {
       var sortParam = req.params.sort;
       sortArray.push({ 'dateModified': { 'order': 'desc' } });
     }
 
     // sortArray.push({'dateModified':{'order':'desc'}});
-    console.log('param page', page);
+    // console.log('param page', page);
     if (page == 1) {
       startFrom = 0;
     } else {
       startFrom = (page - 1) * size + 1;
     }
 
-    console.log('startFrom ', startFrom);
+
     var suggestions = null;
 
     var preProcessTerms = preProcessSearch(req.params.query);

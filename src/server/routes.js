@@ -15,7 +15,7 @@ router.get('/getFeatured/:maxCount', elastic.getFeatured);
 router.get('/getCommon/:maxCount', elastic.getCommon);
 router.get('/termSearch/:query', elastic.termSearch);
 router.get('/getPreparedResponsebyId/:id', elastic.getPrepareResposeById);
-router.get('/search/:query/:page', elastic.fuzzySearch3);
+router.get('/search/:query/:page/:sort?', elastic.fuzzySearch3);
 router.get('/questions/:query', elastic.getQuestions);
 router.get('/*', four0four.notFoundMiddleware);
 router.post('/updatePositiveRating/:id', elastic.updatePositiveRating);

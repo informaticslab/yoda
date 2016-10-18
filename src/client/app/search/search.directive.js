@@ -56,7 +56,8 @@
         var options = {
           searchString: $item,
           page: '1',
-          newSearch: true
+          newSearch: true,
+          sort: 'relevance'
         };
 
         if ($event.which === 13) {  // enter key press, do search

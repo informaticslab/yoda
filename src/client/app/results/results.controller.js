@@ -27,15 +27,16 @@
     vm.secondarySort = '-_score';
     vm.options = {};
     vm.range = {};
+    vm.sort = $stateParams.sort || 'relavance';
 
     vm.sortOptions =[
       {
-        'option' : 'dateModified',
+        'option' : 'recent',
         "label" : 'Most Recent',
         'notAvailable' : false
       },
       {
-      'option' : 'featuredRanking',
+      'option' : 'featured',
       "label" : 'Featured',
         'notAvailable' : false
       },
@@ -46,13 +47,19 @@
       }
      ];
      
+    if($stateParams.sort == 'recent') {
+      vm.sortOption = vm.sortOptions[0];
+    } else {
+      vm.sortOption = vm.sortOptions[2];
+    }
+
     vm.pageChanged = function(newPageNumber) {
       vm.options.searchString = vm.searchString;
       vm.options.page = newPageNumber;
       $state.go('.', vm.options);
     };
 
-    vm.sortOption = vm.sortOptions[2];
+    
 
     vm.toTop = function(id) {
       var old = $location.hash();
@@ -65,17 +72,31 @@
       $state.go('details', {id: $item.id});
     };
 
-    vm.sort = function(keyname){
-      console.log('keyname', keyname);
-      if (keyname == 'default') {
-        vm.sortKey = '-_score';
-        vm.reverse = true;
+    // vm.sort = function(keyname){
+    //   // console.log('keyname', keyname);
+    //   if (keyname == 'default') {
+    //     vm.sortKey = '-_score';
+    //     vm.reverse = true;
+    //   }
+    //   else {
+    //     vm.sortKey = '-_source.' + keyname;   //set the sortKey to the param passed
+    //     vm.reverse = true;
+    //   }
+    // };
+
+    vm.sort = function(keyname) {
+      if (keyname === 'recent'){
+        vm.options.searchString = vm.searchString;
+        vm.options.page = vm.currentPage;
+        vm.options.sort = 'recent';
+        $state.go('.', vm.options);
+      } else if (keyname === 'default'){
+        vm.options.searchString = vm.searchString;
+        vm.options.page = vm.currentPage;
+        vm.options.sort = null;
+        $state.go('.', vm.options);
       }
-      else {
-        vm.sortKey = '-_source.' + keyname;   //set the sortKey to the param passed
-        vm.reverse = true;
-      }
-    };
+    }
 
     vm.filter = function(filterKey) {
             vm.disableFilter = filterKey ==='all'
@@ -98,7 +119,7 @@
     function search() {
       // console.log('searchString ', searchString);
       // console.log('page ', page);
-      return dataservice.doSearch($stateParams.searchString, $stateParams.page)
+      return dataservice.doSearch($stateParams)
         .then(function(data){
           vm.currentPage = $stateParams.page;
           vm.suggestionArray = data.suggestions;
