@@ -24,10 +24,11 @@ describe('CDC-INFO App', function() {
 
   it('should return search result with search values', function () {
   //  var fd = fs.openSync(path.join(process.cwd(),'test.log'), 'a')
-    browser.get('http://localhost:8001');
+      browser.get('http://localhost:8001/');
       searchParams.forEach(function(searchParm){
         element(by.model('vm.selected')).sendKeys(searchParm.phrase);
-        element(by.id('searchButton')).click();
+        //element(by.id('searchButton')).click();
+        browser.actions().sendKeys(protractor.Key.ENTER).perform();
         expect(browser.getTitle()).toEqual('yoda: results');
         var count = element(by.id('resultCount')).getInnerHtml() ;
         switch (searchParm.countCompare)  {
@@ -41,49 +42,64 @@ describe('CDC-INFO App', function() {
             expect(count).toBeGreaterThan(searchParm.expectedCount);  // number of results should be greater than 100
                 break;
         }
-        // element.all(by.exactRepeater('result in vm.resultsArray')).then(function(results){
-        //    results.forEach(function(result){
-        //      console.log('hello ',result.element(by.binding('result._source.title')).getText());
-        //    })
+        element.all(by.repeater('result in vm.resultsArray')).then(function(results){
+          checkterms = searchParm.checkTerms;
+           results.forEach(function(result){
+
+             //checking title
+               result.element(by.binding('result._source.title')).getText().then(function(title){
+                 for (x = 0; x < checkterms.length; x++) {
+                   console.log('title :', title, ' check term ', checkterms[x].toString());
+                   expect(title.toString().toLowerCase()).toContain(checkterms[x].toLowerCase());
+                 }
+             });
+             //checking description
+             result.element(by.id('description')).evaluate('result._source.description').then(function(description){
+               for (x = 0; x < checkterms.length; x++) {
+                 console.log('description :', description, ' check term ', checkterms[x].toString());
+                 expect(description.toString().toLowerCase()).toContain(checkterms[x].toLowerCase());
+               }
+             });
+           })
+        });
+         // var allTitles = element.all(by.repeater('result in vm.resultsArray').column('result._source.title'));
+         // var allDescriptions = element.all(by.repeater('result in vm.resultsArray').column('result._source.description'));
+        // element.all(by.binding('result._source.title')).then(function(items) {
+        //   items.forEach(function(item) {
+        //     // expect(['What','HIV','mom'].indexOf(item.getText()));  // match anyone of the term
+        //     checkterms = searchParm.checkTerms;
+        //       item.getText().then(function(title) {
+        //         for (x = 0; x < checkterms.length; x++) {
+        //           console.log('title :', title, ' check term ', checkterms[x].toString());
+        //           expect(title.toString().toLowerCase()).toContain(checkterms[x].toLowerCase());
+        //         }
+        //       });
+        //
+        //     // expect(item.getText()).toContain(['What']);
+        //     // expect(item.getText()).toContain(['is']);
+        //     //  expect(item.getText()).toContain(['link']);
+        //     //  expect(item.getText()).toContain(['HIV']);
+        //   })
+        //
         // });
-        // var allTitles = element.all(by.repeater('result in vm.resultsArray').column('result._source.title'));
-        // var allDescription = element.all(by.repeater('result in vm.resultsArray').column('result._source.description'));
-        element.all(by.binding('result._source.title')).then(function(items) {
-          items.forEach(function(item) {
-            // expect(['What','HIV','mom'].indexOf(item.getText()));  // match anyone of the term
-            checkterms = searchParm.checkTerms;
-              item.getText().then(function(title) {
-                for (x = 0; x < checkterms.length; x++) {
-                  console.log('title :', title, ' check term ', checkterms[x].toString());
-                  expect(title.toString().toLowerCase()).toContain(checkterms[x].toLowerCase());
-                }
-              });
-
-            // expect(item.getText()).toContain(['What']);
-            // expect(item.getText()).toContain(['is']);
-            //  expect(item.getText()).toContain(['link']);
-            //  expect(item.getText()).toContain(['HIV']);
-          })
-
-        });
-        element.all(by.binding('result._source.description')).then(function(items) {
-          items.forEach(function(item) {
-            // expect(['What','HIV','mom'].indexOf(item.getText()));  // match anyone of the term
-            checkterms = searchParm.checkTerms;
-            item.getText().then(function(description) {
-              for (x = 0; x < checkterms.length; x++) {
-                console.log('description :', description, ' check term ', checkterms[x].toString());
-                expect(description.toString().toLowerCase()).toContain(checkterms[x].toLowerCase());
-              }
-            });
-
-            // expect(item.getText()).toContain(['What']);
-            // expect(item.getText()).toContain(['is']);
-            //  expect(item.getText()).toContain(['link']);
-            //  expect(item.getText()).toContain(['HIV']);
-          })
-
-        });
+        // element.all(by.exactBinding('result._source.description')).then(function(descriptions) {
+        //   descriptions.forEach(function(item) {
+        //     // expect(['What','HIV','mom'].indexOf(item.getText()));  // match anyone of the term
+        //     checkterms = searchParm.checkTerms;
+        //     item.getText().then(function(description) {
+        //       for (x = 0; x < checkterms.length; x++) {
+        //         console.log('description :', description, ' check term ', checkterms[x].toString());
+        //         expect(description.toString().toLowerCase()).toContain(checkterms[x].toLowerCase());
+        //       }
+        //     });
+        //
+        //     // expect(item.getText()).toContain(['What']);
+        //     // expect(item.getText()).toContain(['is']);
+        //     //  expect(item.getText()).toContain(['link']);
+        //     //  expect(item.getText()).toContain(['HIV']);
+        //   })
+        //
+        // });
       })
   //  fs.close(fd);
     });
@@ -94,7 +110,7 @@ describe('CDC-INFO App', function() {
   });
 
   it('should sort by relevant', function() {
-    element(by.cssContainingText('option', 'Relevant')).click();
+    element(by.cssContainingText('option', 'Relevance')).click();
 
   });
 
