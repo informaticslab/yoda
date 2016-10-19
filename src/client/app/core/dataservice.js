@@ -34,6 +34,9 @@
       if(params.sort) {
         url = url + '/' + params.sort;
       }
+      if(params.filter) {
+        url = url + '/' + params.filter;
+      }
       // console.log('in do search: ',query, page);
       return $http.get(url)
       .then(success)

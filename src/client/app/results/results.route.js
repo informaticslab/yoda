@@ -17,7 +17,7 @@
       {
         state: 'results',
         config: {
-          url: '/results/:searchString/:page?sort',
+          url: '/results/:searchString/:page?sort&filter',
           templateUrl: 'app/results/results.html',
           controller: 'ResultsController',
           controllerAs: 'vm',
@@ -28,7 +28,8 @@
           params: { searchString: null,
                     page: '1', 
                     newSearch: null,
-                    sort: null
+                    sort: null,
+                    filter: null
                   },  //required to pass along state params
           settings: {
             nav: 2,
