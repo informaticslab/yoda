@@ -31,7 +31,7 @@
   },
   "devDependencies": {
     "browser-sync": "~2.11.2",
-    "chai": "^3.1.0",
+    "chai": "^3.5.0",
     "chai-as-promised": "^5.1.0",
     "chalk": "^1.1.0",
     "dateformat": "^1.0.8-1.2.3",
@@ -82,15 +82,17 @@
     "lodash": "^3.10.0",
     "method-override": "^2.3.4",
     "minimist": "^1.1.0",
-    "mocha": "^2.2.5",
+    "mocha": "^2.5.3",
     "nlp_compromise": "^6.5.0",
     "node-notifier": "^4.0.3",
     "phantomjs-prebuilt": "^2.1.4",
     "plato": "^1.2.0",
     "q": "^1.0.1",
+    "should": "^11.1.1",
     "sinon": "^1.12.2",
     "sinon-chai": "^2.6.0",
     "stopwords": "0.0.5",
+    "supertest": "^2.0.1",
     "wiredep": "^2.2.2",
     "yargs": "^3.15.0"
   }
