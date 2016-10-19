@@ -27,7 +27,8 @@
     vm.secondarySort = '-_score';
     vm.options = {};
     vm.range = {};
-    vm.sort = $stateParams.sort || 'relavance';
+    vm.sort = $stateParams.sort || 'relevance';
+    vm.filterOption = $stateParams.filter || 'all';
 
     vm.sortOptions =[
       {
@@ -41,8 +42,8 @@
         'notAvailable' : false
       },
       {
-        'option' : 'default',
-        'label' : 'Relevant',
+        'option' : 'relevance',
+        'label' : 'Relevance',
         'notAvailable' : false
       }
      ];
@@ -59,8 +60,6 @@
       $state.go('.', vm.options);
     };
 
-    
-
     vm.toTop = function(id) {
       var old = $location.hash();
       $location.hash(id);
@@ -72,34 +71,31 @@
       $state.go('details', {id: $item.id});
     };
 
-    // vm.sort = function(keyname){
-    //   // console.log('keyname', keyname);
-    //   if (keyname == 'default') {
-    //     vm.sortKey = '-_score';
-    //     vm.reverse = true;
-    //   }
-    //   else {
-    //     vm.sortKey = '-_source.' + keyname;   //set the sortKey to the param passed
-    //     vm.reverse = true;
-    //   }
-    // };
-
     vm.sort = function(keyname) {
+      vm.options.searchString = vm.searchString;
+      vm.options.page = vm.currentPage;
       if (keyname === 'recent'){
-        vm.options.searchString = vm.searchString;
-        vm.options.page = vm.currentPage;
         vm.options.sort = 'recent';
         $state.go('.', vm.options);
-      } else if (keyname === 'default'){
-        vm.options.searchString = vm.searchString;
-        vm.options.page = vm.currentPage;
-        vm.options.sort = null;
+      } else if (keyname === 'relevance'){
+        vm.options.sort = 'relevance';
         $state.go('.', vm.options);
       }
     }
 
     vm.filter = function(filterKey) {
-            vm.disableFilter = filterKey ==='all'
+      vm.options.searchString = vm.searchString;
+      vm.options.page = null;
+      if (filterKey === 'public') {
+        vm.options.filter = 'public';
+        $state.go('.', vm.options);
+      } else if (filterKey ==='professional') {
+        vm.options.filter = 'professional';
+        $state.go('.', vm.options);
+      } else {
+        vm.options.filter = 'all';
+        $state.go('.', vm.options);
+      }
     }
 
     activate();

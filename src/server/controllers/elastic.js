@@ -136,26 +136,28 @@ module.exports = function () {
   }
 
   function fuzzySearch3(req, res, next) {  //full body
-    console.log('params ', req.params);
+    // console.log('params ', req.params);
     var size = 10;
     var page = req.params.page;
     var startFrom;
     var sortArray = [];
-    console.log('sort param: ', req.params.sort);
-    // var sortBy = {'dateModified'};
+    var filterArray = [];
+    // console.log('sort param: ', req.params.sort);
     if (req.params.sort === 'recent') {
       var sortParam = req.params.sort;
       sortArray.push({ 'dateModified': { 'order': 'desc' } });
     }
-
-    // sortArray.push({'dateModified':{'order':'desc'}});
+    if (req.params.filter !== 'all'){
+      var filterParam = req.params.filter;
+      filterArray.push({"term": {"tier": filterParam}});
+    }
     // console.log('param page', page);
-    if (page == 1) {
+    if (page === '1') {
       startFrom = 0;
     } else {
-      startFrom = (page - 1) * size + 1;
+      startFrom = (page - 1) * size;
     }
-
+    // console.log('start from', startFrom);
 
     var suggestions = null;
 
@@ -248,7 +250,8 @@ module.exports = function () {
                   //"minimum_should_match": "2<67%", //not used here. Contolled by min_score
                 }
               },
-            ]
+            ],
+            "filter": filterArray
           },
         },
         "sort": sortArray,

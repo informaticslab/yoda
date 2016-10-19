@@ -57,7 +57,8 @@
           searchString: $item,
           page: '1',
           newSearch: true,
-          sort: 'relevance'
+          sort: 'relevance',
+          filter: 'all'
         };
 
         if ($event.which === 13) {  // enter key press, do search
