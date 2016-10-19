@@ -73,7 +73,7 @@
 
     vm.sort = function(keyname) {
       vm.options.searchString = vm.searchString;
-      vm.options.page = vm.currentPage;
+      vm.options.page = null;
       if (keyname === 'recent'){
         vm.options.sort = 'recent';
         $state.go('.', vm.options);
