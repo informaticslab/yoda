@@ -142,10 +142,13 @@ module.exports = function () {
     var startFrom;
     var sortArray = [];
     var filterArray = [];
+    var containsFeatured = false;
     // console.log('sort param: ', req.params.sort);
     if (req.params.sort === 'recent') {
-      var sortParam = req.params.sort;
+      var sortParam = req.params.sort; //what is this for?
       sortArray.push({ 'dateModified': { 'order': 'desc' } });
+    } else if (req.params.sort === 'featured') {
+      sortArray.push({ 'featuredRanking': { 'order': 'desc' }});
     }
     if (req.params.filter !== 'all'){
       var filterParam = req.params.filter;
@@ -254,6 +257,18 @@ module.exports = function () {
             "filter": filterArray
           },
         },
+        "aggs": {
+          "featured_PRs": {
+            "terms" : {
+              "field": "featuredRanking"
+            }
+          },
+          "user_type": {
+            "terms": {
+              "field": "tier"
+            }
+          }
+        },
         "sort": sortArray,
         size: size,
         from: startFrom,
@@ -266,10 +281,13 @@ module.exports = function () {
           suggestions = results.suggest.didYouMean;
         }
         var hits = results.hits.hits;
+        var aggregations = results.aggregations;
+
         var resultPackage = {
           "total": results.hits.total,
           "hits": hits,
-          "suggestions": suggestions
+          "suggestions": suggestions,
+          "aggregations": aggregations
         }
         res.send(resultPackage);
       }, function (err) {
