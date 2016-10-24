@@ -9,7 +9,7 @@ var session = require('express-session');
 var logger = require('morgan');
 var port = process.env.PORT || 8001;
 var four0four = require('./utils/404')();
-var envProperties = require('./envProperties');
+
 
 var passport = require('passport');
 var cookieParser = require('cookie-parser');
@@ -51,6 +51,8 @@ console.log('PORT=' + port);
 console.log('NODE_ENV=' + environment);
 
 if(environment === 'build') {
+  var envProperties = require('../../../../envProperties');
+
   var https = require('https'),      // module for https
     fs =    require('fs');         // required to read certs and keys
 
