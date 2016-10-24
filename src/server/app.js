@@ -51,34 +51,35 @@ console.log('PORT=' + port);
 console.log('NODE_ENV=' + environment);
 
 if(environment === 'build') {
-  var envProperties = require('./envProperties');
+  // var envProperties = require('./envProperties');
 
   var https = require('https'),      // module for https
     fs =    require('fs');         // required to read certs and keys
 
     var options = {
-    key:    fs.readFileSync('../../../../sec/certs/server-key.pem'),
-    cert:   fs.readFileSync('../../../../sec/certs/server-cert.pem'),
-    ca:     fs.readFileSync('../../../../sec/certs/gd_bundle-g2.crt'),
+    key:    fs.readFileSync('/sec/certs/server-key.pem'),
+    cert:   fs.readFileSync('/sec/certs/server-cert.pem'),
+    ca:     fs.readFileSync('/sec/certs/gd_bundle-g2.crt'),
     requestCert: false,
     rejectUnauthorized: false
 };
 
   // case 'build':
     console.log('** BUILD **');
-    app.use(express.static('./build/'));
+    
     // Any invalid calls for templateUrls are under app/* and should return 404
     app.use('/app/*', function(req, res, next) {
       four0four.send404(req, res);
     });
     // Any deep link calls should return index.html
-    app.use('/*', express.static('./build/index.html'));
+    app.use('/*', express.static('../../build/index.html'));
 
 
     https.createServer(options, app).listen('4400');
 
     http.createServer(function (req, res) {
       res.writeHead(301, { "Location": "https://" + req.headers['host'] + req.url });
+      app.use(express.static('../../build/'));
       // res.writeHead(301, { "Location": "https://localhost:4400" });
       res.end();
     }).listen(port);
