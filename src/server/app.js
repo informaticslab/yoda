@@ -9,12 +9,14 @@ var session = require('express-session');
 var logger = require('morgan');
 var port = process.env.PORT || 8001;
 var four0four = require('./utils/404')();
+var envProperties = require('./envProperties');
 
 var passport = require('passport');
 var cookieParser = require('cookie-parser');
 
 var User = require('./models/User');
 
+var http = require('http');
 var https = require('https');
 var fs = require('fs');
 
@@ -38,16 +40,10 @@ app.use('/logs', require('./logs'));
 
 
 
-var https = require('https'),      // module for https
-    fs =    require('fs');         // required to read certs and keys
 
 passport.use(User.localStrategy);
 passport.serializeUser(User.serializeUser);
 passport.deserializeUser(User.deserializeUser);
-// var options = {
-//     key:    fs.readFileSync('../../sec/certs/server-key.pem'),
-//     cert:   fs.readFileSync('../../sec/certs/server-cert.pem'),
-// };
 
 
 console.log('About to crank up node');
@@ -55,6 +51,17 @@ console.log('PORT=' + port);
 console.log('NODE_ENV=' + environment);
 
 if(environment === 'build') {
+  var https = require('https'),      // module for https
+    fs =    require('fs');         // required to read certs and keys
+
+    var options = {
+    key:    fs.readFileSync(envProperties.SSL_Key),
+    cert:   fs.readFileSync(envProperties.SSL_CERT),
+    ca:     fs.readFileSync(envProperties.SSL_BUNDLE),
+    requestCert: false,
+    rejectUnauthorized: false
+};
+
   // case 'build':
     console.log('** BUILD **');
     app.use(express.static('./build/'));
@@ -64,35 +71,39 @@ if(environment === 'build') {
     });
     // Any deep link calls should return index.html
     app.use('/*', express.static('./build/index.html'));
-    // https.createServer(options, app).listen('4400', function() {
-    //   console.log('Express server listening on port ' + '4400');
-    //   console.log('env = ' + app.get('env') +
-    //     '\n__dirname = ' + __dirname +
-    //     '\nprocess.cwd = ' + process.cwd());
-    // });
-    // break;
+
+
+    https.createServer(options, app).listen('4400');
+
+    http.createServer(function (req, res) {
+      // res.writeHead(301, { "Location": "https://" + req.headers['host'] + req.url });
+      res.writeHead(301, { "Location": "https://localhost:4400" });
+      res.end();
+    }).listen(port);
+
 } else {
-  // default:
-    console.log('** DEV **');
-    app.use(express.static('./src/client/'));
-    app.use(express.static('./'));
-    app.use(express.static('./tmp'));
-    // Any invalid calls for templateUrls are under app/* and should return 404
-    app.use('/app/*', function(req, res, next) {
-      four0four.send404(req, res);
-    })
-  
-    // Any deep link calls should return index.html
-    // app.use('/*', express.static('./src/client/index.html'));
-    app.use('/*',  express.static('./src/client/index.html'));
+  console.log('** DEV **');
+  app.use(express.static('./src/client/'));
+  app.use(express.static('./'));
+  app.use(express.static('./tmp'));
+  // Any invalid calls for templateUrls are under app/* and should return 404
+  app.use('/app/*', function (req, res, next) {
+    four0four.send404(req, res);
+  })
+
+  // Any deep link calls should return index.html
+  // app.use('/*', express.static('./src/client/index.html'));
+  app.use('/*', express.static('./src/client/index.html'));
+
+  app.listen(port, function () {
+    console.log('Express server listening on port ' + port);
+    console.log('env = ' + app.get('env') +
+      '\n__dirname = ' + __dirname +
+      '\nprocess.cwd = ' + process.cwd());
+  });
+
 
 }
 
 // require('./config/passport')();
 
-app.listen(port, function() {
-  console.log('Express server listening on port ' + port);
-  console.log('env = ' + app.get('env') +
-    '\n__dirname = ' + __dirname +
-    '\nprocess.cwd = ' + process.cwd());
-});
