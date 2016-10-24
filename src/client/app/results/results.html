@@ -3,10 +3,10 @@
 		<div class="col-lg-9 col-md-8 col-sm-12 search-results">
 			<div ng-show="vm.noResults">No results found for <strong>{{vm.searchString}}</strong>
       </div>
-			<div ng-show="!vm.noResults">
+      <div ng-show="!vm.noResults" id="resultStatus">
         Displaying {{vm.range.lower}} - {{vm.range.upper}} of {{vm.totalResults}} results for <strong>{{vm.searchString}}</strong>
       </div>
-			
+
 		</div>
 		<div class="col-lg-3 col-md-4 col-sm-12 search-results2">
 			<div class="btn-group" ng-show="!vm.noResults">
@@ -73,7 +73,8 @@
         <h4><a ui-sref ='details({id: results._source.id})'>{{results._source.title}}</a>&nbsp;<i ng-show="results._source.featuredRanking>0"
 						class="glyphicon glyphicon-star" style="color: gold; vertical-align: middle;margin-top:-4px"></i> <span class="liked"
 						ng-show='results._source.liked'>({{results._source.liked}} {{results._source.liked > 1 ? vm.peoplePhrase : vm.personPhrase}})</span></h4>
-        {{results._source.description | limitTo: 256}}...
+        <span ng-if="!testing">{{results._source.description | limitTo: 256}}...</span>
+        <span ng-if="testing">{{results._source.description}}</span>
         <br>
 				<i>ID:{{results._source.id}}</i> &nbsp
 

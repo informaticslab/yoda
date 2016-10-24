@@ -3,6 +3,8 @@
  */
 // spec.js
 var loginModule = require('./login.js');
+var homeModule = require('./pageObjects/homePage.js');
+var searchModule = require('./pageObjects/resultPage.js');
 var path = require('path');
 var fs = require('fs');
 var searchParams =
@@ -49,7 +51,6 @@ var searchParams =
 var delay = 1000;
 
 describe('home page',function() {
-  var homeColumns = ['Most Recent','Common Questions','Featured Questions'];
 
   beforeAll(function() {
     browser.get('http://localhost:8001/');
@@ -61,21 +62,22 @@ describe('home page',function() {
   });
 
   it('should have common section, most recent and featured and at least one PR for each ', function() {
-    element.all(by.css('.panel-title')).then(function(panelTitles) {
+    homeModule.homePage.panelTitles.then(function(panelTitles) {
       for(var i=0;i< panelTitles.length;i++){
         panelTitles[i].getText().then(function(value){
-          expect(homeColumns.join(',  ')).toContain(value);
+          expect(homeModule.homePage.homeColumns.join(',  ')).toContain(value);
         });
 
       }
     });
-    element.all(by.repeater('mostRecentPR in vm.mostRecentPRs')).then(function(recents){
+
+    homeModule.homePage.recentPRs.then(function(recents){
       expect(recents.length).toBeGreaterThan(0);
     });
-    element.all(by.repeater('commonPR in vm.commonPRs')).then(function(commons){
+    homeModule.homePage.commonPRs.then(function(commons){
       expect(commons.length).toBeGreaterThan(0);
     });
-    element.all(by.repeater('featuredPR in vm.featuredPRs')).then(function(featured){
+    homeModule.homePage.featuredPRs.then(function(featured){
       expect(featured.length).toBeGreaterThan(0);
     });
   });
@@ -83,7 +85,7 @@ describe('home page',function() {
   it ('should go to topics page',function(){
     browser.get('http://localhost:8001/topics');
     expect(browser.getTitle()).toEqual('yoda: Topics');
-    element(by.css('.title-section')).getText().then(function(text){
+    homeModule.homePage.topicSection.getText().then(function(text){
       expect(text).toBe('Topics (Placeholder)');
     })
   });
@@ -96,19 +98,17 @@ describe('home page',function() {
 });
 
 describe('CDC-INFO search', function() {
-
+  pending('Force skip');
   browser.get('http://localhost:8001/');
 // search page
   it('should returns search results for search terms', function () {
     //  var fd = fs.openSync(path.join(process.cwd(),'test.log'), 'a')
     browser.get('http://localhost:8001/');
     searchParams.forEach(function (searchParm) {
-      element(by.model('vm.selected')).sendKeys(searchParm.phrase);
-      //element(by.id('searchButton')).click();
-      browser.actions().sendKeys(protractor.Key.ENTER).perform();
+      searchModule.resultPage.searchFor(searchParm.phrase)
       expect(browser.getTitle()).toEqual('yoda: results');
       browser.driver.sleep(delay);
-      element(by.id('resultStatus')).getText().then(function (rowCount) {
+      searchModule.resultPage.totalResults.getText().then(function (rowCount) {
         expect(rowCount).toEqual(searchParm.expectedCountStatus);
       });
 
@@ -124,13 +124,13 @@ describe('CDC-INFO search', function() {
       //         break;
       // }
       var checkterms = searchParm.checkTerms;
-      element.all(by.repeater('results in vm.resultsArray')).then(function (results) {
+
+      searchModule.resultPage.resultsArray.then(function (results) {
         browser.driver.sleep(delay);
         results.forEach(function (result) {
 
           //checking title
-          result.element(by.binding('results._source.title')).getText().then(function (title) {
-
+          searchModule.resultPage.extractTitle(result).getText().then(function (title) {
             for (x = 0; x < checkterms.length; x++) {
               // console.log('title :', title, ' check term ', checkterms[x].toString());
               expect(title.toString().toLowerCase()).toContain(checkterms[x].toLowerCase());
@@ -147,16 +147,13 @@ describe('CDC-INFO search', function() {
       });
       browser.driver.sleep(delay);
       // click on the last page and check the results
-      var lastPageButton = element(by.css('[ng-click="selectPage(totalPages, $event)"]'));
-      lastPageButton.click();
+      searchModule.resultPage.lastPageButton.click();
       browser.driver.sleep(delay);
-      element.all(by.repeater('results in vm.resultsArray')).then(function (results) {
+      searchModule.resultPage.resultsArray.then(function (results) {
         results.forEach(function (result) {
-
           //checking title
-          result.element(by.binding('results._source.title')).getText().then(function (title) {
-
-            for (x = 0; x < checkterms.length; x++) {
+          searchModule.resultPage.extractTitle(result).getText().then(function (title) {
+           for (x = 0; x < checkterms.length; x++) {
               // console.log('title :', title, ' check term ', checkterms[x].toString());
               expect(title.toString().toLowerCase()).toContain(checkterms[x].toLowerCase());
             }
@@ -176,21 +173,21 @@ describe('CDC-INFO search', function() {
 
 
 describe('CDC-INFO Sort',function(){
-  pending('Force skip');
+  pending('Force-skip');
   var searchResults;
 
   it ('should Sort by most recent', function() {
     searchParams.forEach(function (searchParm) {
-      browser.get('http://localhost:8001/');
       element(by.model('vm.selected')).sendKeys(searchParm.phrase);
       //element(by.id('searchButton')).click();
       browser.actions().sendKeys(protractor.Key.ENTER).perform();
       expect(browser.getTitle()).toEqual('yoda: results');
       console.log('in most recent:', searchParm.phrase);
-      element(by.cssContainingText('option', 'Most Recent')).click();
-      element.all(by.repeater('results in vm.resultsArray')).then(function (results) {
+      searchModule.resultPage.sortByRecent();
+      //element(by.cssContainingText('option', 'Most Recent')).click();
+      searchModule.resultPage.resultsArray.then(function (results) {
         browser.driver.sleep(delay);
-        results[0].element(by.binding('results._source.title')).getText().then(function (title) {
+        searchModule.resultPage.extractTitle(results[0]).getText().then(function (title) {
           expect(title).toBe(searchParm.mostRecent);
         });
       });
@@ -198,15 +195,12 @@ describe('CDC-INFO Sort',function(){
   });
   it ('should Sort by relevance', function() {
     searchParams.forEach(function (searchParm) {
-      browser.get('http://localhost:8001/');
-      element(by.model('vm.selected')).sendKeys(searchParm.phrase);
-      //element(by.id('searchButton')).click();
-      browser.actions().sendKeys(protractor.Key.ENTER).perform();
+      searchModule.resultPage.searchFor(searchParm.phrase);
       expect(browser.getTitle()).toEqual('yoda: results');
       console.log('in most relevance:', searchParm.phrase);
-      element(by.cssContainingText('option', 'Relevance')).click();
-      element.all(by.repeater('results in vm.resultsArray')).then(function (results) {
-        results[0].element(by.binding('results._source.title')).getText().then(function (title) {
+      searchModule.resultPage.sortByRelevance();
+      searchModule.resultPage.resultsArray.then(function (results) {
+        searchModule.resultPage.extractTitle(results[0]).getText().then(function (title) {
           expect(title).toBe(searchParm.relevance);
         });
       });
@@ -215,21 +209,18 @@ describe('CDC-INFO Sort',function(){
 
   it ('should Sort by featured', function() {
     searchParams.forEach(function (searchParm) {
-      browser.get('http://localhost:8001/');
-      element(by.model('vm.selected')).sendKeys(searchParm.phrase);
-      //element(by.id('searchButton')).click();
-      browser.actions().sendKeys(protractor.Key.ENTER).perform();
+      searchModule.resultPage.searchFor(searchParm.phrase);
       expect(browser.getTitle()).toEqual('yoda: results');
-      var featuredOption = element(by.cssContainingText('option', 'Featured'));
+      var featuredOption = searchModule.resultPage.sortByFeaturedOption;
     //  featuredOption.getAttribute('disabled').then
       featuredOption.getAttribute('disabled').then(function(attr){
         console.log(attr);
         if (!attr) {
           featuredOption.click();
           console.log('in featured:', searchParm.phrase);
-          element.all(by.repeater('results in vm.resultsArray')).then(function (results) {
+          searchModule.resultPage.resultsArray.then(function (results) {
             browser.driver.sleep(delay);
-            results[0].element(by.binding('results._source.title')).getText().then(function (title) {
+            searchModule.resultPage.extractTitle(results[0]).getText().then(function (title) {
               expect(title).toBe(searchParm.featured);
             });
           });
@@ -241,43 +232,54 @@ describe('CDC-INFO Sort',function(){
 });
 
 describe('CDC-INFO Filter',function(){
-  pending('Force skip');
-  it ('should filter by public', function(){
-    searchParams.forEach(function (searchParm) {
-      browser.get('http://localhost:8001/');
-      element(by.model('vm.selected')).sendKeys(searchParm.phrase);
-      //element(by.id('searchButton')).click();
-      browser.actions().sendKeys(protractor.Key.ENTER).perform();
-      expect(browser.getTitle()).toEqual('yoda: results');
-      console.log('searching for', searchParm.phrase);
-      element.all(by.css('input[name="optionsRadios"]')).then(function(buttons){
-        buttons[1].click();
-        browser.driver.sleep(delay);
-        element(by.id('resultStatus')).getText().then(function(rowCount){
-          expect(rowCount).toEqual(searchParm.publicAudience);
-        });
-      })
 
-    })
+  beforeAll(function() {
+    browser.get('http://localhost:8001/');
+
   });
+  searchParams.forEach(function (searchParm) {
 
-  it ('should filter by professional', function(){
-    searchParams.forEach(function (searchParm) {
-      browser.get('http://localhost:8001/');
-      element(by.model('vm.selected')).sendKeys(searchParm.phrase);
-      //element(by.id('searchButton')).click();
-      browser.actions().sendKeys(protractor.Key.ENTER).perform();
+   // expect(browser.getTitle()).toEqual('yoda: results');
+    it('should filter by public and professional', function () {
+      searchModule.resultPage.searchFor(searchParm.phrase);
       expect(browser.getTitle()).toEqual('yoda: results');
-      console.log('searching for', searchParm.phrase);
-      element.all(by.css('input[name="optionsRadios"]')).then(function(buttons){
+     // searchParams.forEach(function (searchParm) {
+        //browser.get('http://localhost:8001/');
+        searchModule.resultPage.radioButtons.then(function (buttons) {
+          buttons[1].click();
+          browser.driver.sleep(delay);
+          searchModule.resultPage.totalResults.getText().then(function (rowCount) {
+            expect(rowCount).toEqual(searchParm.publicAudience);
+          });
+
+        })
+        searchModule.resultPage.radioButtons.then(function (buttons) {
         buttons[2].click();
-        browser.driver.sleep(6000);
-        element(by.id('resultStatus')).getText().then(function(rowCount){
+        browser.driver.sleep(delay);
+        searchModule.resultPage.totalResults.getText().then(function (rowCount) {
           expect(rowCount).toEqual(searchParm.professionalAudience);
         });
       })
-    })
-  });
+      })
+    //});
+
+    // it('should filter by professional', function () {
+    //   pending('Force-skip');
+    // //  searchParams.forEach(function (searchParm) {
+    //     // browser.get('http://localhost:8001/');
+    //    // console.log('searching for', searchParm.phrase);
+    //   //  searchModule.resultPage.searchFor(searchParm.phrase);
+    //    // expect(browser.getTitle()).toEqual('yoda: results');
+    //     searchModule.resultPage.radioButtons.then(function (buttons) {
+    //       buttons[2].click();
+    //       browser.driver.sleep(delay);
+    //       searchModule.resultPage.totalResults.getText().then(function (rowCount) {
+    //         expect(rowCount).toEqual(searchParm.professionalAudience);
+    //       });
+    //     })
+    // //  })
+    // });
+  })
 });
 
 describe('CDC-INFO Detail Page', function() {
