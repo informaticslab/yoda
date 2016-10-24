@@ -11,7 +11,8 @@
     'app.details',
     'app.topics',
     'app.login',
-    'app.about'
+    'app.about',
+    'app.contact'
   ]);
 
 })();
