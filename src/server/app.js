@@ -52,7 +52,8 @@ console.log('NODE_ENV=' + environment);
 
 if(environment === 'build') {
   // var envProperties = require('./envProperties');
-
+  
+  
   var https = require('https'),      // module for https
     fs =    require('fs');         // required to read certs and keys
 
@@ -66,7 +67,7 @@ if(environment === 'build') {
 
   // case 'build':
     console.log('** BUILD **');
-    
+    app.use(express.static('../../build/'));
     // Any invalid calls for templateUrls are under app/* and should return 404
     app.use('/app/*', function(req, res, next) {
       four0four.send404(req, res);
@@ -79,7 +80,7 @@ if(environment === 'build') {
 
     http.createServer(function (req, res) {
       res.writeHead(301, { "Location": "https://" + req.headers['host'] + req.url });
-      app.use(express.static('../../build/'));
+      
       // res.writeHead(301, { "Location": "https://localhost:4400" });
       res.end();
     }).listen(port);
