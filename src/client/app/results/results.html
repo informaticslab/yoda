@@ -70,9 +70,9 @@
 		</div>
 		<div class="col-lg-9 col-md-9 col-sm-8 col-xs-12 right-results ">
       <div class="indv-results" ng-repeat="results in vm.resultsArray">
-        <h4><a ui-sref ='details({id: results._source.id})'>{{results._source.title}}</a>&nbsp;<i ng-show="result._source.featuredRanking>0"
+        <h4><a ui-sref ='details({id: results._source.id})'>{{results._source.title}}</a>&nbsp;<i ng-show="results._source.featuredRanking>0"
 						class="glyphicon glyphicon-star" style="color: gold; vertical-align: middle;margin-top:-4px"></i> <span class="liked"
-						ng-show='result._source.liked'>({{result._source.liked}} {{result._source.liked > 1 ? vm.peoplePhrase : vm.personPhrase}})</span></h4>
+						ng-show='results._source.liked'>({{results._source.liked}} {{results._source.liked > 1 ? vm.peoplePhrase : vm.personPhrase}})</span></h4>
         {{results._source.description | limitTo: 256}}...
         <br>
 				<i>ID:{{results._source.id}}</i> &nbsp
