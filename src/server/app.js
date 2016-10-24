@@ -57,9 +57,9 @@ if(environment === 'build') {
     fs =    require('fs');         // required to read certs and keys
 
     var options = {
-    key:    fs.readFileSync(envProperties.SSL_Key),
-    cert:   fs.readFileSync(envProperties.SSL_CERT),
-    ca:     fs.readFileSync(envProperties.SSL_BUNDLE),
+    key:    fs.readFileSync('../../../../sec/certs/server-key.pem'),
+    cert:   fs.readFileSync('../../../../sec/certs/server-cert.pem'),
+    ca:     fs.readFileSync('../../../../sec/certs/gd_bundle-g2.crt'),
     requestCert: false,
     rejectUnauthorized: false
 };
@@ -78,8 +78,8 @@ if(environment === 'build') {
     https.createServer(options, app).listen('4400');
 
     http.createServer(function (req, res) {
-      // res.writeHead(301, { "Location": "https://" + req.headers['host'] + req.url });
-      res.writeHead(301, { "Location": "https://localhost:4400" });
+      res.writeHead(301, { "Location": "https://" + req.headers['host'] + req.url });
+      // res.writeHead(301, { "Location": "https://localhost:4400" });
       res.end();
     }).listen(port);
 
