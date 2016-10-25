@@ -122,7 +122,7 @@ module.exports = function () {
               relatedPR.push(onePr);
             });
             preparedResponse['relatedPR'] = relatedPR;
-            console.log(relatedPR);
+            // console.log(relatedPR);
             res.send(preparedResponse);
           });
         }

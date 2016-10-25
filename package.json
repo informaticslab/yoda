@@ -33,6 +33,7 @@
     "browser-sync": "~2.11.2",
     "chai": "^3.5.0",
     "chai-as-promised": "^5.1.0",
+    "chai-http": "^3.0.0",
     "chalk": "^1.1.0",
     "dateformat": "^1.0.8-1.2.3",
     "debug": "^2.0.0",
