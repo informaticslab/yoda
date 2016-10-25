@@ -7,7 +7,7 @@ var homeModule = require('./pageObjects/homePage.js');
 var searchModule = require('./pageObjects/resultPage.js');
 var path = require('path');
 var fs = require('fs');
-var searchParams =
+var searchParams1 =
   [
     {
       'phrase':'what is hiv',
@@ -16,7 +16,7 @@ var searchParams =
       'professionalAudience':'Displaying 1 - 10 of 141 results for what is hiv',
       'expectedCount':'600',
       'countCompare':'lessthan',
-      'checkTerms'  : ['HIV'],
+      'checkTerms'  : ['hiv'],
       'mostRecent'  : 'What is the CDC Global AIDS Program (CDC GAP)?',
       'featured'    : '',
       'relevance'   : 'What is HIV?'
@@ -45,7 +45,54 @@ var searchParams =
       'mostRecent'  : 'Background Text: Varicella and zoster vaccine comparison for medical examination of aliens',
       'featured'    : '',
       'relevance'   : 'What is shingles (herpes zoster)? (Background Text)'
-    }
+    },
+
+    ];
+  var searchParams2 = [
+    { 'phrase':'hiv prevention',
+      'expectedCountStatus':'Displaying 1 - 10 of 44 results for what is shingles',
+      'publicAudience':'Displaying 1 - 10 of 23 results for what is shingles',
+      'professionalAudience':'Displaying 1 - 10 of 21 results for what is shingles',
+      'expectedCount':'44',
+      'countCompare':'equal',
+      'checkTerms' : ['How can HIV infection be prevented?'],
+      'mostRecent'  : 'Background Text: Varicella and zoster vaccine comparison for medical examination of aliens',
+      'featured'    : '',
+      'relevance'   : 'What is shingles (herpes zoster)? (Background Text)'
+    },
+    { 'phrase':'Prevent hiv',
+      'expectedCountStatus':'Displaying 1 - 10 of 44 results for what is shingles',
+      'publicAudience':'Displaying 1 - 10 of 23 results for what is shingles',
+      'professionalAudience':'Displaying 1 - 10 of 21 results for what is shingles',
+      'expectedCount':'44',
+      'countCompare':'equal',
+      'checkTerms' : ['How can HIV infection be prevented?'],
+      'mostRecent'  : 'Background Text: Varicella and zoster vaccine comparison for medical examination of aliens',
+      'featured'    : '',
+      'relevance'   : 'What is shingles (herpes zoster)? (Background Text)'
+    },
+    { 'phrase':'How to prevent hiv',
+      'expectedCountStatus':'Displaying 1 - 10 of 44 results for what is shingles',
+      'publicAudience':'Displaying 1 - 10 of 23 results for what is shingles',
+      'professionalAudience':'Displaying 1 - 10 of 21 results for what is shingles',
+      'expectedCount':'44',
+      'countCompare':'equal',
+      'checkTerms' : ['How can HIV infection be prevented?'],
+      'mostRecent'  : 'Background Text: Varicella and zoster vaccine comparison for medical examination of aliens',
+      'featured'    : '',
+      'relevance'   : 'What is shingles (herpes zoster)? (Background Text)'
+    },
+    { 'phrase':'How can I prevent hiv',
+      'expectedCountStatus':'Displaying 1 - 10 of 44 results for what is shingles',
+      'publicAudience':'Displaying 1 - 10 of 23 results for what is shingles',
+      'professionalAudience':'Displaying 1 - 10 of 21 results for what is shingles',
+      'expectedCount':'44',
+      'countCompare':'equal',
+      'checkTerms' : ['How can HIV infection be prevented?'],
+      'mostRecent'  : 'Background Text: Varicella and zoster vaccine comparison for medical examination of aliens',
+      'featured'    : '',
+      'relevance'   : 'What is shingles (herpes zoster)? (Background Text)'
+    },
   ];
 
 var delay = 1000;
@@ -98,13 +145,15 @@ describe('home page',function() {
 });
 
 describe('CDC-INFO search', function() {
-  pending('Force skip');
-  browser.get('http://localhost:8001/');
+   pending('Force skip');
+  beforeAll(function() {
+    browser.get('http://localhost:8001/');
+  });
 // search page
   it('should returns search results for search terms', function () {
     //  var fd = fs.openSync(path.join(process.cwd(),'test.log'), 'a')
-    browser.get('http://localhost:8001/');
-    searchParams.forEach(function (searchParm) {
+  //  browser.get('http://localhost:8001/');
+    searchParams1.forEach(function (searchParm) {
       searchModule.resultPage.searchFor(searchParm.phrase)
       expect(browser.getTitle()).toEqual('yoda: results');
       browser.driver.sleep(delay);
@@ -171,8 +220,141 @@ describe('CDC-INFO search', function() {
   });
 })
 
+describe('CDC-INFO search-top10', function() {
+  //pending('Force skip');
+  var maxCheck = 10;
+  var resultsToCheck = maxCheck;
 
-describe('CDC-INFO Sort',function(){
+  //pending('Force skip');
+  beforeAll(function() {
+    browser.get('http://localhost:8001/');
+  });
+// search page
+  it('should returns search results for search terms in top 10 results', function () {
+    //  var fd = fs.openSync(path.join(process.cwd(),'test.log'), 'a')
+    //  browser.get('http://localhost:8001/');
+    searchParams2.forEach(function (searchParm) {
+      var matchCount = 0;
+      var checkTitle;
+      searchModule.resultPage.searchFor(searchParm.phrase);
+      expect(browser.getTitle()).toEqual('yoda: results');
+      browser.driver.sleep(delay);
+      var checkterms = searchParm.checkTerms;
+
+      searchModule.resultPage.resultsArray.then(function (results) {
+        browser.driver.sleep(delay);
+        // check top 10 or the results length whichever smaller
+        console.log('search phrase:  ', searchParm.phrase, ' result length ', results.length);
+        expect(checkPhraseExist(results,checkterms)).toBe(true);
+      });
+    });
+
+    var checkPhraseExist = function (results, checkTerms) {
+      var matchCount = 0;
+      var matchArray = [];
+      var deferred = protractor.promise.defer();
+      if (results.length < resultsToCheck) {
+        resultsToCheck = results.length;
+      }
+      for (var i = 0; i < resultsToCheck; i++) {
+        searchModule.resultPage.extractTitle(results[i]).getText().then(function (title) {
+          checkTitle = title;
+          console.log(checkTitle);
+          if (checkTitle.toLowerCase().indexOf(checkTerms[0].toLowerCase()) != -1) {
+            console.log('matched');
+            matchArray.push(true);
+          }
+          else {
+            matchArray.push(false);
+          }
+         // checkMatchingCompleted(matchArray,resultsToCheck);
+          if (matchArray.length == resultsToCheck) {
+            console.log(matchArray);
+            if (matchArray.indexOf(true) != -1) {
+              deferred.fulfill(true);
+            }
+            else {
+              deferred.fulfill(false);
+            }
+          }
+        });
+      }
+          return deferred.promise;
+    }
+  })
+
+  function checkMatchingCompleted(matchedArray,expectedLen) {
+      var deferred = protractor.promise.defer();
+      if (matchedArray.length == expectedLen) {
+        console.log(matchedArray);
+        if (matchedArray.indexOf(true) != -1) {
+          return true;
+        }
+        else {
+          return false
+        }
+      }
+    }
+
+});
+
+describe('CDC-INFO Sort-sharedLoop',function(){
+  pending('Force-skip');
+  var searchResults;
+  beforeAll(function() {
+    browser.get('http://localhost:8001/');
+  });
+  searchParams.forEach(function (searchParm) {
+  it ('should Sort by most recent', function() {
+      element(by.model('vm.selected')).sendKeys(searchParm.phrase);
+      //element(by.id('searchButton')).click();
+      browser.actions().sendKeys(protractor.Key.ENTER).perform();
+      expect(browser.getTitle()).toEqual('yoda: results');
+      console.log('in most recent:', searchParm.phrase);
+      searchModule.resultPage.sortByRecent();
+      //element(by.cssContainingText('option', 'Most Recent')).click();
+      searchModule.resultPage.resultsArray.then(function (results) {
+        browser.driver.sleep(delay);
+        searchModule.resultPage.extractTitle(results[0]).getText().then(function (title) {
+          expect(title).toBe(searchParm.mostRecent);
+        });
+      });
+  it ('should Sort by relevance', function() {
+      searchModule.resultPage.searchFor(searchParm.phrase);
+      expect(browser.getTitle()).toEqual('yoda: results');
+      console.log('in most relevance:', searchParm.phrase);
+      searchModule.resultPage.sortByRelevance();
+      searchModule.resultPage.resultsArray.then(function (results) {
+        searchModule.resultPage.extractTitle(results[0]).getText().then(function (title) {
+          expect(title).toBe(searchParm.relevance);
+        });
+      });
+  });
+
+  it ('should Sort by featured', function() {
+      searchModule.resultPage.searchFor(searchParm.phrase);
+      expect(browser.getTitle()).toEqual('yoda: results');
+      var featuredOption = searchModule.resultPage.sortByFeaturedOption;
+    //  featuredOption.getAttribute('disabled').then
+      featuredOption.getAttribute('disabled').then(function(attr){
+        console.log(attr);
+        if (!attr) {
+          featuredOption.click();
+          console.log('in featured:', searchParm.phrase);
+          searchModule.resultPage.resultsArray.then(function (results) {
+            browser.driver.sleep(delay);
+            searchModule.resultPage.extractTitle(results[0]).getText().then(function (title) {
+              expect(title).toBe(searchParm.featured);
+            });
+          });
+        }
+      });
+  });
+  });
+  });
+});
+
+describe('CDC-INFO Sort-independent',function(){
   pending('Force-skip');
   var searchResults;
 
@@ -212,7 +394,7 @@ describe('CDC-INFO Sort',function(){
       searchModule.resultPage.searchFor(searchParm.phrase);
       expect(browser.getTitle()).toEqual('yoda: results');
       var featuredOption = searchModule.resultPage.sortByFeaturedOption;
-    //  featuredOption.getAttribute('disabled').then
+      //  featuredOption.getAttribute('disabled').then
       featuredOption.getAttribute('disabled').then(function(attr){
         console.log(attr);
         if (!attr) {
@@ -232,7 +414,7 @@ describe('CDC-INFO Sort',function(){
 });
 
 describe('CDC-INFO Filter',function(){
-
+  pending('Force-skip');
   beforeAll(function() {
     browser.get('http://localhost:8001/');
 
