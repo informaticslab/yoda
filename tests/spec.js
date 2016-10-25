@@ -299,12 +299,12 @@ describe('CDC-INFO search-top10', function() {
 });
 
 describe('CDC-INFO Sort-sharedLoop',function(){
-  pending('Force-skip');
+  //pending('Force-skip');
   var searchResults;
   beforeAll(function() {
-    browser.get('http://localhost:8001/');
+    browser.get('http://cdcinfodev.phiresearchlab.org/');
   });
-  searchParams.forEach(function (searchParm) {
+  searchParams1.forEach(function (searchParm) {
   it ('should Sort by most recent', function() {
       element(by.model('vm.selected')).sendKeys(searchParm.phrase);
       //element(by.id('searchButton')).click();
@@ -359,7 +359,7 @@ describe('CDC-INFO Sort-independent',function(){
   var searchResults;
 
   it ('should Sort by most recent', function() {
-    searchParams.forEach(function (searchParm) {
+    searchParams1.forEach(function (searchParm) {
       element(by.model('vm.selected')).sendKeys(searchParm.phrase);
       //element(by.id('searchButton')).click();
       browser.actions().sendKeys(protractor.Key.ENTER).perform();
@@ -376,7 +376,7 @@ describe('CDC-INFO Sort-independent',function(){
     })
   });
   it ('should Sort by relevance', function() {
-    searchParams.forEach(function (searchParm) {
+    searchParams1.forEach(function (searchParm) {
       searchModule.resultPage.searchFor(searchParm.phrase);
       expect(browser.getTitle()).toEqual('yoda: results');
       console.log('in most relevance:', searchParm.phrase);
@@ -390,7 +390,7 @@ describe('CDC-INFO Sort-independent',function(){
   });
 
   it ('should Sort by featured', function() {
-    searchParams.forEach(function (searchParm) {
+    searchParams1.forEach(function (searchParm) {
       searchModule.resultPage.searchFor(searchParm.phrase);
       expect(browser.getTitle()).toEqual('yoda: results');
       var featuredOption = searchModule.resultPage.sortByFeaturedOption;
@@ -414,12 +414,12 @@ describe('CDC-INFO Sort-independent',function(){
 });
 
 describe('CDC-INFO Filter',function(){
-  pending('Force-skip');
+  ///pending('Force-skip');
   beforeAll(function() {
     browser.get('http://localhost:8001/');
 
   });
-  searchParams.forEach(function (searchParm) {
+  searchParams1.forEach(function (searchParm) {
 
    // expect(browser.getTitle()).toEqual('yoda: results');
     it('should filter by public and professional', function () {
@@ -465,7 +465,7 @@ describe('CDC-INFO Filter',function(){
 });
 
 describe('CDC-INFO Detail Page', function() {
-  pending('Force skip');
+  //pending('Force skip');
   it('should return a detail page with ID:60183 ', function () {
     browser.get('http://localhost:8001/details/60183');
     expect(browser.getTitle()).toEqual('yoda: Details');
