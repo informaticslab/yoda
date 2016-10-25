@@ -51,15 +51,16 @@ console.log('PORT=' + port);
 console.log('NODE_ENV=' + environment);
 
 if(environment === 'build') {
-  var envProperties = require('../../../../envProperties.js');
-
+  // var envProperties = require('./envProperties');
+  
+  
   var https = require('https'),      // module for https
     fs =    require('fs');         // required to read certs and keys
 
     var options = {
-    key:    fs.readFileSync('../../../../sec/certs/server_cert.pem'),
-    cert:   fs.readFileSync('../../../../sec/certs/server_key.pem'),
-    ca:     fs.readFileSync('../../../../sec/certs/gd_bundle-g2.crt'),
+    key:    fs.readFileSync('/sec/certs/server-key.pem'),
+    cert:   fs.readFileSync('/sec/certs/server-cert.pem'),
+    ca:     fs.readFileSync('/sec/certs/gd_bundle-g2.crt'),
     requestCert: false,
     rejectUnauthorized: false
 };
@@ -78,8 +79,9 @@ if(environment === 'build') {
     https.createServer(options, app).listen('4400');
 
     http.createServer(function (req, res) {
-      // res.writeHead(301, { "Location": "https://" + req.headers['host'] + req.url });
-      res.writeHead(301, { "Location": "https://localhost:4400" });
+      res.writeHead(301, { "Location": "https://" + req.headers['host'] + req.url });
+      
+      // res.writeHead(301, { "Location": "https://localhost:4400" });
       res.end();
     }).listen(port);
 
