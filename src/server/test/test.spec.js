@@ -77,7 +77,7 @@ describe('Routing', function() {
       });
     });
 
-    describe("Full Search", function() {
+    describe("Search", function() {
 
       var singleSearch = new SearchObj('ebola', 'relevance', 'all', {length:17, suggestionsLength: 1, firstHit: 'How is Ebola hemorrhagic fever (Ebola HF) diagnosed?', id: 101076});
 
@@ -145,12 +145,42 @@ describe('Routing', function() {
         request(baseUrl)
           .get('/api/search/' + partialPhraseSearch.query + '/1/' + partialPhraseSearch.sort + '/' + partialPhraseSearch.filter)
           .end(function(err, res) {
+            var firstHit = res.body.hits[0]._source;
+
             res.should.have.status(200);
+            res.body.total.should.be.eql(partialPhraseSearch.expected.length);
+            res.body.suggestions.length.should.be.eql(1);
+            firstHit.should.have.property('id').eql(partialPhraseSearch.expected.id);
+            firstHit.should.have.property('prId');
+            firstHit.should.have.property('dateModified');
+            firstHit.should.have.property('resources');
+            firstHit.should.have.property('tier');
+            firstHit.should.have.property('featuredRanking');
+            firstHit.should.have.property('commonQuestionRanking');
+            firstHit.should.have.property('datePublished');
+            firstHit.should.have.property('keywords');
+            firstHit.should.have.property('language');
+            firstHit.should.have.property('category');
+            firstHit.should.have.property('title').eql(partialPhraseSearch.expected.firstHit);
+            firstHit.should.have.property('description');
             done();
           });
       });
 
-      it("should return a suggestion for misspelled single word search");
+      var misspelledSearch = new SearchObj('evola', 'relevance', 'all', {length: 0, suggestion: 'ebola'});
+
+      it("should return a suggestion for misspelled single word search", function(done) {
+        request(baseUrl) 
+          .get('/api/search/' + misspelledSearch.query + '/1/' + misspelledSearch.sort + '/' +misspelledSearch.filter)
+          .end(function(err, res) {
+            var suggestion =  res.body.suggestions[0].options[0].text;
+            res.should.have.status(200);
+            res.body.should.have.property('hits');
+            res.body.should.have.property('total').eql(misspelledSearch.expected.length);
+            suggestion.should.be.eql(misspelledSearch.expected.suggestion);
+            done();
+          });
+      });
 
       var featuredSearch = new SearchObj('sars', 'relevance', 'all', {});
       it("should return a 'constainsFeatured' flag in response if the result set contains a featured PR", function(done) {
@@ -165,32 +195,256 @@ describe('Routing', function() {
       });
 
       describe("Filtering & Sorting", function() {
-        it("should return expected results when passing 'public' parameter with search term");
-        it("should return expected results when passing 'professiona' parameter with search term");
+
+        var filterSearchPublic = new SearchObj('ebola', 'relevance', 'public', {length:6, firstHit: 'How is Ebola hemorrhagic fever (Ebola HF) treated?', id: 101078});
+
+        it("should return expected results when passing 'public' parameter with search term", function(done) {
+          request(baseUrl)
+            .get('/api/search/' + filterSearchPublic.query + '/1/' + filterSearchPublic.sort + '/' + filterSearchPublic.filter)
+            .end(function(err, res) {
+              var firstHit = res.body.hits[0]._source;
+              res.should.have.status(200);
+              res.body.total.should.be.eql(filterSearchPublic.expected.length);
+              firstHit.should.have.property('id').eql(filterSearchPublic.expected.id);
+              firstHit.should.have.property('prId');
+              firstHit.should.have.property('dateModified');
+              firstHit.should.have.property('resources');
+              firstHit.should.have.property('tier');
+              firstHit.should.have.property('featuredRanking');
+              firstHit.should.have.property('commonQuestionRanking');
+              firstHit.should.have.property('datePublished');
+              firstHit.should.have.property('topic');
+              firstHit.should.have.property('subtopic');
+              firstHit.should.have.property('keywords');
+              firstHit.should.have.property('language');
+              firstHit.should.have.property('category');
+              firstHit.should.have.property('title').eql(filterSearchPublic.expected.firstHit);
+              firstHit.should.have.property('description');
+              done();
+            });
+        });
+
+        var filterSearchProfessional = new SearchObj('ebola', 'relevance', 'professional', {length:11, firstHit: 'How is Ebola hemorrhagic fever (Ebola HF) diagnosed?', id: 101076});
+
+        it("should return expected results when passing 'professional' parameter with search term", function(done) {
+          request(baseUrl)
+            .get('/api/search/' + filterSearchProfessional.query + '/1/' + filterSearchProfessional.sort + '/' + filterSearchProfessional.filter)
+            .end(function(err, res) {
+              var firstHit = res.body.hits[0]._source;
+              res.should.have.status(200);
+              res.body.total.should.be.eql(filterSearchProfessional.expected.length);
+              firstHit.should.have.property('id').eql(filterSearchProfessional.expected.id);
+              firstHit.should.have.property('prId');
+              firstHit.should.have.property('dateModified');
+              firstHit.should.have.property('resources');
+              firstHit.should.have.property('tier');
+              firstHit.should.have.property('featuredRanking');
+              firstHit.should.have.property('commonQuestionRanking');
+              firstHit.should.have.property('datePublished');
+              firstHit.should.have.property('topic');
+              firstHit.should.have.property('subtopic');
+              firstHit.should.have.property('keywords');
+              firstHit.should.have.property('language');
+              firstHit.should.have.property('category');
+              firstHit.should.have.property('title').eql(filterSearchProfessional.expected.firstHit);
+              firstHit.should.have.property('description');
+              done();
+            });
+        });
+
+        var sortSearchRecent = new SearchObj('ebola', 'recent', 'all', {length:17, firstHit: 'What kinds of viruses cause viral hemorrhagic fevers (VHFs)?', id: 101038});
+
+        it("should return expected results in correct order for 'Most Recent' sort", function(done) {
+          request(baseUrl)
+            .get('/api/search/' + sortSearchRecent.query + '/1/' + sortSearchRecent.sort + '/' + sortSearchRecent.filter)
+            .end(function(err, res) {
+              var firstHit = res.body.hits[0]._source;
+              res.should.have.status(200);
+              res.body.total.should.be.eql(sortSearchRecent.expected.length);
+              firstHit.should.have.property('id').eql(sortSearchRecent.expected.id);
+              firstHit.should.have.property('prId');
+              firstHit.should.have.property('dateModified');
+              firstHit.should.have.property('resources');
+              firstHit.should.have.property('tier');
+              firstHit.should.have.property('featuredRanking');
+              firstHit.should.have.property('commonQuestionRanking');
+              firstHit.should.have.property('datePublished');
+              firstHit.should.have.property('topic');
+              firstHit.should.have.property('subtopic');
+              firstHit.should.have.property('keywords');
+              firstHit.should.have.property('language');
+              firstHit.should.have.property('category');
+              firstHit.should.have.property('title').eql(sortSearchRecent.expected.firstHit);
+              firstHit.should.have.property('description');
+              done();
+            });
+        });
+
+        var sortSearchFeatured = new SearchObj('sars', 'featured', 'all', {length:27, firstHit: 'What are the symptoms of SARS?', id: 1325});
+
+        it("should return expected results in correct order for 'Featured' sort", function(done) {
+          request(baseUrl)
+            .get('/api/search/' + sortSearchFeatured.query + '/1/' + sortSearchFeatured.sort + '/' + sortSearchFeatured.filter)
+            .end(function(err, res) {
+              var firstHit = res.body.hits[0]._source;
+              res.should.have.status(200);
+              res.body.total.should.be.eql(sortSearchFeatured.expected.length);
+              firstHit.should.have.property('id').eql(sortSearchFeatured.expected.id);
+              firstHit.should.have.property('prId');
+              firstHit.should.have.property('dateModified');
+              firstHit.should.have.property('resources');
+              firstHit.should.have.property('tier');
+              firstHit.should.have.property('featuredRanking');
+              firstHit.should.have.property('commonQuestionRanking');
+              firstHit.should.have.property('datePublished');
+              firstHit.should.have.property('topic');
+              firstHit.should.have.property('subtopic');
+              firstHit.should.have.property('language');
+              firstHit.should.have.property('category');
+              firstHit.should.have.property('title').eql(sortSearchFeatured.expected.firstHit);
+              firstHit.should.have.property('description');
+              done();
+            });
+        });
+
       });
 
-      describe("sorting", function() {
+    
+      describe("Paging", function() {
+        var pagingSearch = new SearchObj('ebola', 'relevance', 'all', {length: 7, firstHit: 'How do I submit human specimens for testing (LCMV, Lassa Fever, Ebola, Marburg, RVF, CCHF, TBE)?', id: 101774 });
 
+        it("should return expected results page when a page parameter is passed", function(done) {
+          request(baseUrl)
+            .get('/api/search/' + pagingSearch.query + '/2/' + pagingSearch.sort + '/' + pagingSearch.filter)
+            .end(function(err, res) {
+              var firstHit = res.body.hits[0]._source;
+              var numOfResults = res.body.hits.length;
+              res.should.have.status(200);
+              numOfResults.should.be.eql(pagingSearch.expected.length);
+              firstHit.should.have.property('id').eql(pagingSearch.expected.id);
+              firstHit.should.have.property('prId');
+              firstHit.should.have.property('dateModified');
+              firstHit.should.have.property('resources');
+              firstHit.should.have.property('tier');
+              firstHit.should.have.property('featuredRanking');
+              firstHit.should.have.property('commonQuestionRanking');
+              firstHit.should.have.property('datePublished');
+              firstHit.should.have.property('topic');
+              firstHit.should.have.property('subtopic');
+              firstHit.should.have.property('language');
+              firstHit.should.have.property('category');
+              firstHit.should.have.property('title').eql(pagingSearch.expected.firstHit);
+              firstHit.should.have.property('description');
+              done();
+            });
+        });
       });
       
-      describe("special cases", function() {
-
-      })
+      // describe("Edge cases", function() {
+      //   //For if we want to test very specific edge cases
+      // });
     });
 
     describe("Get questions for typeahead", function() {
-      it("should return correct set of questions for provided search term");
-      it("should return suggestions if you type a single character");
-      it("should return suggestions for a phrase");
+
+      var termSearch = new SearchObj('pregnancy', 'relevance', 'all', {length: 20, firstHit: 'Measles and pregnancy', id: 87993});
+
+      it("should return correct set of questions for provided search term", function(done) {
+        request(baseUrl)
+          .get('/api/questions/' + termSearch.query)
+          .end(function(err, res) {
+            var firstHit = res.body[0]._source;
+            res.should.have.status(200);
+            res.body.length.should.be.eql(termSearch.expected.length);
+            firstHit.should.have.property('id').eql(termSearch.expected.id);
+            firstHit.should.have.property('prId');
+            firstHit.should.have.property('dateModified');
+            firstHit.should.have.property('resources');
+            firstHit.should.have.property('tier');
+            firstHit.should.have.property('featuredRanking');
+            firstHit.should.have.property('commonQuestionRanking');
+            firstHit.should.have.property('datePublished');
+            firstHit.should.have.property('topic');
+            firstHit.should.have.property('subtopic');
+            firstHit.should.have.property('language');
+            firstHit.should.have.property('category');
+            firstHit.should.have.property('title').eql(termSearch.expected.firstHit);
+            firstHit.should.have.property('description');
+            done();
+          });
+      });
+
+      var singleCharSearch = new SearchObj('e', 'relevance', 'all', {length: 20, firstHit: 'What is Hepatitis E?', id: 96482});
+
+      it("should return suggestions if you type a single character", function(done) {
+        request(baseUrl)
+          .get('/api/questions/' + singleCharSearch.query)
+          .end(function(err, res) {
+            var firstHit = res.body[0]._source;
+            res.should.have.status(200);
+            res.body.length.should.be.eql(singleCharSearch.expected.length);
+            firstHit.should.have.property('id').eql(singleCharSearch.expected.id);
+            firstHit.should.have.property('prId');
+            firstHit.should.have.property('dateModified');
+            firstHit.should.have.property('resources');
+            firstHit.should.have.property('tier');
+            firstHit.should.have.property('featuredRanking');
+            firstHit.should.have.property('commonQuestionRanking');
+            firstHit.should.have.property('datePublished');
+            firstHit.should.have.property('topic');
+            firstHit.should.have.property('subtopic');
+            firstHit.should.have.property('language');
+            firstHit.should.have.property('category');
+            firstHit.should.have.property('title').eql(singleCharSearch.expected.firstHit);
+            firstHit.should.have.property('description');
+            done();
+          });
+      });
+
+      var phraseSearch = new SearchObj('this kind of sickness', 'relevance', 'all', {length: 20, firstHit: 'What kind of germ causes botulism?', id: 90108});
+
+      it("should return suggestions for a phrase", function(done) {
+        request(baseUrl)
+          .get('/api/questions/' + phraseSearch.query)
+          .end(function(err, res) {
+            var firstHit = res.body[0]._source;
+            res.should.have.status(200);
+            res.body.length.should.be.eql(phraseSearch.expected.length);
+            firstHit.should.have.property('id').eql(phraseSearch.expected.id);
+            firstHit.should.have.property('prId');
+            firstHit.should.have.property('dateModified');
+            firstHit.should.have.property('resources');
+            firstHit.should.have.property('tier');
+            firstHit.should.have.property('featuredRanking');
+            firstHit.should.have.property('commonQuestionRanking');
+            firstHit.should.have.property('datePublished');
+            firstHit.should.have.property('topic');
+            firstHit.should.have.property('subtopic');
+            firstHit.should.have.property('language');
+            firstHit.should.have.property('category');
+            firstHit.should.have.property('title').eql(phraseSearch.expected.firstHit);
+            firstHit.should.have.property('description');
+            done();
+          });
+      });
     });
 
-    describe("Update positive rating", function() {
+    describe("Ratings", function() {
+      it("should update positive rating property of a PR", function(done) {
+        request(baseUrl)
+          .post('/api/updatePositiveRating/'+101076)
+          .end(function(err, res) {
+            res.should.have.status(200);
+            res.body._id.should.be.eql('101076');
+            res.body._shards.successful.should.be.eql(1);
+            done();
+          });
+      });
+
+      it("should update negative rating property of a PR");
 
     });
 
-    describe("Update negative rating", function() {
-
-    });
 
     describe("Featured", function() {
       var max = 5;
@@ -250,9 +504,9 @@ describe('Routing', function() {
   });
 
 
-  describe("Users", function() {
-    // it("should return -1 when the value is not present");
-  });
+  // describe("Users", function() {
+  //   // it("should return -1 when the value is not present");
+  // });
 });
 
 function SearchObj(query, sort, filter, expected) {

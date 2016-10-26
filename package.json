@@ -84,6 +84,7 @@
     "method-override": "^2.3.4",
     "minimist": "^1.1.0",
     "mocha": "^2.5.3",
+    "mochawesome": "^1.5.3",
     "nlp_compromise": "^6.5.0",
     "node-notifier": "^4.0.3",
     "phantomjs-prebuilt": "^2.1.4",

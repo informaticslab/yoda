@@ -10,3 +10,5 @@ report/
 
 data/logs/
 .vscode/
+
+mochawesome-reports/
