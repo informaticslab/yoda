@@ -441,15 +441,24 @@ describe('Routing', function() {
           });
       });
 
-      it("should update negative rating property of a PR");
+      it("should update negative rating property of a PR", function(done) {
+        request(baseUrl)
+          .post('/api/updateNegativeRating/'+101076)
+          .end(function(err, res) {
+            res.should.have.status(200);
+            res.body._id.should.be.eql('101076');
+            res.body._shards.successful.should.be.eql(1);
+            done();
+          });
+      });
 
     });
 
 
-    describe("Featured", function() {
+    describe("Home page routes", function() {
       var max = 5;
 
-      it("should return correct number of results based on 'max' variable", function(done) {
+      it("should return expected result for Featured PRs routes", function(done) {
         request(baseUrl)
           .get('/api/getFeatured/' + max)
           .end(function(err, res) {
@@ -458,13 +467,8 @@ describe('Routing', function() {
             done();
           });
       });
-      it("should return expected 'featured' based on expected object");
-    });
 
-    describe("Common Questions",function() {
-      var max = 5;
-
-      it("should return correct number of results based on 'max' variable", function(done) {
+      it("should return expected result for Common PRs routes", function(done) {
         request(baseUrl)
           .get('/api/getCommon/' + max)
           .end(function(err, res) {
@@ -475,14 +479,8 @@ describe('Routing', function() {
             done();
           });
       });
-      it("should return expected 'common questions' based on expected object");
 
-    });
-
-    describe('Most Recent', function() {
-      var max = 5;
-
-      it("should return correct number of results based on 'max' variable", function(done) {
+      it("should return expected result for Most Recent routes", function(done) {
         request(baseUrl)
           .get('/api/getMostRecent/'+max)
           .end(function(err, res){
@@ -496,11 +494,9 @@ describe('Routing', function() {
             done();
           });
       });
-
-      it("returns expected most recent results");
-
+  
     });
-    
+
   });
 
 
