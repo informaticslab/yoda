@@ -10,9 +10,6 @@ var baseUrl = 'http://localhost:3000/';
 chai.use(chaiHTTP);
 
 describe('Routing', function() {
-  describe('Auth', function() {
-
-  });
 
   describe('Elastic Search', function() {
 
@@ -307,6 +304,33 @@ describe('Routing', function() {
             });
         });
 
+        var comboSearch =  new SearchObj('hiv', 'recent', 'public', {length: 171, firstHit: 'How soon should I get tested if I think I have been exposed to HIV?', id: 106647});
+
+        it("should return expected results from a 'recent' sort and 'public' filter", function(done){
+          request(baseUrl)
+            .get('/api/search/' + comboSearch.query + '/1/' + comboSearch.sort + '/' + comboSearch.filter)
+            .end(function(err, res) {
+              var firstHit = res.body.hits[0]._source;
+              res.should.have.status(200);
+              res.body.total.should.be.eql(comboSearch.expected.length);
+              firstHit.should.have.property('id').eql(comboSearch.expected.id);
+              firstHit.should.have.property('prId');
+              firstHit.should.have.property('dateModified');
+              firstHit.should.have.property('resources');
+              firstHit.should.have.property('tier');
+              firstHit.should.have.property('featuredRanking');
+              firstHit.should.have.property('commonQuestionRanking');
+              firstHit.should.have.property('datePublished');
+              firstHit.should.have.property('topic');
+              firstHit.should.have.property('subtopic');
+              firstHit.should.have.property('language');
+              firstHit.should.have.property('category');
+              firstHit.should.have.property('title').eql(comboSearch.expected.firstHit);
+              firstHit.should.have.property('description');
+              done();
+            });
+        });
+
       });
 
     
@@ -345,7 +369,7 @@ describe('Routing', function() {
       // });
     });
 
-    describe("Get questions for typeahead", function() {
+    describe("Typeahead query", function() {
 
       var termSearch = new SearchObj('pregnancy', 'relevance', 'all', {length: 20, firstHit: 'Measles and pregnancy', id: 87993});
 
