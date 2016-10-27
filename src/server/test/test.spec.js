@@ -72,6 +72,16 @@ describe('Routing', function() {
             done();
           });
       });
+
+      it("should return 404 if no ID is provided", function(done) {
+        request(baseUrl)
+          .get('/api/getPreparedResponsebyId/')
+          .end(function(err, res) {
+            res.should.have.status(404);
+            done();
+          });
+      });
+
     });
 
     describe("Search", function() {
@@ -180,6 +190,7 @@ describe('Routing', function() {
       });
 
       var featuredSearch = new SearchObj('sars', 'relevance', 'all', {});
+
       it("should return a 'constainsFeatured' flag in response if the result set contains a featured PR", function(done) {
         request(baseUrl)
           .get('/api/search/' + featuredSearch.query + '/1/' + featuredSearch.sort + '/' + featuredSearch.filter)
@@ -187,6 +198,18 @@ describe('Routing', function() {
             var hasFeatured = res.body.aggregations.featured_PRs.buckets; 
             res.should.have.status(200);
             hasFeatured.length.should.be.eql(2);
+            done();
+          });
+      });
+
+      var randomInvalidSearch = new SearchObj('23dl;ajdf3', 'relevance', 'all', {length:0});
+
+      it("should return zero results for random invalid query but should correctly execute a search", function(done) {
+        request(baseUrl)
+          .get('/api/search/' + randomInvalidSearch.query + '/1/' + randomInvalidSearch.sort + '/' + randomInvalidSearch.filter)
+          .end(function(err, res) {
+            res.should.have.status(200);
+            res.body.should.have.property('total').eql(randomInvalidSearch.expected.length);
             done();
           });
       });
