@@ -1,5 +1,5 @@
 /* Help configure the state-base ui.router */
-(function() {
+(function () {
   'use strict';
 
   angular
@@ -21,7 +21,7 @@
 
     $locationProvider.html5Mode(true);
 
-    this.configure = function(cfg) {
+    this.configure = function (cfg) {
       angular.extend(config, cfg);
     };
 
@@ -50,7 +50,7 @@
       ///////////////
 
       function configureStates(states, otherwisePath) {
-        states.forEach(function(state) {
+        states.forEach(function (state) {
           state.config.resolve =
             angular.extend(state.config.resolve || {}, config.resolveAlways);
           $stateProvider.state(state.state, state.config);
@@ -66,7 +66,7 @@
         // On routing error, go to the dashboard.
         // Provide an exit clause if it tries to do it twice.
         $rootScope.$on('$stateChangeError',
-          function(event, toState, toParams, fromState, fromParams, error) {
+          function (event, toState, toParams, fromState, fromParams, error) {
             if (handlingStateChangeError) {
               return;
             }
@@ -86,7 +86,7 @@
 
       function init() {
         // checkAuth()
-        isLoggedIn();
+        // isLoggedIn();
         handleRoutingErrors();
         updateDocTitle();
       }
@@ -94,32 +94,32 @@
       function getStates() { return $state.get(); }
 
       function isLoggedIn() {
-        $rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromParams, fromState) {
-         
-          
-            // console.log('from state url: ', fromState);
-            $http.get('/api/isLoggedIn').success(function(data) {
-              // console.log('data: ', data);
-              // console.log('state.current: ', $state.current.name);
-              if(data.state === 'success') {
-                $rootScope.authenticated = true;
-                $rootScope.currentUser = data.user.username;
-      
-              } else {
-                // console.log('go to login')
-                $rootScope.authenticated = false;
-                $rootScope.currentUser = '';
-                $state.go('login');
-              }
-            });
-          
-          
+        $rootScope.$on('$stateChangeStart', function (event, toState, toParams, fromParams, fromState) {
+
+
+          // console.log('from state url: ', fromState);
+          $http.get('/api/isLoggedIn').success(function (data) {
+            // console.log('data: ', data);
+            // console.log('state.current: ', $state.current.name);
+            if (data.state === 'success') {
+              $rootScope.authenticated = true;
+              $rootScope.currentUser = data.user.username;
+
+            } else {
+              // console.log('go to login')
+              $rootScope.authenticated = false;
+              $rootScope.currentUser = '';
+              $state.go('login');
+            }
+          });
+
+
         });
       }
-      
+
       function updateDocTitle() {
         $rootScope.$on('$stateChangeSuccess',
-          function(event, toState, toParams, fromState, fromParams) {
+          function (event, toState, toParams, fromState, fromParams) {
             stateCounts.changes++;
             handlingStateChangeError = false;
             var title = config.docTitle + ' ' + (toState.title || '');
