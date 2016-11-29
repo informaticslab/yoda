@@ -3,46 +3,20 @@
     <div class="col-lg-12">
       <div class="form-group">
 
-      <div class="input-group search-bar">
-          <input type="search" class="form-control search-bar" id="inputValidation" ng-model='vm.selected' uib-typeahead='pr.title for pr in vm.getQuery($viewValue)' ng-keypress="vm.checkKey($event,vm.selected)" typeahead-focus-first="false" typeahead-on-select='vm.goToDetails($item, $model, $label)' typeahead-loading="loadingLocations" typeahead-no-results="noResults" placeholder="Search CDC-INFO"/>
+        <div class="input-group search-bar">
+          <input type="search" class="form-control search-bar" id="inputValidation" ng-model='vm.selected' uib-typeahead='pr.title for pr in vm.getQuery($viewValue)'
+            ng-keypress="vm.checkKey($event,vm.selected)" typeahead-focus-first="false" typeahead-on-select='vm.goToDetails($item, $model, $label)'
+            typeahead-loading="loadingLocations" typeahead-no-results="noResults" placeholder="Search CDC-INFO" />
 
           <span class="input-group-btn">
             <button id="searchButton" class="btn btn-default search-button" type="button" ng-click="vm.goToResults(vm.selected)"><i class="glyphicon glyphicon-search"></i></button>
           </span>
 
-      </div>
-      </div>
-    </div>
-    <!-- Collect the nav links, forms, and other content for toggling -->
-    <div class="row">
-      <div class="col-lg-8 col-lg-offset-2 col-md-offset-1 col-sm-offset-0">
-        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-          <ul class="nav navbar-nav search-nav">
-            <li>
-              <a ui-sref="home"><i class="glyphicon glyphicon-home"></i> Home</a>
-            </li>
-            <li>
-              <a ui-sref="topics"><i class="glyphicon glyphicon-th-list"></i> Topics</a>
-            </li>
-           <!--  <li>
-              <a href="#"><i class="glyphicon glyphicon-user"></i> FAQ</a>
-            </li> -->
-            <li>
-              <a ui-sref="about"><i class="glyphicon glyphicon-info-sign"></i> About</a>
-            </li>
-            <li>
-              <a ui-sref="contact"><i class="glyphicon glyphicon-envelope"></i> Contact CDC-INFO</a>
-            </li>
-            <li>
-              <a href="http://wwwn.cdc.gov/pubs/CDCInfoOnDemand.aspx" target="_blank"><i class="glyphicon glyphicon-book"></i> Publications</a>
-            </li>
-            <li>
-              <a href="#"><i class="glyphicon glyphicon-question-sign"></i> Help</a>
-            </li>
-          </ul>
         </div>
       </div>
     </div>
+    <!-- Collect the nav links, forms, and other content for toggling -->
+
     <!-- /.navbar-collapse -->
   </div>
 </div>
