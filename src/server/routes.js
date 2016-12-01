@@ -1,16 +1,7 @@
 const router = require('express').Router();
 const four0four = require('./utils/404')();
-const users = require('./controllers/users');
-const auth = require('./controllers/auth')();
 const elastic = require('./controllers/elastic')();
 const search = require('./controllers/search')();
-
-
-router.get('/users', users.index);
-
-router.post('/login', auth.login);
-router.get('/isLoggedIn', auth.isLoggedIn);
-router.post('/logout', auth.logout);
 
 router.get('/search/:query', search.basicSearch);
 router.get('/smartSearch/:query/:page/:sort?/:filter?', search.smartSearch);

@@ -1,4 +1,4 @@
-(function() {
+(function () {
   'use strict';
 
   angular
@@ -12,7 +12,6 @@
   }
 
   function getStates() {
-    var access = accessConfig.accessLevels
     return [
       {
         state: 'results',
@@ -22,15 +21,13 @@
           controller: 'ResultsController',
           controllerAs: 'vm',
           title: 'results',
-          data: {
-            access: access.user
-          },
-          params: { searchString: null,
-                    page: '1', 
-                    newSearch: null,
-                    sort: null,
-                    filter: null
-                  },  //required to pass along state params
+          params: {
+            searchString: null,
+            page: '1',
+            newSearch: null,
+            sort: null,
+            filter: null
+          },  //required to pass along state params
           settings: {
             nav: 2,
             content: '<i class="fa fa-dashboard"></i> Home'

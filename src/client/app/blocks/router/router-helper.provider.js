@@ -26,9 +26,9 @@
     };
 
     this.$get = RouterHelper;
-    RouterHelper.$inject = ['$location', '$rootScope', '$state', 'logger', 'authservice', '$http'];
+    RouterHelper.$inject = ['$location', '$rootScope', '$state', 'logger', '$http'];
     /* @ngInject */
-    function RouterHelper($location, $rootScope, $state, logger, authservice, $http) {
+    function RouterHelper($location, $rootScope, $state, logger, $http) {
       var handlingStateChangeError = false;
       var hasOtherwise = false;
       var stateCounts = {
@@ -40,7 +40,6 @@
         configureStates: configureStates,
         getStates: getStates,
         stateCounts: stateCounts
-        // checkAuth: checkAuth
       };
 
       init();

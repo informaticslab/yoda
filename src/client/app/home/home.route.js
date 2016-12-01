@@ -1,4 +1,4 @@
-(function() {
+(function () {
   'use strict';
 
   angular
@@ -12,7 +12,6 @@
   }
 
   function getStates() {
-    var access = accessConfig.accessLevels;
 
     return [
       {
@@ -23,9 +22,6 @@
           controller: 'HomeController',
           controllerAs: 'vm',
           title: 'home',
-          data: {
-            access: access.user
-          },
           settings: {
             nav: 1,
             content: '<i class="fa fa-dashboard"></i> Home'

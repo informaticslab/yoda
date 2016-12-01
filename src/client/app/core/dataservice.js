@@ -1,4 +1,4 @@
-(function() {
+(function () {
   'use strict';
 
   angular
@@ -11,36 +11,25 @@
     var service = {
       doSearch: doSearch,
       getQuestions: getQuestions,
-      getPreparedResponsebyId: getPreparedResponsebyId,
-      getMessageCount: getMessageCount,
-      ratePreparedResponse: ratePreparedResponse,
-
-      getIndices: getIndices,
-      getLogDetails: getLogDetails,
-
-      getFeatured : getFeatured,
-      getCommon : getCommon,
-      getMostRecent : getMostRecent
+      getPreparedResponsebyId: getPreparedResponsebyId
 
     };
 
     return service;
 
-    function getMessageCount() { return $q.when(72); }
-
     function doSearch(params) {
-      var url = '/api/search/' + params.searchString +'/' + params.page ;
+      var url = '/api/search/' + params.searchString + '/' + params.page;
       // console.log(params);
-      if(params.sort) {
+      if (params.sort) {
         url = url + '/' + params.sort;
       }
-      if(params.filter) {
+      if (params.filter) {
         url = url + '/' + params.filter;
       }
       // console.log('in do search: ',query, page);
       return $http.get(url)
-      .then(success)
-      .catch(fail);
+        .then(success)
+        .catch(fail);
 
       function success(response) {
         return response.data;
@@ -53,8 +42,8 @@
 
     function getQuestions(query) {
       return $http.get('/api/questions/' + query)
-      .then(success)
-      .catch(fail);
+        .then(success)
+        .catch(fail);
 
       function success(response) {
         return response.data;
@@ -67,8 +56,8 @@
 
     function getPreparedResponsebyId(id) {
       return $http.get('/api/getPreparedResponsebyId/' + id)
-      .then(success)
-      .catch(fail);
+        .then(success)
+        .catch(fail);
 
       function success(response) {
         return response.data;
@@ -76,98 +65,6 @@
 
       function fail(e) {
         return exception.catcher('XHR failed for getPreparedResponsebyId')(e);
-      }
-    }
-
-    function ratePreparedResponse(type, id) {
-      if(type === 'like') {
-        return $http.post('/api/updatePositiveRating/' + id)
-        .then(success)
-        .catch(fail);
-      } else {
-        return $http.post('/api/updateNegativeRating/' + id)
-        .then(success)
-        .catch(fail);
-      }
-
-      function success(response) {
-        return response;
-      }
-
-      function fail(e) {
-        return exception.catcher('XHR failed for ratePreparedResponse')(e);
-      }
-    }
-
-
-    function getIndices() {
-      return $http.get('/logs/getIndices')
-        .then(success)
-        .catch(fail);
-
-      function success (response) {
-        return response.data;
-      }
-
-       function fail(e) {
-        return exception.catcher('XHR failed for getIndices')(e);
-  
-      }
-
-    }
-
-    function getFeatured(maxCount) {
-      return $http.get('/api/getFeatured/'+ maxCount)
-        .then(success)
-        .catch(fail);
-
-      function success(response) {
-        return response;
-      }
-      function fail(e) {
-        return exception.catcher('XHR failed for getFeatured')(e);
-      }
-    }
-
-
-
-  function getLogDetails(index) {
-    return $http.get('/logs/getLogs/' + index)
-      .then(success)
-      .catch(fail);
-
-      function success(response) {
-        return response.data;
-      }
-
-      function fail(e) {
-        return exception.catcher('XHR failed for getLogs')(e);
-      }
-    }
-    function getCommon(maxCount) {
-      return $http.get('/api/getCommon/'+ maxCount)
-        .then(success)
-        .catch(fail);
-
-      function success(response) {
-        return response;
-      }
-
-      function fail(e) {
-        return exception.catcher('XHR failed for getCommon')(e);
-      }
-    }
-    function getMostRecent(maxCount) {
-      return $http.get('/api/getMostRecent/'+ maxCount)
-        .then(success)
-        .catch(fail);
-
-      function success(response) {
-        return response;
-      }
-
-      function fail(e) {
-        return exception.catcher('XHR failed for getMostRecent')(e);
       }
     }
 
