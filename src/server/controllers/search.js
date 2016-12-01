@@ -41,8 +41,8 @@ module.exports = function () {
     let sortArray = [];
     let filterArray = [];
     let suggestions = null;
-    let preProcessedTerms = searchHelper.preProcessSearch(req.params.query);
     let preProcessedTerms2 = searchHelper.preProcessSearch2(req.params.query);
+    let fieldsToSearch = ["name", "language", "schedule", "summary"];
 
 
     if (req.params.sort === 'recent') {
@@ -94,7 +94,7 @@ module.exports = function () {
                 "multi_match": {
                   "query": preProcessedTerms2,
                   "type": "best_fields",
-                  "fields": ["name", "language", "schedule", "summary"],
+                  "fields": fieldsToSearch,
                   "minimum_should_match": "3<75%",
                   //fuzziness: 1,
                   //prefix_length: 1,
@@ -104,7 +104,7 @@ module.exports = function () {
               },
               {
                 "multi_match": {
-                  "fields": ["name", "language", "schedule", "summary"],
+                  "fields": fieldsToSearch,
                   //"type":"phrase",
                   "query": req.params.query,
                   //"slop":4,
