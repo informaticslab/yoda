@@ -4,48 +4,48 @@ var client = new es.Client({
   host: 'localhost:9200'
 });
 
-fs.readFile('cdcinfo_dev_data_modified_2.json', {encoding: 'utf-8'}, function(err, data) {
+fs.readFile('cdcinfo_dev_data_modified_2.json', { encoding: 'utf-8' }, function (err, data) {
   if (err) { throw err; }
 
-  var content =  JSON.parse(data);
+  var content = JSON.parse(data.content);
   content = content.List;
 
   // Build up a giant bulk request for elasticsearch.
-  bulk_request = content.reduce(function(bulk_request, line) {
+  bulk_request = content.reduce(function (bulk_request, line) {
 
     // console.log(line);
     var obj, recipe;
 
     try {
       obj = line;
-    } catch(e) {
+    } catch (e) {
       // console.log(e);
       console.log('Done reading');
       return bulk_request;
     }
 
 
-    bulk_request.push({index: {_index: 'prepared_responses', _type: 'prepared_responses', _id: obj.id}});
+    bulk_request.push({ index: { _index: 'prepared_responses', _type: 'prepared_responses', _id: obj.id } });
     bulk_request.push(obj);
     return bulk_request;
   }, []);
 
   // A little voodoo to simulate synchronous insert
   var busy = false;
-  var callback = function(err, resp) {
+  var callback = function (err, resp) {
     if (err) { console.log(err); }
 
     busy = false;
   };
 
-  // Recursively whittle away at bulk_request, 1000 at a time.
-  var perhaps_insert = function(){
+  // Recursively whittle away at bulk_request, 500 at a time.
+  var perhaps_insert = function () {
     if (!busy) {
       busy = true;
       client.bulk({
-        body: bulk_request.slice(0, 1000)
+        body: bulk_request.slice(0, 500)
       }, callback);
-      bulk_request = bulk_request.slice(1000);
+      bulk_request = bulk_request.slice(500);
       console.log(bulk_request.length);
     }
 
