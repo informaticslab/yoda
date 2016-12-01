@@ -1,22 +1,21 @@
 <div class="row">
-  <div class="cdc-info-search">
-    <div class="col-lg-12">
-      <div class="form-group">
 
-        <div class="input-group search-bar">
-          <input type="search" class="form-control search-bar" id="inputValidation" ng-model='vm.selected' uib-typeahead='pr.title for pr in vm.getQuery($viewValue)'
-            ng-keypress="vm.checkKey($event,vm.selected)" typeahead-focus-first="false" typeahead-on-select='vm.goToDetails($item, $model, $label)'
-            typeahead-loading="loadingLocations" typeahead-no-results="noResults" placeholder="Search CDC-INFO" />
+  <div class="col-lg-12">
+    <div class="form-group">
 
-          <span class="input-group-btn">
+      <div class="input-group search-bar">
+        <input type="search" class="form-control search-bar" id="inputValidation" ng-model='vm.selected' uib-typeahead='pr.title for pr in vm.getQuery($viewValue)'
+          ng-keypress="vm.checkKey($event,vm.selected)" typeahead-focus-first="false" typeahead-on-select='vm.goToDetails($item, $model, $label)'
+          typeahead-loading="loadingLocations" typeahead-no-results="noResults" placeholder="Type here to search" />
+
+        <span class="input-group-btn">
             <button id="searchButton" class="btn btn-default search-button" type="button" ng-click="vm.goToResults(vm.selected)"><i class="glyphicon glyphicon-search"></i></button>
           </span>
 
-        </div>
       </div>
     </div>
-    <!-- Collect the nav links, forms, and other content for toggling -->
-
-    <!-- /.navbar-collapse -->
   </div>
+  <!-- Collect the nav links, forms, and other content for toggling -->
+
+  <!-- /.navbar-collapse -->
 </div>
