@@ -32,7 +32,8 @@
     "angular-spinner": "^0.8.1",
     "lato": "^0.3.0",
     "angular-cookies": "^1.5.8",
-    "angular-resource": "^1.5.8"
+    "angular-resource": "^1.5.8",
+    "angular-material": "^1.1.1"
   },
   "resolutions": {
     "angular": "1.5.3"

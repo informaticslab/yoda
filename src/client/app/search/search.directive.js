@@ -1,4 +1,4 @@
-(function() {
+(function () {
   'use strict';
 
   angular
@@ -24,35 +24,44 @@
     function SearchController($scope, dataservice, $state) {
       var vm = this;
       vm.selected = undefined;
+      vm.isDisabled = false;
 
-      vm.goToDetails = function($item, $model, $label) {
+      vm.goToDetails = function ($item, $model, $label) {
         // console.log($item);
-        $state.go('details', {id: $item.id});
+        $state.go('details', { id: $item.id });
         vm.selected = undefined;
       };
 
-      vm.goToResults = function($item) {
+      vm.goToResults = function ($item) {
         var options = {
           searchString: $item,
           page: '1'
         };
         // console.log('item: ',$item);
-        if(!($item === undefined)) {
+        if (!($item === undefined)) {
           $state.go('results', options);
           vm.selected = undefined;
         }
       }
 
-      vm.getQuery = function(val) {
-        return dataservice.getQuestions(val).then(function(data) {
-          return data.map(function(item) {
+      vm.getMatches = function (queryString) {
+        return dataservice.autocomplete(queryString).then(function (data) {
+          return data.map(function (item) {
+            return item._source;
+          });
+        });
+      }
+
+      vm.getQuery = function (val) {
+        return dataservice.getQuestions(val).then(function (data) {
+          return data.map(function (item) {
             return item._source;
           });
         });
       };
 
-      vm.checkKey = function($event,$item) {
-      
+      vm.checkKey = function ($event, $item) {
+
         var options = {
           searchString: $item,
           page: '1',

@@ -3,7 +3,7 @@ const four0four = require('./utils/404')();
 const elastic = require('./controllers/elastic')();
 const search = require('./controllers/search')();
 
-router.get('/search/:query', search.basicSearch);
+router.get('/autocomplete/:query', search.basicSearch);
 router.get('/smartSearch/:query/:page/:sort?/:filter?', search.smartSearch);
 router.get('/findById/:id', search.findById);
 

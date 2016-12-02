@@ -1,9 +1,15 @@
-<div class="row">
+<form ng-submit="$event.preventDefault()">
 
-  <div class="col-lg-12">
-    <div class="form-group">
-
-      <div class="input-group search-bar">
+  <md-autocomplete md-selected-item="vm.selectedItem" md-search-text="vm.searchText" md-items="item in vm.getMatches(vm.searchText)"
+    md-item-text="item.name" md-min-length="3" placeholder="Type anything about a TV show">
+    <md-item-template>
+      <span md-highlight-text="searchText">{{item.name}}</span>
+    </md-item-template>
+    <md-not-found>
+      No matches found.
+    </md-not-found>
+  </md-autocomplete>
+  <!--<div class="input-group search-bar">
         <input type="search" class="form-control search-bar" id="inputValidation" ng-model='vm.selected' uib-typeahead='pr.title for pr in vm.getQuery($viewValue)'
           ng-keypress="vm.checkKey($event,vm.selected)" typeahead-focus-first="false" typeahead-on-select='vm.goToDetails($item, $model, $label)'
           typeahead-loading="loadingLocations" typeahead-no-results="noResults" placeholder="Type here to search" />
@@ -12,10 +18,9 @@
             <button id="searchButton" class="btn btn-default search-button" type="button" ng-click="vm.goToResults(vm.selected)"><i class="glyphicon glyphicon-search"></i></button>
           </span>
 
-      </div>
-    </div>
-  </div>
-  <!-- Collect the nav links, forms, and other content for toggling -->
+      </div>-->
+</form>
 
-  <!-- /.navbar-collapse -->
-</div>
+<!-- Collect the nav links, forms, and other content for toggling -->
+
+<!-- /.navbar-collapse -->
