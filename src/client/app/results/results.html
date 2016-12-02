@@ -2,11 +2,11 @@
 	<div class="row" ng-show="!isBusy">
 		<div class="col-lg-9 col-md-8 col-sm-12 search-results">
 			<div ng-show="vm.noResults">No results found for <strong>{{vm.searchString}}</strong>
-      </div>
-      <div ng-show="!vm.noResults" id="resultStatus">
-        Displaying {{vm.range.lower}} - {{vm.range.upper}} of {{vm.totalResults}} results for <strong>{{vm.searchString}}</strong>
-      </div>
-			
+			</div>
+			<div ng-show="!vm.noResults" id="resultStatus">
+				Displaying {{vm.range.lower}} - {{vm.range.upper}} of {{vm.totalResults}} results for <strong>{{vm.searchString}}</strong>
+			</div>
+
 		</div>
 		<div class="col-lg-3 col-md-4 col-sm-12 search-results2">
 			<div class="btn-group" ng-show="!vm.noResults">
@@ -69,17 +69,15 @@
 			</div>
 		</div>
 		<div class="col-lg-9 col-md-9 col-sm-8 col-xs-12 right-results ">
-      <div class="indv-results" ng-repeat="results in vm.resultsArray">
-        <h4><a ui-sref ='details({id: results._source.id})'>{{results._source.title}}</a>&nbsp;<i ng-show="results._source.featuredRanking>0"
-						class="glyphicon glyphicon-star" style="color: gold; vertical-align: middle;margin-top:-4px"></i> <span class="liked"
-						ng-show='results._source.liked'>({{results._source.liked}} {{results._source.liked > 1 ? vm.peoplePhrase : vm.personPhrase}})</span></h4>
-        {{results._source.description | limitTo: 256}}...
-        <br>
-				<i>ID:{{results._source.id}}</i> &nbsp
+			<div class="indv-results" ng-repeat="results in vm.resultsArray">
+				<h4><a ui-sref='details({id: results._source.id})'>{{results._source.name}}</a><span class="liked" ng-show='results._source.liked'>({{results._source.liked}} {{results._source.liked > 1 ? vm.peoplePhrase : vm.personPhrase}})</span></h4>
+				<span ng-bind-html="results._source.summary | limitTo: 300"></span>
 
-				<span class="date-color">Content last updated: {{results._source.dateModified | date}}</span>
-      </div>
-      <ul uib-pagination class="pagination-sm" boundary-links="true" boundary-link-numbers="true" max-size="vm.maxSize" total-items="vm.totalResults" ng-model="vm.currentPage" items-per-Page="vm.pageSize" previous-text="&lsaquo;" next-text="&rsaquo;" first-text="&laquo;" last-text="&raquo;" ng-click="vm.toTop('top'); vm.pageChanged(vm.currentPage)"></ul>
+				<i>ID:{{results._source.id}}</i>
+			</div>
+			<ul uib-pagination class="pagination-sm" boundary-links="true" boundary-link-numbers="true" max-size="vm.maxSize" total-items="vm.totalResults"
+				ng-model="vm.currentPage" items-per-Page="vm.pageSize" previous-text="&lsaquo;" next-text="&rsaquo;" first-text="&laquo;"
+				last-text="&raquo;" ng-click="vm.toTop('top'); vm.pageChanged(vm.currentPage)"></ul>
 		</div>
 	</div>
 </section>

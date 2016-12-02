@@ -1,150 +1,93 @@
- <section class='mainbar'>
-  <div id="section1" class="row" >
-            <div class="col-lg-10 col-md-10 col-sm-9 title-section">
-                <h3>{{vm.data.title}} <span class="liked" ng-if='vm.data.liked'>({{vm.data.liked}} {{vm.data.liked > 1 ? vm.peoplePhrase : vm.personPhrase}})</span></h3>
-                <i>ID: {{vm.data.id}}</i>
-                &nbsp
-                <span class="date-color"> Last updated: {{vm.data.dateModified | date}}</span>
-            </div>
-            <div class="col-lg-2 col-md-2 col-sm-3 share-section">
-              <!--<a class="share_button tp-link-policy" title="Facebook" href="http://api.addthis.com/oexchange/0.8/forward/facebook/offer?url={{vm.myUrl}}&amp;title={{vm.data.title}}&amp;description={{vm.data.title}}&amp;via=CDCgov&amp;ct=0&amp;media=http://www.cdc.gov/homepage/images/centers-for-disease-control-and-prevention.png" rel="nofollow" target="_blank"><span class="tp-sr-only">Recommend on Facebook</span><span id="share_facebook" class="facebookRecommend"></span><img src='https://www.cdc.gov/TemplatePackage/3.0/images/social/facebook-32.png' height='16' width='16' alt='Share' style="display: inline;"></a>-->
-              <a class="share_button tp-link-policy dd-toggle" href ng-click="vm.shareTwitter(myUrl,vm.data.title)"><img src='https://www.cdc.gov/TemplatePackage/3.0/images/social/twitter-32.png' height='16' width='16' alt='Share' style="display: inline;"></a>&nbsp;&nbsp
-              <a class="share_button tp-link-policy dd-toggle" href ng-click="vm.shareFacebook(myUrl,vm.data.title)"><img src='https://www.cdc.gov/TemplatePackage/3.0/images/social/facebook-32.png' height='16' width='16' alt='Share' style="display: inline;"></a>&nbsp;&nbsp
-              <!--<a class="share_button tp-link-policy dd-toggle" href><img src='https://www.cdc.gov/TemplatePackage/3.0/images/social/addthis-32.png' height='16' width='16' alt='Share' style="display: inline;"></a>&nbsp;&nbsp;&nbsp;-->
-              <a href={{vm.mailtoStr}} target="_top"><i class="glyphicon glyphicon-envelope"></i></a>&nbsp;&nbsp;&nbsp;
-              <a href ng-click='vm.printPage()'><i class="glyphicon glyphicon glyphicon-print"></i></a>
-            </div>
+<section class='mainbar'>
+    <div id="section1" class="row">
+        <div class="col-lg-10 col-md-10 col-sm-9 title-section">
+            <h3>{{vm.data.name}} <span class="liked" ng-if='vm.data.liked'>({{vm.data.liked}} {{vm.data.liked > 1 ? vm.peoplePhrase : vm.personPhrase}})</span></h3>
+            <i>ID: {{vm.data.id}}</i>
         </div>
-
-        <div id="section2" class="row">
-            <div class="col-lg-12 content-section" ng-bind-html='vm.data.description'>
-
-            </div>
+        <div class="col-lg-2 col-md-2 col-sm-3 share-section">
+            <!--<a class="share_button tp-link-policy" title="Facebook" href="http://api.addthis.com/oexchange/0.8/forward/facebook/offer?url={{vm.myUrl}}&amp;title={{vm.data.title}}&amp;description={{vm.data.title}}&amp;via=CDCgov&amp;ct=0&amp;media=http://www.cdc.gov/homepage/images/centers-for-disease-control-and-prevention.png" rel="nofollow" target="_blank"><span class="tp-sr-only">Recommend on Facebook</span><span id="share_facebook" class="facebookRecommend"></span><img src='https://www.cdc.gov/TemplatePackage/3.0/images/social/facebook-32.png' height='16' width='16' alt='Share' style="display: inline;"></a>-->
+            <a class="share_button tp-link-policy dd-toggle" href ng-click="vm.shareTwitter(myUrl,vm.data.title)"><img src='https://www.cdc.gov/TemplatePackage/3.0/images/social/twitter-32.png' height='16' width='16' alt='Share'
+                    style="display: inline;"></a>&nbsp;&nbsp
+            <a class="share_button tp-link-policy dd-toggle" href ng-click="vm.shareFacebook(myUrl,vm.data.title)"><img src='https://www.cdc.gov/TemplatePackage/3.0/images/social/facebook-32.png' height='16' width='16' alt='Share'
+                    style="display: inline;"></a>&nbsp;&nbsp
+            <!--<a class="share_button tp-link-policy dd-toggle" href><img src='https://www.cdc.gov/TemplatePackage/3.0/images/social/addthis-32.png' height='16' width='16' alt='Share' style="display: inline;"></a>&nbsp;&nbsp;&nbsp;-->
+            <a href={{vm.mailtoStr}} target="_top"><i class="glyphicon glyphicon-envelope"></i></a>&nbsp;&nbsp;&nbsp;
+            <a href ng-click='vm.printPage()'><i class="glyphicon glyphicon glyphicon-print"></i></a>
         </div>
+    </div>
 
-        <div id="section3" class="row">
-            <div class="col-lg-12">
-                <hr>
-            </div>
+    <div id="section2" class="row">
+        <div class="col-lg-12 content-section" ng-bind-html='vm.data.summary'>
+
         </div>
+    </div>
 
-        <div id="section4" class="row">
-            <div class="col-lg-12">
-                <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true" style="margin-bottom:0px;">
-                  <div class="panel panel-default">
+    <div id="section3" class="row">
+        <div class="col-lg-12">
+            <hr>
+        </div>
+    </div>
+
+    <div id="section4" class="row">
+        <div class="col-lg-12">
+            <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true" style="margin-bottom:0px;">
+                <div class="panel panel-default">
                     <div class="panel-heading" role="tab" id="headingOne">
-                      <h4 class="panel-title">
-                        <i class="indicator glyphicon glyphicon-plus-sign pull-LEFT"></i>
-                        <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                        <h4 class="panel-title">
+                            <i class="indicator glyphicon glyphicon-plus-sign pull-LEFT"></i>
+                            <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
                           RESOURCES (Placeholder)
                         </a>
-                      </h4>
+                        </h4>
                     </div>
                     <div id="collapseOne" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
-                      <div class="panel-body" ng-bind-html="vm.data.resources" ng-if="vm.data.resources != null"></div>
-                      <!--<div class="panel-body" ng-if="vm.data.resources == null">-->
-                        <!--<strong>CDC Publications</strong><br>-->
-                        <!--General Recommendations on Immunization: Recommendations of the Advisory Committee on Immunization Practices, January 28, 2011<br>-->
-                        <!--Centers for Disease Control and Prevention<br>-->
-                        <!--<a href="#">http://www.cdc.gov/mmwr/pdf/rr/rr6002.pdf</a><br>-->
-                        <!--<br>-->
-                        <!--Do Your Part for Vaccine Safety - Report to VAERS<br>-->
-                        <!--Centers for Disease Control and Prevention and the United States Food and Drug Administration<br>-->
-                        <!--<a href="#">http://vaers.hhs.gov/resources/VAERS-Brochure.pdf</a><br>-->
-                        <!--<br>-->
-                        <!--Parents' Guide to Childhood Immunizations, 2010<br>-->
-                        <!--National Center for Immunization and Respiratory Diseases, Immunization Services Division<br>-->
-                        <!--<a href="#">http://www.cdc.gov/vaccines/pubs/parents-guide/downloads/parents-guide-508.pdf</a><br>-->
-                        <!-- <br>-->
-                        <!--<strong>CDC Resources</strong><br>-->
-                        <!--Advisory Committee on Immunization Practices (ACIP) Recommendations<br>-->
-                        <!--Centers for Disease Control and Prevention<br>-->
-                        <!--<a href="#">http://www.cdc.gov/vaccines/acip/recs/index.html</a><br>-->
-                        <!-- <br>-->
-                        <!--VAERS: Vaccine Adverse Event Reporting System<br>-->
-                        <!--Centers for Disease Control and Prevention and the United States Food and Drug Administration<br>-->
-                        <!--1-800-822-7967<br>-->
-                        <!--<a href="#">http://vaers.hhs.gov/</a><br>-->
-                        <!-- <br>-->
-                        <!--Vaccine Safety and Adverse Events<br>-->
-                        <!--National Center for Immunization and Respiratory Diseases, Immunization Services Division<br>-->
-                        <!--<a href="#">http://www.cdc.gov/vaccines/vac-gen/safety/default.htm</a><br>-->
-                        <!-- <br>-->
-                        <!--Parents' Guide to Childhood Immunizations<br>-->
-                        <!--National Center for Immunization and Respiratory Diseases, Immunization Services Division<br>-->
-                        <!--<a href="#">http://www.cdc.gov/vaccines/pubs/parents-guide/default.htm</a><br>-->
-                        <!-- <br>-->
-                        <!--Vaccines and Immunizations<br>-->
-                        <!--National Center for Immunization and Respiratory Diseases, Immunization Services Division<br>-->
-                        <!--<a href="#">http://www.cdc.gov/vaccines/</a><br>-->
-                        <!-- <br>-->
-                        <!--<strong>External Resources</strong><br>-->
-                        <!--The National Medication Errors Reporting Program (ISMP MERP)<br>-->
-                        <!--Institute for Safe Medication Practices<br>-->
-                        <!--<a href="#">https://www.ismp.org/orderforms/report-errortoISMP.asp</a><br>-->
-                        <!-- <br>-->
-                        <!--Vaccine Safety: Dosing Safety: Childrens Hospital of Philadelphia<br>-->
-                        <!--<a href="#">http://www.chop.edu/centers-programs/vaccine-education-center/vaccine-safety/dosing-safety#.Vw-uNfLVyos</a><br>-->
-                        <!--<br>-->
-                        <!--What is the Zika virus?<br>-->
-                        <!--<a href="#">http://www.cdc.gov/zika</a><br>-->
-                        <!--<br>-->
-                        <!--<strong>CDC Resources</strong><br>-->
-                        <!--Zika - General Information<br>-->
-                        <!--National Center for Emerging and Zoonotic Infectious Diseases<br>-->
-                        <!--<a href="#">http://www.cdc.gov/zika/basics/</a><br>-->
-                        <!--<br>-->
-                        <!--<strong>Questions and Answers</strong><br>-->
-                        <!--Zika - General Information<br>-->
-                        <!--Office of Public Health Preparedness and Response<br>-->
-                        <!--<a href="#">http://www.cdc.gov/zika/basics/</a>-->
-                      <!--</div>-->
+                        <div class="panel-body" ng-bind-html="vm.data.resources" ng-if="vm.data.resources != null"></div>
                     </div>
-                  </div>
                 </div>
             </div>
         </div>
+    </div>
 
-        <div id="section5" class="row">
-            <div class="col-lg-12">
-                <hr>
+    <div id="section5" class="row">
+        <div class="col-lg-12">
+            <hr>
+        </div>
+    </div>
+
+    <div id="section6" class="row" ng-show="vm.data.relatedPR.length > 0">
+        <div class="col-lg-12">
+            <strong>OTHER RELATED QUESTIONS &amp; TOPICS (Placeholder)</strong><br>
+            <a class="related-links" ng-repeat="onePR in vm.data.relatedPR" ui-sref='details({id: onePR.prId})'>{{onePR.title}}<br></a>
+            <!--<a href="#">Who can contract the Zika virus?</a><br>-->
+            <!--<a href="#">Can dogs get Zika?</a><br>-->
+            <!--<a href="#">How do I know if I have Zika?</a><br>-->
+            <!--<a href="#">Where did Zika come from?</a><br>-->
+            <!--<a href="#">What is the Zika virus?</a><br>-->
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-12">
+            <hr>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-12">
+            <strong>WAS THIS HELPFUL TO YOU?</strong>
+            <br>
+            <div ng-if='!vm.showThanks'>
+                <button class="btn btn-default" type="submit" ng-click='vm.ratePreparedResponse(vm.like)'><i class="glyphicon glyphicon-thumbs-up"></i> Yes</button>                &nbsp;<button class="btn btn-default" type="submit" ng-click='vm.ratePreparedResponse(vm.dislike)'><i class="glyphicon glyphicon-thumbs-down"></i> No</button>
+            </div>
+            <div ng-if='vm.showThanks'>
+                Thank you for your feedback.
             </div>
         </div>
+    </div>
 
-        <div id="section6" class="row" ng-show="vm.data.relatedPR.length > 0">
-            <div class="col-lg-12">
-                <strong>OTHER RELATED QUESTIONS &amp; TOPICS (Placeholder)</strong><br>
-                <a class="related-links" ng-repeat="onePR in vm.data.relatedPR" ui-sref='details({id: onePR.prId})'>{{onePR.title}}<br></a>
-                <!--<a href="#">Who can contract the Zika virus?</a><br>-->
-                <!--<a href="#">Can dogs get Zika?</a><br>-->
-                <!--<a href="#">How do I know if I have Zika?</a><br>-->
-                <!--<a href="#">Where did Zika come from?</a><br>-->
-                <!--<a href="#">What is the Zika virus?</a><br>-->
-            </div>
+    <div class="row">
+        <div class="col-lg-12">
+            <hr>
         </div>
-
-        <div class="row">
-            <div class="col-lg-12">
-                <hr>
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="col-lg-12">
-                <strong>WAS THIS HELPFUL TO YOU?</strong>
-                <br>
-                <div ng-if='!vm.showThanks'>
-                    <button class="btn btn-default" type="submit" ng-click='vm.ratePreparedResponse(vm.like)'><i class="glyphicon glyphicon-thumbs-up"></i> Yes</button> &nbsp;<button class="btn btn-default" type="submit" ng-click='vm.ratePreparedResponse(vm.dislike)'><i class="glyphicon glyphicon-thumbs-down"></i> No</button>
-                </div>
-                <div ng-if='vm.showThanks'>
-                    Thank you for your feedback.
-                </div>
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="col-lg-12">
-                <hr>
-            </div>
-        </div>
+    </div>
 </section>

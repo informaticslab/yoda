@@ -1,4 +1,4 @@
-(function() {
+(function () {
     'use strict';
 
     angular
@@ -10,10 +10,8 @@
     function dataservice($http, $q, exception, logger) {
         var service = {
             doSearch: doSearch,
-            getQuestions: getQuestions,
-            getPreparedResponsebyId: getPreparedResponsebyId,
-            autocomplete: autocomplete
-
+            autocomplete: autocomplete,
+            findById: findById
         };
 
         return service;
@@ -28,13 +26,13 @@
             }
 
             function fail(e) {
-                return exception.catcher('XHR failed for getQuestions')(e);
+                return exception.catcher('XHR failed for autocomplete')(e);
             }
         }
 
 
         function doSearch(params) {
-            var url = '/api/search/' + params.searchString + '/' + params.page;
+            var url = '/api/smartSearch/' + params.searchString + '/' + params.page;
             // console.log(params);
             if (params.sort) {
                 url = url + '/' + params.sort;
@@ -56,8 +54,9 @@
             }
         }
 
-        function getQuestions(query) {
-            return $http.get('/api/questions/' + query)
+
+        function findById(id) {
+            return $http.get('/api/findById/' + id)
                 .then(success)
                 .catch(fail);
 
@@ -66,21 +65,7 @@
             }
 
             function fail(e) {
-                return exception.catcher('XHR failed for getQuestions')(e);
-            }
-        }
-
-        function getPreparedResponsebyId(id) {
-            return $http.get('/api/getPreparedResponsebyId/' + id)
-                .then(success)
-                .catch(fail);
-
-            function success(response) {
-                return response.data;
-            }
-
-            function fail(e) {
-                return exception.catcher('XHR failed for getPreparedResponsebyId')(e);
+                return exception.catcher('XHR failed for findById')(e);
             }
         }
 

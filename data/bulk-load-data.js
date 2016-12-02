@@ -9,7 +9,7 @@ let bulk_request = [];
 let content = data;
 
 for (let i = 0; i < content.length; i++) {
-    bulk_request.push({ index: { _index: 'tv_shows', _type: 'tv_shows', _id: content.id } });
+    bulk_request.push({ index: { _index: 'tv_shows', _type: 'tv_shows', _id: content[i].id } });
     bulk_request.push(content[i]);
     if (bulk_request.length === data.length * 2) {
         perhaps_insert();
@@ -21,7 +21,7 @@ for (let i = 0; i < content.length; i++) {
 // Recursively whittle away at bulk_request, 500 at a time.
 function perhaps_insert() {
     let busy = false;
-    let callback = function(err, resp) {
+    let callback = function (err, resp) {
         if (err) { console.log(err); }
 
         busy = false;
