@@ -1,8 +1,12 @@
-<div ng-controller="ShellController as vm" class='container'>
-  <div>
-    <header class="clearfix" id="top">
-      <top-nav></top-nav>
-    </header>
+<div ng-controller="ShellController as vm">
+  <div class="clearfix" id="topNav">
+    <a ui-sref="home">
+      <h1 class="cdc-info-header">Elastic Showcase</h1>
+    </a>
+    <search></search>
+  </div>
+  <div class='container'>
+
 
     <section id="content" class="content">
       <!--<div class="row">
@@ -10,9 +14,9 @@
           <search></search>
         </div>
       </div>-->
-      <search></search>
+
       <!--<span ncy-breadcrumb></span>-->
-      <div ui-view us-spinner spinner-on='isBusy' class='shuffle-animation'></div>
+      <div ui-view us-spinner spinner-on='isBusy'></div>
 
     </section>
     <footer>

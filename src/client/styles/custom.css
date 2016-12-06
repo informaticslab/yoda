@@ -1,6 +1,21 @@
-/*body {
-    background-color: #4B87B8;
-}*/
+body {
+    /*background-color: #97BDDC;*/
+}
+
+#topNav {
+    margin-top:-80px;
+    background-color: #009688;
+    width: 100%;
+    height: 18em;
+    padding-bottom: 0px;
+}
+
+#app-title {
+    color: white;
+}
+.tv-image {
+    padding-top: 20px;
+}
 
 span[class*=sprite-] {
     margin:0 5px;
@@ -93,7 +108,7 @@ span[class*=sprite-48],i[class*=sprite-48] {
 }
 
 .container {
-    margin-top:-80px;
+    /*margin-top:-80px;*/
 }
 .navbar-inverse {
     background-color: #eee;
@@ -167,12 +182,13 @@ span[class*=sprite-48],i[class*=sprite-48] {
     width:475px;
 }
 .cdc-info-header {
-    background-color: #075290;
+    /*background-color: #075290;*/
     color:#ffffff;
-    font-size:22px;
-    line-height:24px;
+    /*font-size:22px;*/
+    /*text-decoration: none;*/
+    line-height: 28px;
 
-    padding:11px 0 11px 5px;
+    padding:11px 12px 35px 35px;
     margin-top:20px;
 }
 .cdc-info-search {
@@ -405,50 +421,6 @@ margin:0;
   position: absolute;
   padding: 10px;
   pointer-events: none;
-}
-
-.login-cont {
-	width:600px; 
-	position:relative; 
-	margin:0 auto;
-}
-.login-header {
-	background-color:#015ea4; 
-	-webkit-border-top-left-radius: 4px;
-	-webkit-border-top-right-radius: 4px;
-	-moz-border-radius-topleft: 4px;
-	-moz-border-radius-topright: 4px;
-	border-top-left-radius: 4px;
-	border-top-right-radius: 4px; 
-	padding:30px; margin:0px;
-}
-.login-content-cont {
-	margin-top:-10px; 
-	background-color:#EDEDED;  
-	-webkit-border-bottom-right-radius: 4px;
-	-webkit-border-bottom-left-radius: 4px;
-	-moz-border-radius-bottomright: 4px;
-	-moz-border-radius-bottomleft: 4px;
-	border-bottom-right-radius: 4px;
-	border-bottom-left-radius: 4px;
-	-webkit-box-shadow: 0px 15px 28px 8px rgba(0,0,0,0.75);
-	-moz-box-shadow: 0px 15px 28px 8px rgba(0,0,0,0.75);
-	box-shadow: 0px 15px 28px 8px rgba(0,0,0,0.75); 
-	padding:30px 30px 70px 30px;
-}
-.login-content {
-	width:350px; 
-	margin:0 auto;
-}
-.login-footer {
-	margin-top:30px;
-}
-
-.search-button{
-    height: 40px;
-}
-.search-bar {
-    height: 40px;
 }
 
 .spin-body{
