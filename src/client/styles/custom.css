@@ -4,7 +4,7 @@ body {
 
 #topNav {
     margin-top:-80px;
-    background-color: #009688;
+    background-color: #00838F;
     width: 100%;
     height: 18em;
     padding-bottom: 0px;
@@ -186,8 +186,8 @@ span[class*=sprite-48],i[class*=sprite-48] {
     color:#ffffff;
     /*font-size:22px;*/
     /*text-decoration: none;*/
+    display: block;
     line-height: 28px;
-
     padding:11px 12px 35px 35px;
     margin-top:20px;
 }
