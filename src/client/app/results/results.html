@@ -69,10 +69,10 @@
 		</div>
 		<div class="col-lg-9 col-md-9 col-sm-8 col-xs-12 right-results ">
 			<div class="indv-results" ng-repeat="results in vm.resultsArray">
-				<h4><a ui-sref='details({id: results._source.id})'>{{results._source.name}}</a><span class="liked" ng-show='results._source.liked'>({{results._source.liked}} {{results._source.liked > 1 ? vm.peoplePhrase : vm.personPhrase}})</span></h4>
-				<span ng-bind-html="results._source.summary | limitTo: 300"></span>
-
-				<i>ID:{{results._source.id}}</i>
+				<h4><a ui-sref='details({id: results._id})'>{{results._source.title}}</a><span class="liked" ng-show='results._source.liked'>({{results._source.liked}} {{results._source.liked > 1 ? vm.peoplePhrase : vm.personPhrase}})</span></h4>
+				<span ng-bind-html="results._source.text | limitTo: 300"></span>
+				<br>
+				<i>ID:{{results._id}}</i>
 			</div>
 			<ul uib-pagination class="pagination-sm" boundary-links="true" boundary-link-numbers="true" max-size="vm.maxSize" total-items="vm.totalResults"
 				ng-model="vm.currentPage" items-per-Page="vm.pageSize" previous-text="&lsaquo;" next-text="&rsaquo;" first-text="&laquo;"

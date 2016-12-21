@@ -1,12 +1,14 @@
 const elasticsearch = require('elasticsearch');
 const searchHelper = require('../utils/search-helpers')();
+const wikiparse = require('wtf_wikipedia');
 
-module.exports = function() {
+module.exports = function () {
 
     let service = {
         basicSearch: basicSearch,
         smartSearch: smartSearch,
-        findById: findById
+        findById: findById,
+        findByTitle: findByTitle
     };
 
     const client = new elasticsearch.Client({
@@ -14,8 +16,8 @@ module.exports = function() {
         log: 'error'
     })
 
-    let index = 'tv_shows';
-    let type = 'tv_shows';
+    let index = 'elastic-showcase';
+    let type = 'page';
     let min_score = 0.5;
     let logicalOperator = 'or';
     let tie_breaker = 0.3;
@@ -34,16 +36,28 @@ module.exports = function() {
         });
     }
 
+    function findByTitle(req, res, next) {
+        client.get({
+            index: index,
+            type: type,
+            title: req.params.title
+        }, (error, response) => {
+            if (error) {
+                res.send(error);
+            }
+            res.send(response);
+        })
+    }
+
     function smartSearch(req, res, next) {
         let size = 10;
         let page = req.params.page;
         let startFrom;
         let sortArray = [];
-        let filterArray = [];
+        let filterArray = [{ "term": { "redirect": false } }, { "term": { "special": false } }, { "term": { "disambiguation": false } }];
         let suggestions = null;
         let preProcessedTerms2 = searchHelper.preProcessSearch2(req.params.query);
-        let fieldsToSearch = ["name", "language", "schedule", "summary"];
-
+        let fieldsToSearch = ["title", "text", "title.en", "text.en"];
 
         if (req.params.sort === 'recent') {
             var sortParam = req.params.sort; //what is this for?
@@ -68,13 +82,13 @@ module.exports = function() {
                     "didYouMean": {
                         "phrase": {
                             "analyzer": "standard",
-                            "field": "name",
+                            "field": "title",
                             "size": 1,
                             "real_word_error_likelihood": 0.95,
-                            "max_errors": 2,
+                            "max_errors": 3,
                             //"gram_size" : 2,
                             "direct_generator": [{
-                                "field": "name",
+                                "field": "title",
                                 "suggest_mode": "always",
                                 "min_word_length": 1
                             }],
@@ -141,13 +155,16 @@ module.exports = function() {
                     suggestions = results.suggest.didYouMean;
                 }
                 var hits = results.hits.hits;
-                var aggregations = results.aggregations;
-
+                // var aggregations = results.aggregations;
+                var total = results.hits.total;
+                if (total > 200) {
+                    total = 200;
+                }
                 var resultPackage = {
-                    "total": results.hits.total,
+                    "total": total,
                     "hits": hits,
-                    "suggestions": suggestions,
-                    "aggregations": aggregations
+                    // "suggestions": suggestions,
+                    // "aggregations": aggregations
                 }
                 res.send(resultPackage);
             }, (err) => {
@@ -159,6 +176,7 @@ module.exports = function() {
 
     function basicSearch(req, res, next) {
         var searchTerm = req.params.query;
+        let filterArray = [{ "term": { "redirect": false } }, { "term": { "special": false } }, { "term": { "disambiguation": false } }];
         searchTerm = searchTerm.toLowerCase();
 
         client.search({
@@ -171,7 +189,7 @@ module.exports = function() {
                         "should": [
                             {
                                 "match": {
-                                    "name": {
+                                    "title": {
                                         query: searchTerm,
                                         boost: 2
                                     }
@@ -179,13 +197,14 @@ module.exports = function() {
                             },
                             {
                                 "match": {
-                                    "name": {
+                                    "title": {
                                         query: searchTerm,
                                         fuzziness: "auto",
                                     }
                                 }
                             }
-                        ]
+                        ],
+                        "filter": filterArray
                     }
                 }
             }

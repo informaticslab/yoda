@@ -3,25 +3,22 @@ Elaasticsearch Clean Setup Process
 
 1. Create empty index:
 
-curl -XPUT 'localhost:9200/wikipedia/'
+curl -XPUT 'localhost:9200/en_wikipedia/'
 
 2. Close the index:
 
-curl -XPOST 'localhost:9200/wikipedia/_close'
+curl -XPOST 'localhost:9200/en_wikipedia/_close'
 
 3. Add mapping: 
 
-curl -XPUT 'http://localhost:9200/wikipedia/wikipedia/_mapping' -d '
+curl -XPUT 'http://localhost:9200/en_wikipedia/en_wikipedia/_mapping' -d '
 {
-  "wikipedia": {
+  "en_wikipedia": {
     "properties": {
-      "category": {
+      "type": {
         "type": "string"
       },
-      "special": {
-        "type": "boolean"
-      },
-      "title": {
+      "text": {
         "type": "string",
         "fields": {
           "en": {
@@ -30,19 +27,25 @@ curl -XPUT 'http://localhost:9200/wikipedia/wikipedia/_mapping' -d '
           }
         }
       },
-      "stub": {
-        "type": "boolean"
-      },
-      "disambiguation": {
-        "type": "boolean"
-      },
-      "link": {
+      "categories": {
         "type": "string"
       },
-      "redirect": {
-        "type": "boolean"
+      "images": {
+        "type": "string"
       },
-      "text": {
+      "infobox": {
+        "type": "string"
+      },
+      "infobox_template": {
+        "type": "string"
+      },
+      "tables": {
+        "type": "string"
+      },
+      "translations": {
+        "type": "string"
+      },
+      "title": {
         "type": "string",
         "fields": {
           "en": {
@@ -57,7 +60,7 @@ curl -XPUT 'http://localhost:9200/wikipedia/wikipedia/_mapping' -d '
 
 4. Open index:
 
-curl -XPOST 'localhost:9200/wikipedia/_open'
+curl -XPOST 'localhost:9200/en_wikipedia/_open'
 
 5. Create alias for index:
 

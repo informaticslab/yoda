@@ -1,6 +1,6 @@
-body {
-    /*background-color: #97BDDC;*/
-}
+/*body {
+    background-color: #97BDDC;
+}*/
 
 #topNav {
     margin-top:-80px;
@@ -106,10 +106,10 @@ span[class*=sprite-48],i[class*=sprite-48] {
 .sprite-24-rss {
     background: url(../img/ss.png) no-repeat -155px -85px;
 }
-
+/*
 .container {
-    /*margin-top:-80px;*/
-}
+    margin-top:-80px;
+}*/
 .navbar-inverse {
     background-color: #eee;
     border-color: none;

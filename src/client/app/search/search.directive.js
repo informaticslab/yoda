@@ -27,8 +27,8 @@
             vm.isDisabled = false;
 
             vm.goToDetails = function($item, $model, $label) {
-                // console.log($item);
-                $state.go('details', { id: $item.id });
+                console.log($item);
+                $state.go('details', { id: $item._id });
                 vm.selected = undefined;
             };
 
@@ -42,23 +42,15 @@
                     $state.go('results', options);
                     vm.selected = undefined;
                 }
-            }
+            };
 
             vm.getMatches = function(queryString) {
                 return dataservice.autocomplete(queryString).then(function(data) {
                     return data.map(function(item) {
-                        return item._source;
+                        return item;
                     });
                 });
-            }
-
-            // vm.getQuery = function (val) {
-            //   return dataservice.getQuestions(val).then(function (data) {
-            //     return data.map(function (item) {
-            //       return item._source;
-            //     });
-            //   });
-            // };
+            };
 
             vm.checkKey = function($event, $item) {
 
