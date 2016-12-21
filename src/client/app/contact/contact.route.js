@@ -1,6 +1,10 @@
 (function() {
   'use strict';
 
+  angular
+    .module('app.contact')
+    .run(appRun);
+
   angular.$inject = ['routerHelper'];
   /* @ngInject */
   function appRun(routerHelper) {
