@@ -2,6 +2,7 @@
     <div id="section1" class="row">
         <div class="col-lg-9 col-md-9 col-sm-12 ">
             <h2>{{vm.data.title}}</h2>
+            <i>ID: {{vm.dataId}}</i>
             <!--<div class="row" ng-if="vm.data.category">
                 <div class="col-lg-12">
                     Categories: <span ng-repeat="category in vm.data.category">{{category}} </span>
@@ -12,9 +13,11 @@
                     Links: <span ng-repeat="link in vm.data.link">{{link}}</span>
                 </div>
             </div>-->
-            <div class="row">
+            <div class="row" ng-if="vm.data.text.Intro">
                 <div class="col-lg-12">
-                    <div class="content-section" ng-bind-html='vm.data.text'></div>
+                    <div class="content-section">
+                        <span ng-repeat="text in vm.data.text.Intro">{{text.text}}  </span>
+                    </div>
                 </div>
             </div>
 
@@ -23,12 +26,19 @@
     </div>
 
 
-    <div id="section3" class="row">
+    <div id="section2" class="row">
         <div class="col-lg-12">
             <hr>
         </div>
     </div>
-
+    <div id="section3" class="row">
+        <div class="col-lg-12">
+            <h4>Categories</h4>
+            <ul>
+                <li ng-repeat="category in vm.data.categories">{{category}}</li>
+            </ul>
+        </div>
+    </div>
 
 
 

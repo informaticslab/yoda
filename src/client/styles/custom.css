@@ -185,19 +185,22 @@ span[class*=sprite-48],i[class*=sprite-48] {
     /*background-color: #075290;*/
     color:#ffffff;
     /*font-size:22px;*/
-    /*text-decoration: none;*/
+    text-decoration: none !important;
+    
+    text-align: center;
     display: block;
     line-height: 28px;
-    padding:11px 12px 35px 35px;
+    padding:11px 11px 35px 35px;
     margin-top:20px;
 }
 .cdc-info-search {
-    background-color:#b1dafb;
+    /*background-color:#b1dafb;*/
     padding:20px 20px 15px 20px;
     margin-top:10px;
 }
 .cdc-info-home {
     background-color:#f0f0f0;
+    text-decoration: none !important;
     padding:20px;
     margin-top:10px;
     margin-bottom:20px;
@@ -510,19 +513,21 @@ h3,h4 {
     height:100%;
 }
 }
-@media (min-width: 1200px) {
+@media (min-width: 900px) {
  .search-bar {
-        width:60%;
+        width:70%;
         margin: auto;
     }
-    .search-nav {
-        padding-left: 43px;
-    }
 }
+
 @media (max-width: 768px) {
     .search-results2 {
     text-align: left;
 }
+.search-bar {
+        width:80%;
+        margin: auto;
+    }
 }
 @media (min-width: 768px) {
     .nav>li {

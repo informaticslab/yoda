@@ -72,6 +72,7 @@
             if (id !== null) {
                 return dataservice.findById(id).then(function (data) {
                     vm.data = data._source;
+                    vm.dataId = data._id;
                     return vm.data;
                 });
             }

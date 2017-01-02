@@ -127,8 +127,8 @@ module.exports = function () {
                   //"minimum_should_match": "2<67%",
                 }
               },
-            ],
-            "filter": filterArray
+            ]
+            // "filter": filterArray
           },
         },
         // "aggs": {
@@ -203,8 +203,8 @@ module.exports = function () {
                   }
                 }
               }
-            ],
-            "filter": filterArray
+            ]
+            // "filter": filterArray
           }
         }
       }
