@@ -11,13 +11,11 @@ curl -XPOST 'localhost:9200/en_wikipedia/_close'
 
 3. Add mapping: 
 
-curl -XPUT 'http://localhost:9200/en_wikipedia/en_wikipedia/_mapping' -d '
+curl -XPUT 'http://localhost:9200/en_wikipedia/_mapping/article' -d '
 {
-  "en_wikipedia": {
+  
     "properties": {
-      "type": {
-        "type": "string"
-      },
+     
       "text": {
         "type": "string",
         "fields": {
@@ -26,24 +24,6 @@ curl -XPUT 'http://localhost:9200/en_wikipedia/en_wikipedia/_mapping' -d '
             "analyzer": "english"
           }
         }
-      },
-      "categories": {
-        "type": "string"
-      },
-      "images": {
-        "type": "string"
-      },
-      "infobox": {
-        "type": "string"
-      },
-      "infobox_template": {
-        "type": "string"
-      },
-      "tables": {
-        "type": "string"
-      },
-      "translations": {
-        "type": "string"
       },
       "title": {
         "type": "string",
@@ -55,7 +35,7 @@ curl -XPUT 'http://localhost:9200/en_wikipedia/en_wikipedia/_mapping' -d '
         }
       }
     }
-  }
+  
 }'
 
 4. Open index:

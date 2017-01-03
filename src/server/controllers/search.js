@@ -131,18 +131,13 @@ module.exports = function () {
             // "filter": filterArray
           },
         },
-        // "aggs": {
-        //   "featured_PRs": {
-        //     "terms": {
-        //       "field": "featuredRanking"
-        //     }
-        //   },
-        //   "user_type": {
-        //     "terms": {
-        //       "field": "tier"
-        //     }
-        //   }
-        // },
+        "aggs": {
+          "categories": {
+            "terms": {
+              "field": "categories"
+            }
+          }
+        },
         "sort": sortArray,
         size: size,
         from: startFrom,
@@ -155,7 +150,7 @@ module.exports = function () {
           suggestions = results.suggest.didYouMean;
         }
         var hits = results.hits.hits;
-        // var aggregations = results.aggregations;
+        var aggregations = results.aggregations;
         var total = results.hits.total;
         if (total > 200) {
           total = 200;
@@ -163,8 +158,8 @@ module.exports = function () {
         var resultPackage = {
           "total": total,
           "hits": hits,
-          // "suggestions": suggestions,
-          // "aggregations": aggregations
+          "suggestions": suggestions,
+          "aggregations": aggregations
         }
         res.send(resultPackage);
       }, (err) => {
