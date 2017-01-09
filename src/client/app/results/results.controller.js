@@ -1,4 +1,4 @@
-(function() {
+(function () {
     'use strict';
 
     angular
@@ -30,15 +30,12 @@
         vm.sort = $stateParams.sort || 'relevance';
         vm.filterOption = $stateParams.filter || 'all';
 
+
+
         vm.sortOptions = [
             {
-                'option': 'recent',
-                "label": 'Most Recent',
-                'notAvailable': false
-            },
-            {
-                'option': 'featured',
-                "label": 'Featured',
+                'option': 'title',
+                "label": 'Title',
                 'notAvailable': false
             },
             {
@@ -48,21 +45,19 @@
             }
         ];
 
-        if ($stateParams.sort == 'recent') {
+        if ($stateParams.sort == 'title') {
             vm.sortOption = vm.sortOptions[0];
-        } else if ($stateParams.sort == 'featured') {
-            vm.sortOption = vm.sortOptions[1];
         } else {
-            vm.sortOption = vm.sortOptions[2];
+            vm.sortOption = vm.sortOptions[1];
         }
 
-        vm.pageChanged = function(newPageNumber) {
+        vm.pageChanged = function (newPageNumber) {
             vm.options.searchString = vm.searchString;
             vm.options.page = newPageNumber;
             $state.go('.', vm.options);
         };
 
-        vm.toTop = function(id) {
+        vm.toTop = function (id) {
             var old = $location.hash();
             $location.hash(id);
             $anchorScroll();
@@ -73,14 +68,11 @@
         //     $state.go('results.details', { id: id });
         // };
 
-        vm.sort = function(keyname) {
+        vm.sort = function (keyname) {
             vm.options.searchString = vm.searchString;
             vm.options.page = null;
-            if (keyname === 'recent') {
-                vm.options.sort = 'recent';
-                $state.go('.', vm.options);
-            } else if (keyname === 'featured') {
-                vm.options.sort = 'featured';
+            if (keyname === 'title') {
+                vm.options.sort = 'title';
                 $state.go('.', vm.options);
             } else {
                 vm.options.sort = 'relevance';
@@ -88,20 +80,31 @@
             }
         }
 
-        vm.filter = function(filterKey) {
+        vm.filter = function (filterKey) {
             vm.options.searchString = vm.searchString;
             vm.options.page = null;
             vm.options.sort = 'relevance';
-            if (filterKey === 'public') {
-                vm.options.filter = 'public';
-                $state.go('.', vm.options);
-            } else if (filterKey === 'professional') {
-                vm.options.filter = 'professional';
-                $state.go('.', vm.options);
-            } else {
-                vm.options.filter = 'all';
-                $state.go('.', vm.options);
-            }
+            // console.log(filterKey);
+            vm.options.filter = filterKey.key;
+            $state.go('.', vm.options);
+            // if (filterKey === 'public') {
+            //     vm.options.filter = 'public';
+            //     $state.go('.', vm.options);
+            // } else if (filterKey === 'professional') {
+            //     vm.options.filter = 'professional';
+            //     $state.go('.', vm.options);
+            // } else {
+            //     vm.options.filter = 'all';
+            //     $state.go('.', vm.options);
+            // }
+        }
+
+        vm.removeFilter = function () {
+            vm.options.searchString = vm.searchString;
+            vm.options.page = null;
+            vm.options.sort = 'relevance';
+            vm.options.filter = 'all';
+            $state.go('.', vm.options);
         }
 
         activate();
@@ -111,9 +114,13 @@
 
             // var promises = [search($stateParams.searchString, $stateParams.page)];
             var promises = [search()];
+            if (vm.filterOption !== 'all') {
+                vm.isFilterSelected = true;
+            } else {
+                vm.isFilterSelected = false;
+            }
             // var promises = [search(vm.searchString, vm.currentPage)];
-            return $q.all(promises).then(function() {
-                // logger.info('Activated Results View');
+            return $q.all(promises).then(function () {
                 $rootScope.isBusy = false;
             });
         }
@@ -121,15 +128,16 @@
         function search() {
             // console.log('searchString ', searchString);
             // console.log('page ', page);
-            var containsFeatured = false;
+            // console.log('state params ', $stateParams);
             return dataservice.doSearch($stateParams)
-                .then(function(data) {
+                .then(function (data) {
                     vm.currentPage = $stateParams.page;
                     vm.suggestionArray = data.suggestions;
                     vm.resultsArray = data.hits;
                     vm.totalResults = data.total;
-                    // var aggregations = data.aggregations
-
+                    vm.aggregations = data.aggregations.categories.buckets;
+                    // console.log(vm.resultsArray);
+                    // console.log(data.aggregations);
                     // var featuredAgg = aggregations.featured_PRs;
                     // if(featuredAgg.buckets.length !== 1){
                     //   containsFeatured = true;

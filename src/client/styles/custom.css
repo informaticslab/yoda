@@ -302,6 +302,35 @@ margin:0;
   
   font-size:12px;
 }
+.category-button {
+    margin: 0px 4px 4px 0px;
+    border-radius: 0;
+    background-color: #7b8282;
+    border-width: 0;
+    color: white;
+}
+
+/*.category-button hover {
+     TODO 
+}*/
+
+#filter-x{
+    padding-left: 6px;
+    padding-right: -2px;
+    color: white;
+}
+
+.filter-pill{ 
+      margin: 0px 4px 4px 0px;
+    border-radius: 0;
+    background-color: #7b8282;
+    border-width: 0;
+    color: white;
+    padding: 5px 10px;
+    line-height: 1.5;
+    font-size: 12px;
+}
+
 .cb-group {
     margin-bottom:15px;
 }
@@ -484,6 +513,10 @@ body {
 }
 h3,h4 {
     font-weight:bold;
+}
+
+h4 a {
+    color: #00838F;
 }
 
 .navbar-fixed-top .nav {

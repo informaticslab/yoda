@@ -17,7 +17,7 @@ module.exports = function () {
 
   let index = 'elastic-showcase';
   let type = 'page';
-  let min_score = 0.5;
+  let min_score = 0.75;
   let logicalOperator = 'or';
   let tie_breaker = 0.3;
 
@@ -53,19 +53,21 @@ module.exports = function () {
     let page = req.params.page;
     let startFrom;
     let sortArray = [];
-    let filterArray = [{ "term": { "redirect": false } }, { "term": { "special": false } }, { "term": { "disambiguation": false } }];
+    let filterArray = [];
     let suggestions = null;
     let preProcessedTerms2 = searchHelper.preProcessSearch2(req.params.query);
-    let fieldsToSearch = ["title", "text", "title.en", "text.en"];
+    let fieldsToSearch = ["title", "title.en", "text", "text.en"];
     // let fieldsToSearch = ["title", "title.en"];
 
-    if (req.params.sort === 'recent') {
-      var sortParam = req.params.sort; //what is this for?
-      sortArray.push({ 'dateModified': { 'order': 'desc' } });
+    if (req.params.sort === 'title') {
+      let sortParam = req.params.sort; //what is this for?
+      sortArray.push({ 'title.keyword': { 'order': 'asc' } });
     }
+    // if (req.params.filter !== 'all') {
     if (req.params.filter !== 'all') {
-      var filterParam = req.params.filter;
-      filterArray.push({ "term": { "tier": filterParam } });
+      let filterParam = req.params.filter;
+      console.log('filter Param', filterParam)
+      filterArray.push({ "term": { "categories.keyword": filterParam } });
     }
     // console.log('param page', page);
     if (page === '1') {
@@ -100,48 +102,48 @@ module.exports = function () {
 
           }
         },
-        "min_score": min_score,
+        // "min_score": min_score,
         "query": {
           "bool": {
-            "should": [
+            "must": [
               { //best_fields - orig string
                 "multi_match": {
                   "query": preProcessedTerms2,
                   "type": "best_fields",
                   "fields": fieldsToSearch,
                   "minimum_should_match": "3<75%",
-                  //fuzziness: 1,
+                  // fuzziness: 1,
                   //prefix_length: 1,
                   //"operator" : "or",
-                  //"boost" : 2
+                  // "boost": 2
                 }
               },
               {
                 "multi_match": {
                   "fields": fieldsToSearch,
-                  //"type":"phrase",
+                  // "type": "best_fields",
                   "query": req.params.query,
                   //"slop":4,
                   //"boost":3
                   //"operator":"and",
                   //"minimum_should_match": "2<67%",
                 }
-              },
-            ]
-            // "filter": filterArray
+              }
+            ],
+            "filter": filterArray
           },
         },
         "aggs": {
           "categories": {
             "terms": {
-              "field": "categories"
+              "field": "categories.keyword"
             }
           }
         },
         "sort": sortArray,
         size: size,
         from: startFrom,
-        explain: false     //set to 'true' for testing only
+        explain: true     //set to 'true' for testing only
       }
     })
       .then((results) => {
@@ -171,7 +173,7 @@ module.exports = function () {
 
   function basicSearch(req, res, next) {
     var searchTerm = req.params.query;
-    let filterArray = [{ "term": { "redirect": false } }, { "term": { "special": false } }, { "term": { "disambiguation": false } }];
+    // let filterArray = [{ "term": { "redirect": false } }, { "term": { "special": false } }, { "term": { "disambiguation": false } }];
     searchTerm = searchTerm.toLowerCase();
 
     client.search({

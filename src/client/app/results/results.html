@@ -12,8 +12,7 @@
 			<div class="btn-group" ng-show="!vm.noResults">
 
 				<label class='sort-label'>Sort By</label>
-				<select ng-model=vm.sortOption ng-options="option as option.label disable when option.notAvailable for option in vm.sortOptions"
-					ng-change="vm.sort(vm.sortOption.option)">
+				<select ng-model=vm.sortOption ng-options="option as option.label for option in vm.sortOptions" ng-change="vm.sort(vm.sortOption.option)">
         </select>
 			</div>
 		</div>
@@ -42,32 +41,32 @@
 					<div class="panel-heading" role="tab" id="headingOne">
 						<h4 class="panel-title">
 							<i class="indicator glyphicon glyphicon-plus-sign pull-left"></i>&nbsp;&nbsp;<a role="button" data-toggle="collapse"
-								data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">Filter
+								data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">Categories
               </a>
 						</h4>
 					</div>
 					<div id="collapseOne" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
 						<div class="panel-body">
-
+							<button class="btn btn-default btn-sm category-button" ng-click="vm.filter(category)" ng-repeat="category in vm.aggregations">{{category.key}} ({{category.doc_count}})</button>
 						</div>
 					</div>
 				</div>
 			</div>
 		</div>
-		<div class="col-lg-3 col-md-3 col-sm-4 left-filters" ng-show='!isBusy'>
-			<h4>Filter</h4>
-			<div class="radio cb-group">
-				<label>
-            <input type="radio" name="optionsRadios" ng-model = "vm.filterOption" value="all" ng-change="vm.filter(vm.filterOption)">For everyone</label>
-				<br>
-				<label>
-              <input type="radio" name="optionsRadios"  ng-model = "vm.filterOption" value="public" ng-change="vm.filter(vm.filterOption)">For the public</label>
-				<br>
-				<label>
-                <input type="radio" name="optionsRadios" ng-model = "vm.filterOption" value="professional" ng-change="vm.filter(vm.filterOption)">For health care professionals</label>
+		<div class="col-lg-4 col-md-4 col-sm-4 left-filters" ng-show="!isBusy">
+			<div ng-show="vm.isFilterSelected">
+				<h4>Filter</h4>
+				<span class="filter-pill">{{vm.filterOption}}<a id="filter-x" href="" ng-click="vm.removeFilter()"><i class="fa fa-times" aria-hidden="true"></i></a></span>
 			</div>
+			<h4>Categories</h4>
+			<button class="btn btn-default btn-sm category-button" ng-click="vm.filter(category)" ng-repeat="category in vm.aggregations">{{category.key}} ({{category.doc_count}})</button>
+			<!--<div class="radio cb-group" ng-repeat="filter in vm.aggregations">
+				<label>
+						<input type="radio" name="optionsRadios" ng-model = "vm.filterOption" value="all" ng-change="vm.filter(vm.filterOption)">{{filter.key}} ({{filter.doc_count}})
+				</label>
+			</div>-->
 		</div>
-		<div class="col-lg-9 col-md-9 col-sm-8 col-xs-12 right-results ">
+		<div class="col-lg-8 col-md-8 col-sm-8 col-xs-12 right-results ">
 			<div class="indv-results" ng-repeat="results in vm.resultsArray">
 				<h4><a ui-sref='details({id: results._id})'>{{results._source.title}}</a></h4>
 				<span ng-repeat="text in results._source.text.Intro | limitTo:3">{{text.text}}  </span>
