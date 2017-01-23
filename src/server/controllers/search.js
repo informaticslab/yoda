@@ -16,7 +16,7 @@ module.exports = function () {
   })
 
   let index = 'elastic-showcase';
-  let type = 'page';
+  let type = 'wikipedia';
   let min_score = 0.75;
   let logicalOperator = 'or';
   let tie_breaker = 0.3;
