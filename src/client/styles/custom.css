@@ -184,9 +184,8 @@ span[class*=sprite-48],i[class*=sprite-48] {
 .cdc-info-header {
     /*background-color: #075290;*/
     color:#ffffff;
-    /*font-size:22px;*/
+    font-size:1.4em;
     text-decoration: none !important;
-    
     text-align: center;
     display: block;
     line-height: 28px;
@@ -508,7 +507,7 @@ body {
     color:#1a1a1a;
     font-family: 'Lato', sans-serif;
     font-weight:400;
-    font-size:14px;
+    font-size:15px;
     line-height:26px;
 }
 h3,h4 {
@@ -517,6 +516,10 @@ h3,h4 {
 
 h4 a {
     color: #00838F;
+}
+
+.btn-sm {
+    font-size: 13px;
 }
 
 .navbar-fixed-top .nav {

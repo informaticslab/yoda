@@ -1,8 +1,9 @@
 <section class='mainbar'>
     <div id="section1" class="row">
+        <div class="col-lg-3 col-md-3">
+        </div>
         <div class="col-lg-9 col-md-9 col-sm-12 ">
             <h2>{{vm.data.title}}</h2>
-            <i>ID: {{vm.dataId}}</i>
             <!--<div class="row" ng-if="vm.data.category">
                 <div class="col-lg-12">
                     Categories: <span ng-repeat="category in vm.data.category">{{category}} </span>
@@ -20,6 +21,7 @@
                     </div>
                 </div>
             </div>
+            <i>ID: {{vm.dataId}}</i>
 
         </div>
 
@@ -27,16 +29,17 @@
 
 
     <div id="section2" class="row">
-        <div class="col-lg-12">
+        <div class="col-lg-3">
+        </div>
+        <div class="col-lg-9">
             <hr>
         </div>
     </div>
     <div id="section3" class="row">
-        <div class="col-lg-12">
-            <h4>Categories</h4>
-            <ul>
-                <li ng-repeat="category in vm.data.categories">{{category}}</li>
-            </ul>
+        <div class="col-lg-3">
+        </div>
+        <div class="col-lg-9">
+            <button class="btn btn-default btn-sm category-button" ng-repeat="category in vm.data.categories">{{category}}</button>
         </div>
     </div>
 
