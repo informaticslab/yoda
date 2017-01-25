@@ -69,9 +69,10 @@
 		<div class="col-lg-8 col-md-8 col-sm-8 col-xs-12 right-results ">
 			<div class="indv-results" ng-repeat="results in vm.resultsArray">
 				<h4><a ui-sref='details({id: results._id})'>{{results._source.title}}</a></h4>
-				<span ng-repeat="text in results._source.text.Intro | limitTo:3">{{text.text}}  </span>
-				<br><br>
 				<i>ID:{{results._id}}</i>
+				<br></br>
+				<p>{{results._source.text | limitTo:325}}</p>
+				<!--<br><br>-->
 			</div>
 			<ul uib-pagination class="pagination-sm" boundary-links="true" boundary-link-numbers="true" max-size="vm.maxSize" total-items="vm.totalResults"
 				ng-model="vm.currentPage" items-per-Page="vm.pageSize" previous-text="&lsaquo;" next-text="&rsaquo;" first-text="&laquo;"

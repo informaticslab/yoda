@@ -11,7 +11,8 @@
         var service = {
             doSearch: doSearch,
             autocomplete: autocomplete,
-            findById: findById
+            findById: findById,
+            getDocCount: getCount
         };
 
         return service;
@@ -66,6 +67,20 @@
 
             function fail(e) {
                 return exception.catcher('XHR failed for findById')(e);
+            }
+        }
+
+        function getCount() {
+            return $http.get('/api/getCount')
+                .then(success)
+                .catch(fail);
+
+            function success(response) {
+                return response.data;
+            }
+
+            function fail(e) {
+                return exception.catcher('XHR failed for getCOunt')(e);
             }
         }
 

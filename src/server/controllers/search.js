@@ -7,7 +7,7 @@ module.exports = function () {
     basicSearch: basicSearch,
     smartSearch: smartSearch,
     findById: findById,
-    findByTitle: findByTitle
+    getCount: getCount
   };
 
   const client = new elasticsearch.Client({
@@ -16,7 +16,7 @@ module.exports = function () {
   })
 
   let index = 'elastic-showcase';
-  let type = 'wikipedia';
+  let type = 'page';
   let min_score = 0.75;
   let logicalOperator = 'or';
   let tie_breaker = 0.3;
@@ -24,6 +24,7 @@ module.exports = function () {
   return service;
 
   ///////////////////////////////////////////
+
 
   function findById(req, res, next) {
     client.get({
@@ -35,17 +36,12 @@ module.exports = function () {
     });
   }
 
-  function findByTitle(req, res, next) {
-    client.get({
-      index: index,
-      type: type,
-      title: req.params.title
+  function getCount(req, res, next) {
+    client.count({
+      index: index
     }, (error, response) => {
-      if (error) {
-        res.send(error);
-      }
       res.send(response);
-    })
+    });
   }
 
   function smartSearch(req, res, next) {
@@ -67,7 +63,7 @@ module.exports = function () {
     if (req.params.filter !== 'all') {
       let filterParam = req.params.filter;
       console.log('filter Param', filterParam)
-      filterArray.push({ "term": { "categories.keyword": filterParam } });
+      filterArray.push({ "term": { "category": filterParam } });
     }
     // console.log('param page', page);
     if (page === '1') {
@@ -112,10 +108,10 @@ module.exports = function () {
                   "type": "best_fields",
                   "fields": fieldsToSearch,
                   "minimum_should_match": "3<75%",
-                  // fuzziness: 1,
+                  // fuzziness: 'auto',
                   //prefix_length: 1,
                   //"operator" : "or",
-                  // "boost": 2
+                  "boost": 2
                 }
               },
               {
@@ -136,7 +132,7 @@ module.exports = function () {
         "aggs": {
           "categories": {
             "terms": {
-              "field": "categories.keyword"
+              "field": "category"
             }
           }
         },
@@ -154,8 +150,8 @@ module.exports = function () {
         var hits = results.hits.hits;
         var aggregations = results.aggregations;
         var total = results.hits.total;
-        if (total > 200) {
-          total = 200;
+        if (total > 250) {
+          total = 250;
         }
         var resultPackage = {
           "total": total,

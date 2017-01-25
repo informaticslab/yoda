@@ -64,7 +64,7 @@
             var promises = [getDetail(vm.id)];
             return $q.all(promises).then(function () {
                 // logger.info('Activated Details View');
-                vm.mailtoStr = "mailto:?Subject=I thought you may like this: " + vm.data.title + "&body=" + vm.data.title + "%0A" + vm.myUrl;
+                // vm.mailtoStr = "mailto:?Subject=I thought you may like this: " + vm.data.title + "&body=" + vm.data.title + "%0A" + vm.myUrl;
             });
         }
 
@@ -78,15 +78,15 @@
             }
         }
 
-        vm.shareTwitter = function (url, text) {
-            open('http://twitter.com/share?url=' + url + '&text=' + text, 'tshare', 'height=400,width=550,resizable=1,toolbar=0,menubar=0,status=0,location=0');
-        }
+        // vm.shareTwitter = function (url, text) {
+        //     open('http://twitter.com/share?url=' + url + '&text=' + text, 'tshare', 'height=400,width=550,resizable=1,toolbar=0,menubar=0,status=0,location=0');
+        // }
 
-        vm.shareFacebook = function (url, text) {
-            var url = 'https://my.website.com/detail/' + vm.data.id;
-            var text = vm.data.title;
-            open('https://facebook.com/sharer.php?s=100&p[url]=' + url, 'fbshare', 'height=380,width=660,resizable=0,toolbar=0,menubar=0,status=0,location=0,scrollbars=0');
-        }
+        // vm.shareFacebook = function (url, text) {
+        //     var url = 'https://my.website.com/detail/' + vm.data.id;
+        //     var text = vm.data.title;
+        //     open('https://facebook.com/sharer.php?s=100&p[url]=' + url, 'fbshare', 'height=380,width=660,resizable=0,toolbar=0,menubar=0,status=0,location=0,scrollbars=0');
+        // }
 
     }
 })();
