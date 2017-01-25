@@ -132,14 +132,16 @@ module.exports = function () {
         "aggs": {
           "categories": {
             "terms": {
-              "field": "category"
+              "field": "category",
+              "size": 75,
+              "exclude": "articles|from|with|all|pages|in|of|using|links|wikipedia|the|dates|use|statements|people|on|needing|and|language|unsourced|isbn|cs1|category|viaf|wikidata|external|commons|identifiers|as|dmy|references|sources|text|link|hcards|infobox|template|errors|gnd|same"
             }
           }
         },
         "sort": sortArray,
         size: size,
         from: startFrom,
-        explain: true     //set to 'true' for testing only
+        explain: false     //set to 'true' for testing only
       }
     })
       .then((results) => {
@@ -175,11 +177,11 @@ module.exports = function () {
     client.search({
       index: index,
       body: {
-        "size": 20,
+        "size": 25,
         "min_score": .2,
         "query": {
           "bool": {
-            "should": [
+            "must": [
               {
                 "match": {
                   "title": {

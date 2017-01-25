@@ -14,7 +14,7 @@
         vm.searchString = $stateParams.searchString;
         vm.currentPage = $stateParams.page || 1;
         vm.totalResults;
-        vm.resultsArray = [];
+        vm.resultsArray = null;
         vm.suggestionArray = [];
         vm.featuredArray = [];
         vm.pageSize = 10;

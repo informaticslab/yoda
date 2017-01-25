@@ -74,9 +74,11 @@
 				<p>{{results._source.text | limitTo:325}}</p>
 				<!--<br><br>-->
 			</div>
-			<ul uib-pagination class="pagination-sm" boundary-links="true" boundary-link-numbers="true" max-size="vm.maxSize" total-items="vm.totalResults"
-				ng-model="vm.currentPage" items-per-Page="vm.pageSize" previous-text="&lsaquo;" next-text="&rsaquo;" first-text="&laquo;"
-				last-text="&raquo;" ng-click="vm.toTop('top'); vm.pageChanged(vm.currentPage)"></ul>
+			<div ng-if="vm.resultsArray">
+				<ul uib-pagination class="pagination-sm" boundary-links="true" boundary-link-numbers="true" max-size="vm.maxSize" total-items="vm.totalResults"
+					ng-model="vm.currentPage" items-per-Page="vm.pageSize" previous-text="&lsaquo;" next-text="&rsaquo;" first-text="&laquo;"
+					last-text="&raquo;" ng-click="vm.toTop('top'); vm.pageChanged(vm.currentPage)"></ul>
+			</div>
 		</div>
 	</div>
 </section>
