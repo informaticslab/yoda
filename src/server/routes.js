@@ -6,7 +6,7 @@ const search = require('./controllers/search')();
 router.get('/autocomplete/:query', search.basicSearch);
 router.get('/smartSearch/:query/:page/:sort?/:filter?', search.smartSearch);
 router.get('/findById/:id', search.findById);
-router.get('/getCount', search.getCount);
+router.get('/getStats', search.getStats);
 // router.get('/getMostRecent/:maxCount', elastic.getMostRecent);
 // router.get('/getFeatured/:maxCount', elastic.getFeatured);
 // router.get('/getCommon/:maxCount', elastic.getCommon);

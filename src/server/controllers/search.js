@@ -7,7 +7,7 @@ module.exports = function () {
     basicSearch: basicSearch,
     smartSearch: smartSearch,
     findById: findById,
-    getCount: getCount
+    getStats: getStats
   };
 
   const client = new elasticsearch.Client({
@@ -36,11 +36,18 @@ module.exports = function () {
     });
   }
 
-  function getCount(req, res, next) {
-    client.count({
+  function getStats(req, res, next) {
+    client.indices.stats({
       index: index
     }, (error, response) => {
-      res.send(response);
+      var esStats = response.indices.enwiki.primaries;
+      var statsPackage = {};
+      statsPackage.doc = esStats.docs;
+      statsPackage.store = esStats.store;
+      statsPackage.get = esStats.get;
+      statsPackage.search = esStats.search;
+
+      res.send(statsPackage);
     });
   }
 

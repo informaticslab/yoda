@@ -16,22 +16,28 @@
     vm.messageCount = 0;
     vm.title = 'Home';
     vm.documentCount = 0;
+    vm.stats = null;
 
     activate();
 
     ///////
 
     function activate() {
-      var promises = [getDocCount()];
+      var promises = [getStats()];
       return $q.all(promises).then(function () {
         // logger.info('Activated Home View');
       });
     }
 
-    function getDocCount() {
-      return dataservice.getDocCount()
+    function getStats() {
+      return dataservice.getStats()
         .then(function (data) {
-          vm.documentCount = data.count;
+          vm.stats = data;
+          var queryTotal = vm.stats.search.query_total;
+          var queryTime = vm.stats.search.query_time_in_millis;
+          vm.avgQuery = queryTime / queryTotal;
+          vm.size = vm.stats.store.size_in_bytes / Math.pow(1024, 3);
+
         });
     }
 

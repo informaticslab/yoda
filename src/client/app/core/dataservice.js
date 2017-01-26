@@ -12,7 +12,7 @@
             doSearch: doSearch,
             autocomplete: autocomplete,
             findById: findById,
-            getDocCount: getCount
+            getStats: getStats
         };
 
         return service;
@@ -70,8 +70,8 @@
             }
         }
 
-        function getCount() {
-            return $http.get('/api/getCount')
+        function getStats() {
+            return $http.get('/api/getStats')
                 .then(success)
                 .catch(fail);
 
@@ -80,7 +80,7 @@
             }
 
             function fail(e) {
-                return exception.catcher('XHR failed for getCOunt')(e);
+                return exception.catcher('XHR failed for getStats')(e);
             }
         }
 

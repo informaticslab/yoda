@@ -1,8 +1,19 @@
 <section id='home-view' class='mainbar'>
   <div class='row'>
-    <div class="col-lg-12">
-      <p class="content-overview">Elasticsearch database containing <b>{{vm.documentCount | number}}</b> records from Wikipedia.</p>
+    <div class="col-lg-3"></div>
+    <div class="col-lg-6 description">
+      <p>This project is meant to showcase the capabilities of Elasticsearch. It allows users to explore a data dump of Wikipedia’s
+        indexed content pages from 01-23-2017. The app searches through the “title” and “text” properties of each document
+        returning the most relevant results.</p>
+      <h4>Statistics:</h4>
+      <ul id="statistics">
+        <li>Total Documents: <b>{{vm.stats.doc.count | number}}</b></li>
+        <li>Size: <b>{{vm.size | number : 2}} GB</b>
+          <li>Average Query Time: <b>{{vm.avgQuery | number: 2}} ms</b></li>
+          <li>Total Queries: <b>{{vm.stats.search.query_total}}</b></li>
+      </ul>
     </div>
+    <div class="col-lg-3"></div>
   </div>
 
 </section>

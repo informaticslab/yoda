@@ -71,7 +71,7 @@
 				<h4><a ui-sref='details({id: results._id})'>{{results._source.title}}</a></h4>
 				<i>ID:{{results._id}}</i>
 				<br></br>
-				<p>{{results._source.text | limitTo:325}}</p>
+				<p>{{results._source.opening_text | limitTo:325}}...</p>
 				<!--<br><br>-->
 			</div>
 			<div ng-if="vm.resultsArray">
