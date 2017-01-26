@@ -11,36 +11,28 @@
     var vm = this;
     vm.news = {
       title: 'yoda',
-      description: 'CDC-INFO responsive webapp'
+      description: 'Elastisearch Showcase'
     };
     vm.messageCount = 0;
     vm.title = 'Home';
-    vm.featuredMax = 5;
-    vm.featuredPRs, vm.commonPRs, vm.mostRecent;
+    vm.documentCount = 0;
 
     activate();
-
-    var index = 'prepared_responses';
-
-    vm.selected = undefined;
-    vm.currentPage = 1;
-    vm.pageSize = 10;
-
-
-    vm.placeholderSort = [
-      'Topic',
-      'Type',
-      'Relevance',
-      'Keywords'
-    ];
 
     ///////
 
     function activate() {
-      var promises = [];
+      var promises = [getDocCount()];
       return $q.all(promises).then(function () {
         // logger.info('Activated Home View');
       });
+    }
+
+    function getDocCount() {
+      return dataservice.getDocCount()
+        .then(function (data) {
+          vm.documentCount = data.count;
+        });
     }
 
   }
