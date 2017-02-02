@@ -64,7 +64,7 @@ module.exports = function () {
 
     if (req.params.sort === 'title') {
       let sortParam = req.params.sort; //what is this for?
-      sortArray.push({ 'title.keyword': { 'order': 'asc' } });
+      sortArray.push({ 'title': { 'order': 'asc' } });
     }
     // if (req.params.filter !== 'all') {
     if (req.params.filter !== 'all') {
@@ -141,7 +141,7 @@ module.exports = function () {
             "terms": {
               "field": "category",
               "size": 75,
-              "exclude": "articles|from|with|all|pages|in|of|using|links|wikipedia|the|dates|use|statements|people|on|needing|and|language|unsourced|isbn|cs1|category|viaf|wikidata|external|commons|identifiers|as|dmy|references|sources|text|link|hcards|infobox|template|errors|gnd|same"
+              "exclude": "articles|from|with|all|page|pages|in|of|using|links|wikipedia|the|dates|use|statements|people|on|needing|and|language|unsourced|isbn|cs1|category|viaf|wikidata|external|commons|identifiers|as|dmy|references|sources|text|link|hcards|infobox|template|errors|gnd|same"
             }
           }
         },

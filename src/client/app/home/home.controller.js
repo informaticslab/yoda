@@ -35,7 +35,8 @@
           vm.stats = data;
           var queryTotal = vm.stats.search.query_total;
           var queryTime = vm.stats.search.query_time_in_millis;
-          vm.avgQuery = queryTime / queryTotal;
+          vm.avgQuery = (queryTime / queryTotal);
+          vm.avgQuery = (vm.avgQuery / 1000) % 6;
           vm.size = vm.stats.store.size_in_bytes / Math.pow(1024, 3);
 
         });
