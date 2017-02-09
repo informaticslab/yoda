@@ -40,9 +40,10 @@
 				<div class="panel panel-default">
 					<div class="panel-heading" role="tab" id="headingOne">
 						<h4 class="panel-title">
-							<i class="indicator glyphicon glyphicon-plus-sign pull-left"></i>&nbsp;&nbsp;<a role="button" data-toggle="collapse"
+							<i class="indicator glyphicon glyphicon-plus-sign pull-left"></i>&nbsp;&nbsp;
+							<a role="button" data-toggle="collapse"
 								data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">Categories
-              </a>
+								</a>
 						</h4>
 					</div>
 					<div id="collapseOne" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
@@ -71,7 +72,7 @@
 				<h4><a ui-sref='details({id: results._id})'>{{results._source.title}}</a></h4>
 				<i>ID:{{results._id}}</i>
 				<br></br>
-				<p>{{results._source.opening_text | limitTo:325}}...</p>
+				<p>{{results._source.text | limitTo:325}}...</p>
 				<!--<br><br>-->
 			</div>
 			<div ng-if="vm.resultsArray">
