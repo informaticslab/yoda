@@ -61,6 +61,24 @@ if(environment === 'build') {
     key:    fs.readFileSync('/sec/certs/server-key.pem'),
     cert:   fs.readFileSync('/sec/certs/server-cert.pem'),
     ca:     fs.readFileSync('/sec/certs/gd_bundle-g2.crt'),
+    ciphers: [
+    "ECDHE-RSA-AES256-SHA384",
+    "DHE-RSA-AES256-SHA384",
+    "ECDHE-RSA-AES256-SHA256",
+    "DHE-RSA-AES256-SHA256",
+    "ECDHE-RSA-AES128-SHA256",
+    "DHE-RSA-AES128-SHA256",
+    "HIGH",
+    "!aNULL",
+    "!eNULL",
+    "!EXPORT",
+    "!DES",
+    "!RC4",
+    "!MD5",
+    "!PSK",
+    "!SRP",
+    "!CAMELLIA"
+].join(':'),
     requestCert: false,
     rejectUnauthorized: false
 };
